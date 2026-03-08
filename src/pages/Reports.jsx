@@ -36,7 +36,7 @@ const Reports = () => {
             <CardTitle>Total Revenue</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-green-600">${mockStats.totalRevenue.toLocaleString()}</div>
+            <div className="text-3xl font-bold text-green-600">Rs {mockStats.totalRevenue.toLocaleString()}</div>
           </CardContent>
         </Card>
 
@@ -45,7 +45,7 @@ const Reports = () => {
             <CardTitle>Total Bookings</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-blue-600">{mockStats.totalBookings.toLocaleString()}</div>
+            <div className="text-3xl font-bold text-brand-red">{mockStats.totalBookings.toLocaleString()}</div>
           </CardContent>
         </Card>
 
@@ -78,9 +78,9 @@ const Reports = () => {
                 {revenueData.map((row, index) => (
                   <tr key={index}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{row.month}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${row.revenue.toLocaleString()}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${row.expenses.toLocaleString()}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${row.profit.toLocaleString()}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rs {row.revenue.toLocaleString()}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rs {row.expenses.toLocaleString()}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rs {row.profit.toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
