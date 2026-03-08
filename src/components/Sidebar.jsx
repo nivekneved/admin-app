@@ -1,80 +1,85 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Users, Package, ShoppingCart, BarChart3, Settings, Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { Users, Package, ShoppingCart, BarChart3, Settings, LogOut, Home, Calendar, FileText } from 'lucide-react';
 
-const Sidebar = ({ isOpen, toggleSidebar }) => {
+const Sidebar = () => {
   const location = useLocation();
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   const menuItems = [
-    { icon: Home, label: 'Dashboard', path: '/' },
-    { icon: Package, label: 'Services', path: '/services' },
-    { icon: Users, label: 'Customers', path: '/customers' },
-    { icon: ShoppingCart, label: 'Orders', path: '/orders' },
-    { icon: BarChart3, label: 'Analytics', path: '/analytics' },
-    { icon: Settings, label: 'Settings', path: '/settings' },
+    { 
+      title: 'Dashboard', 
+      path: '/', 
+      icon: <Home size={20} /> 
+    },
+    { 
+      title: 'Users', 
+      path: '/users', 
+      icon: <Users size={20} /> 
+    },
+    { 
+      title: 'Products', 
+      path: '/products', 
+      icon: <Package size={20} /> 
+    },
+    { 
+      title: 'Orders', 
+      path: '/orders', 
+      icon: <ShoppingCart size={20} /> 
+    },
+    { 
+      title: 'Bookings', 
+      path: '/bookings', 
+      icon: <Calendar size={20} /> 
+    },
+    { 
+      title: 'Reports', 
+      path: '/reports', 
+      icon: <BarChart3 size={20} /> 
+    },
+    { 
+      title: 'Invoices', 
+      path: '/invoices', 
+      icon: <FileText size={20} /> 
+    },
+    { 
+      title: 'Settings', 
+      path: '/settings', 
+      icon: <Settings size={20} /> 
+    },
   ];
 
   return (
-    <>
-      {/* Mobile sidebar overlay */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 z-20 bg-black bg-opacity-50 lg:hidden" 
-          onClick={toggleSidebar}
-        ></div>
-      )}
-
-      {/* Sidebar */}
-      <div 
-        className={`fixed top-0 left-0 h-full w-64 bg-gray-900 text-white z-30 transform transition-transform duration-300 ease-in-out
-          ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
-      >
-        <div className="flex items-center justify-between p-4 border-b border-gray-800">
-          <h1 className="text-xl font-bold">Travel Lounge Admin</h1>
-          <button 
-            className="lg:hidden text-gray-400 hover:text-white"
-            onClick={toggleSidebar}
-          >
-            <X size={24} />
-          </button>
-        </div>
-
-        <nav className="mt-6">
-          <ul>
-            {menuItems.map((item, index) => {
-              const Icon = item.icon;
-              return (
-                <li key={index}>
-                  <Link
-                    to={item.path}
-                    className={`flex items-center px-6 py-3 text-sm transition-colors duration-200 ${
-                      location.pathname === item.path
-                        ? 'bg-indigo-700 text-white'
-                        : 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                    }`}
-                  >
-                    <Icon size={20} className="mr-3" />
-                    {item.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-
-        <div className="absolute bottom-0 w-full p-4 border-t border-gray-800">
-          <div className="flex items-center">
-            <div className="bg-gray-200 border-2 border-dashed rounded-xl w-10 h-10" />
-            <div className="ml-3">
-              <p className="text-sm font-medium text-white">Admin User</p>
-              <p className="text-xs text-gray-400">admin@travellounge.com</p>
-            </div>
-          </div>
-        </div>
+    <div className="fixed inset-y-0 left-0 w-64 bg-gray-900 text-white z-10">
+      <div className="flex items-center justify-center h-16 border-b border-gray-700">
+        <h1 className="text-xl font-bold">Travel Lounge Admin</h1>
       </div>
-    </>
+      <nav className="mt-6 px-4">
+        <ul>
+          {menuItems.map((item, index) => (
+            <li key={index}>
+              <Link
+                to={item.path}
+                className={`flex items-center px-4 py-3 rounded-lg mb-1 transition-colors ${
+                  location.pathname === item.path
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-300 hover:bg-gray-800'
+                }`}
+              >
+                <span className="mr-3">{item.icon}</span>
+                <span>{item.title}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      
+      <div className="absolute bottom-0 w-full p-4 border-t border-gray-700">
+        <button className="flex items-center text-red-400 hover:text-red-300 w-full">
+          <LogOut size={20} className="mr-3" />
+          <span>Logout</span>
+        </button>
+      </div>
+    </div>
   );
 };
 
