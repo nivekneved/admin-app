@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/Card';
 import { Button } from '../components/Button';
-import { ArrowLeft, UserPlus, Mail, Phone, Globe, Shield, Loader2, CheckCircle2, UserCheck } from 'lucide-react';
+import { ArrowLeft, UserPlus, Mail, Phone, Globe, Shield, Loader2, UserCheck } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { showAlert } from '../utils/swal';
 

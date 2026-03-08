@@ -44,7 +44,7 @@ const Customers = () => {
 
             if (error) {
                 if (error.message.includes('relation "public.customers" does not exist')) {
-                    console.log('Customers table not found yet.');
+
                     setCustomers([]);
                 } else {
                     throw error;

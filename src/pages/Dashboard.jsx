@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/Card';
-import { Users, Package, ShoppingCart, Calendar, Loader2, UserCheck, TrendingUp, DollarSign } from 'lucide-react';
+import { Users, Calendar, Loader2, UserCheck, TrendingUp, DollarSign } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 const Dashboard = () => {

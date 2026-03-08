@@ -47,7 +47,7 @@ const Settings = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Simulate saving settings
-    console.log('Saving settings:', formData);
+
     showAlert('Settings Saved', 'Global administrative settings have been updated.', 'success');
   };
 

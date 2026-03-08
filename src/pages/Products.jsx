@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/Card';
 import { Button } from '../components/Button';
-import { Tag, Star, Loader2, RefreshCw, Plus, Search, Edit, Trash2 } from 'lucide-react';
+import { Tag, Loader2, RefreshCw, Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import Modal from '../components/Modal';
 import { showAlert, showConfirm } from '../utils/swal';

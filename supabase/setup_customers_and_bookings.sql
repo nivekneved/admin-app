@@ -73,8 +73,8 @@ ALTER TABLE public.customers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
 
 -- 5. Create basic policies (Allowing for management within the app)
-CREATE POLICY "Enable all for admins on customers" ON public.customers FOR ALL USING (true);
-CREATE POLICY "Enable all for admins on bookings" ON public.bookings FOR ALL USING (true);
+CREATE POLICY "Enable all for admins on customers" ON public.customers FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Enable all for admins on bookings" ON public.bookings FOR ALL USING (auth.role() = 'authenticated');
 
 -- 6. Trigger to update 'updated_at'
 CREATE OR REPLACE FUNCTION update_updated_at_column()

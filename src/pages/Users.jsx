@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/Card';
 import { Button } from '../components/Button';
-import { Search, Plus, Edit, Trash2, Eye, MoreVertical, Loader2 } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Eye, Key, Mail, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import Modal from '../components/Modal';
 import { showAlert, showConfirm } from '../utils/swal';
 
 const Users = () => {
@@ -13,17 +12,6 @@ const Users = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(8);
-  const [showModal, setShowModal] = useState(false);
-  const [editingUser, setEditingUser] = useState(null);
-  const [formLoading, setFormLoading] = useState(false);
-
-  // Form states matching 'admins' table
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    role: 'staff'
-  });
 
   useEffect(() => {
     fetchUsers();
@@ -56,12 +44,6 @@ const Users = () => {
     }
   };
 
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
   const deleteUser = async (id) => {
     const result = await showConfirm(
       'Delete Admin?',
@@ -86,50 +68,6 @@ const Users = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setFormLoading(true);
-
-    try {
-      if (editingUser) {
-        // Only update username and role
-        const { error } = await supabase
-          .from('admins')
-          .update({
-            username: formData.username,
-            role: formData.role,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', editingUser.id);
-
-        if (error) throw error;
-        showAlert('Updated', 'Admin updated successfully');
-      } else {
-        // Create new admin
-        const { error } = await supabase
-          .from('admins')
-          .insert([{
-            username: formData.username,
-            email: formData.email,
-            password: formData.password, // Ideally handled by an Auth trigger, but matching DDL
-            role: formData.role,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          }]);
-
-        if (error) throw error;
-        showAlert('Success', 'Admin created successfully');
-      }
-
-      closeModal();
-      fetchUsers();
-    } catch (error) {
-      showAlert('Action Failed', error.message || 'Error saving admin', 'error');
-    } finally {
-      setFormLoading(false);
-    }
-  };
-
   const filteredUsers = users.filter(user =>
     (user.username?.toLowerCase().includes(searchTerm.toLowerCase()) || '') ||
     (user.email?.toLowerCase().includes(searchTerm.toLowerCase()) || '') ||
@@ -140,33 +78,6 @@ const Users = () => {
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
-
-  const openEditModal = (user) => {
-    setEditingUser(user);
-    setFormData({
-      username: user.username || '',
-      email: user.email || '',
-      password: '', // Don't reload password
-      role: user.role || 'staff'
-    });
-    setShowModal(true);
-  };
-
-  const openCreateModal = () => {
-    setEditingUser(null);
-    setFormData({
-      username: '',
-      email: '',
-      password: '',
-      role: 'staff'
-    });
-    setShowModal(true);
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-    setEditingUser(null);
-  };
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -263,20 +174,40 @@ const Users = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex justify-end space-x-2">
-                          <button
-                            onClick={() => openEditModal(user)}
+                          <Link
+                            to={`/users/${user.id}`}
+                            title="View Details"
+                            className="text-gray-400 hover:text-brand-red p-1 transition-colors"
+                          >
+                            <Eye size={16} />
+                          </Link>
+                          <Link
+                            to={`/users/${user.id}/edit`}
+                            title="Edit Admin"
                             className="text-gray-400 hover:text-brand-red p-1 transition-colors"
                           >
                             <Edit size={16} />
-                          </button>
+                          </Link>
+                          <Link
+                            to={`/users/${user.id}/password`}
+                            title="Change Password"
+                            className="text-gray-400 hover:text-brand-red p-1 transition-colors"
+                          >
+                            <Key size={16} />
+                          </Link>
+                          <Link
+                            to={`/users/${user.id}/email`}
+                            title="Send Email"
+                            className="text-gray-400 hover:text-brand-red p-1 transition-colors"
+                          >
+                            <Mail size={16} />
+                          </Link>
                           <button
+                            title="Delete Admin"
                             onClick={() => deleteUser(user.id)}
                             className="text-gray-400 hover:text-brand-red p-1 transition-colors"
                           >
                             <Trash2 size={16} />
-                          </button>
-                          <button className="text-gray-400 hover:text-brand-red p-1 transition-colors">
-                            <MoreVertical size={16} />
                           </button>
                         </div>
                       </td>
@@ -338,92 +269,6 @@ const Users = () => {
           </div>
         </CardContent>
       </Card>
-
-      {/* Admin Modal */}
-      <Modal
-        isOpen={showModal}
-        onClose={closeModal}
-        title={editingUser ? `Edit Admin` : 'Create New Admin'}
-      >
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 gap-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Username</label>
-              <input
-                type="text"
-                name="username"
-                required
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition-all"
-                value={formData.username}
-                onChange={handleInputChange}
-                placeholder="e.g. john_doe"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Email Address</label>
-              <input
-                type="email"
-                name="email"
-                required
-                disabled={editingUser}
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red disabled:bg-gray-100 disabled:text-gray-400 transition-all"
-                value={formData.email}
-                onChange={handleInputChange}
-                placeholder="admin@travellounge.mu"
-              />
-            </div>
-
-            {!editingUser && (
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  required
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  placeholder="••••••••"
-                />
-              </div>
-            )}
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Access Role</label>
-              <select
-                name="role"
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all appearance-none"
-                value={formData.role}
-                onChange={handleInputChange}
-              >
-                <option value="staff">Staff (Limited Access)</option>
-                <option value="admin">Administrator (Full Access)</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="pt-6 border-t border-gray-100">
-            <div className="flex justify-end space-x-3">
-              <button
-                type="button"
-                onClick={closeModal}
-                className="px-6 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-xl transition-all"
-              >
-                Cancel
-              </button>
-              <Button
-                type="submit"
-                disabled={formLoading}
-                className="bg-brand-red hover:opacity-90 text-white px-8 py-2.5 rounded-xl flex items-center shadow-lg shadow-red-200"
-              >
-                {formLoading && <Loader2 className="animate-spin mr-2" size={16} />}
-                {editingUser ? 'Update Admin' : 'Create Admin'}
-              </Button>
-            </div>
-          </div>
-        </form>
-      </Modal>
     </div>
   );
 };

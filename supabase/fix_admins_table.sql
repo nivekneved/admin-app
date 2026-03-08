@@ -22,16 +22,16 @@ CREATE TABLE IF NOT EXISTS admins (
 ALTER TABLE admins ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Public can view admins" ON admins;
-CREATE POLICY "Public can view admins" ON admins FOR SELECT USING (true);
+CREATE POLICY "Public can view admins" ON admins FOR SELECT USING (auth.role() = 'authenticated');
 
 DROP POLICY IF EXISTS "Public can insert admins" ON admins;
-CREATE POLICY "Public can insert admins" ON admins FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public can insert admins" ON admins FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
 DROP POLICY IF EXISTS "Public can update admins" ON admins;
-CREATE POLICY "Public can update admins" ON admins FOR UPDATE USING (true);
+CREATE POLICY "Public can update admins" ON admins FOR UPDATE USING (auth.role() = 'authenticated');
 
 DROP POLICY IF EXISTS "Public can delete admins" ON admins;
-CREATE POLICY "Public can delete admins" ON admins FOR DELETE USING (true);
+CREATE POLICY "Public can delete admins" ON admins FOR DELETE USING (auth.role() = 'authenticated');
 
 -- 4. Verify table exists by inserting a test admin if empty
 INSERT INTO admins (username, email, password, role)

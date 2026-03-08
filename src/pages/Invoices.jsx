@@ -5,7 +5,7 @@ import { Button } from '../components/Button';
 import { Download, Eye, Send, Calendar, Loader2, RefreshCw, Search, Plus } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import Modal from '../components/Modal';
-import { showAlert, showConfirm } from '../utils/swal';
+import { showAlert } from '../utils/swal';
 
 const Invoices = () => {
   const [invoices, setInvoices] = useState([]);

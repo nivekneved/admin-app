@@ -14,6 +14,10 @@ import Invoices from './pages/Invoices';
 import Customers from './pages/Customers';
 import Settings from './pages/Settings';
 import CreateAdmin from './pages/CreateAdmin';
+import ViewAdmin from './pages/ViewAdmin';
+import EditAdmin from './pages/EditAdmin';
+import ChangePasswordAdmin from './pages/ChangePasswordAdmin';
+import EmailAdmin from './pages/EmailAdmin';
 import CreateCustomer from './pages/CreateCustomer';
 import CreateProduct from './pages/CreateProduct';
 import CreateOrder from './pages/CreateOrder';
@@ -40,6 +44,10 @@ function App() {
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/users" element={<Users />} />
                     <Route path="/users/create" element={<CreateAdmin />} />
+                    <Route path="/users/:id" element={<ViewAdmin />} />
+                    <Route path="/users/:id/edit" element={<EditAdmin />} />
+                    <Route path="/users/:id/password" element={<ChangePasswordAdmin />} />
+                    <Route path="/users/:id/email" element={<EmailAdmin />} />
                     <Route path="/products" element={<Products />} />
                     <Route path="/products/create" element={<CreateProduct />} />
                     <Route path="/bookings" element={<Bookings />} />

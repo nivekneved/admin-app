@@ -46,9 +46,9 @@ ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.invoices ENABLE ROW LEVEL SECURITY;
 
 -- 5. Create Policies
-CREATE POLICY "Enable all for admins on products" ON public.products FOR ALL USING (true);
-CREATE POLICY "Enable all for admins on orders" ON public.orders FOR ALL USING (true);
-CREATE POLICY "Enable all for admins on invoices" ON public.invoices FOR ALL USING (true);
+CREATE POLICY "Enable all for admins on products" ON public.products FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Enable all for admins on orders" ON public.orders FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Enable all for admins on invoices" ON public.invoices FOR ALL USING (auth.role() = 'authenticated');
 
 -- 6. Add updated_at triggers
 CREATE TRIGGER update_products_modtime BEFORE UPDATE ON public.products FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();

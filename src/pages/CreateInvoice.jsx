@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/Card';
 import { Button } from '../components/Button';
-import { ArrowLeft, FileText, Users, Calendar, DollarSign, Loader2, Info, CheckCircle2, Hash, ShieldCheck, Mail } from 'lucide-react';
+import { ArrowLeft, FileText, Users, Calendar, DollarSign, Loader2, CheckCircle2, Hash, ShieldCheck, Mail } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { showAlert } from '../utils/swal';
 
@@ -301,7 +301,7 @@ const CreateInvoice = () => {
                         <div className="relative">
                             <h4 className="text-sm font-black text-red-900 mb-2 uppercase tracking-widest underline decoration-red-200 decoration-4 underline-offset-4">Audit Hub</h4>
                             <p className="text-xs text-red-700/80 font-bold leading-relaxed">
-                                Connect monetary ledger entries with specific traveler services. This record is immutable once the status is marked 'Processed'.
+                                Connect monetary ledger entries with specific traveler services. This record is immutable once the status is marked &apos;Processed&apos;.
                             </p>
                         </div>
                     </div>

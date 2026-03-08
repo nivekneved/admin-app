@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/Card';
 import { Button } from '../components/Button';
-import { Search, Plus, Edit, Trash2, Eye, Calendar, Clock, MapPin, User, Loader2, RefreshCw, Star, Coffee, Plane, Sun, DollarSign, Users } from 'lucide-react';
+import { Search, Plus, Trash2, Eye, Calendar, MapPin, Loader2, RefreshCw, Star, Coffee, Plane, Sun, DollarSign, Users } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import Modal from '../components/Modal';
 import { showAlert, showConfirm } from '../utils/swal';
@@ -49,7 +49,7 @@ const Bookings = () => {
 
       if (error) {
         if (error.message.includes('relation "public.bookings" does not exist')) {
-          console.log('Bookings table not found yet.');
+
           setBookings([]);
         } else {
           throw error;
