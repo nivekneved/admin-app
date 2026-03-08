@@ -34,7 +34,14 @@ function App() {
           </Layout>
         </div>
       </Router>
-      <Toaster />
+      <Toaster 
+        position="bottom-right"
+        toastOptions={{
+          style: {
+            fontSize: '14px',
+          },
+        }}
+      />
     </QueryClientProvider>
   )
 }

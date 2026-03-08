@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Users, Package, ShoppingCart, BarChart3, Settings, LogOut, Home, Calendar, FileText } from 'lucide-react';
+import { Users, Package, ShoppingCart, Settings, LogOut, Home, Calendar, FileText, BarChart2 } from 'lucide-react';
 
 const Sidebar = () => {
   const location = useLocation();
@@ -34,7 +34,7 @@ const Sidebar = () => {
     { 
       title: 'Reports', 
       path: '/reports', 
-      icon: <BarChart3 size={20} /> 
+      icon: <BarChart2 size={20} /> 
     },
     { 
       title: 'Invoices', 

@@ -1,23 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/Card';
 import { Button } from '../components/Button';
 import { Search, Plus, Download, Eye, Send, Calendar, DollarSign } from 'lucide-react';
+import { mockInvoices } from '../services/mockData';
 
 const Invoices = () => {
-  const [invoices, setInvoices] = useState([
-    { id: 1, customer: 'John Smith', date: '2023-06-15', amount: 249.99, status: 'Paid' },
-    { id: 2, customer: 'Emma Johnson', date: '2023-06-16', amount: 129.49, status: 'Pending' },
-    { id: 3, customer: 'Michael Brown', date: '2023-06-17', amount: 399.99, status: 'Overdue' },
-    { id: 4, customer: 'Sarah Williams', date: '2023-06-18', amount: 89.99, status: 'Paid' },
-  ]);
-
+  const [invoices, setInvoices] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [invoicesPerPage] = useState(8);
+
+  useEffect(() => {
+    // Simulate API call
+    setTimeout(() => {
+      setInvoices(mockInvoices);
+    }, 500);
+  }, []);
+
   // Filter invoices based on search term
   const filteredInvoices = invoices.filter(invoice => 
     invoice.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    invoice.id.toString().includes(searchTerm)
+    invoice.reference.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    invoice.service.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Pagination
+  const indexOfLastInvoice = currentPage * invoicesPerPage;
+  const indexOfFirstInvoice = indexOfLastInvoice - invoicesPerPage;
+  const currentInvoices = filteredInvoices.slice(indexOfFirstInvoice, indexOfLastInvoice);
+  const totalPages = Math.ceil(filteredInvoices.length / invoicesPerPage);
+
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
 
   return (
     <div>
@@ -38,7 +54,7 @@ const Invoices = () => {
                 <input
                   type="text"
                   placeholder="Search invoices..."
-                  className="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full md:w-64"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -52,25 +68,34 @@ const Invoices = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice ID</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reference</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredInvoices.map((invoice) => (
+                {currentInvoices.map((invoice) => (
                   <tr key={invoice.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#INV-{invoice.id}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{invoice.reference}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{invoice.customer}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <div className="flex items-center">
                         <Calendar className="text-gray-400 mr-1" size={14} />
-                        {invoice.date}
+                        {formatDate(invoice.date)}
                       </div>
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <div className="flex items-center">
+                        <Calendar className="text-gray-400 mr-1" size={14} />
+                        {formatDate(invoice.dueDate)}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 max-w-xs truncate">{invoice.service}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <div className="flex items-center">
                         <DollarSign className="text-gray-400 mr-1" size={14} />
@@ -110,17 +135,38 @@ const Invoices = () => {
           {/* Pagination */}
           <div className="flex items-center justify-between border-t border-gray-200 px-6 py-3">
             <div className="text-sm text-gray-700">
-              Showing <span className="font-medium">1</span> to <span className="font-medium">4</span> of{' '}
-              <span className="font-medium">4</span> results
+              Showing <span className="font-medium">{indexOfFirstInvoice + 1}</span> to <span className="font-medium">
+                {Math.min(indexOfLastInvoice, filteredInvoices.length)}
+              </span> of <span className="font-medium">{filteredInvoices.length}</span> results
             </div>
             <div className="flex space-x-2">
-              <button className="px-3 py-1 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50">
+              <button 
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50"
+              >
                 Previous
               </button>
-              <button className="px-3 py-1 rounded-md bg-blue-600 text-white hover:bg-blue-700">
-                1
-              </button>
-              <button className="px-3 py-1 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50">
+              
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`px-3 py-1 rounded-md ${
+                    currentPage === page 
+                      ? 'bg-blue-600 text-white' 
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+              
+              <button 
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50"
+              >
                 Next
               </button>
             </div>

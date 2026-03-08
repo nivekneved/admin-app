@@ -1,23 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/Card';
 import { Button } from '../components/Button';
-import { Search, Plus, Edit, Trash2, Eye, Tag } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Eye, Tag, Star } from 'lucide-react';
+import { mockProducts } from '../services/mockData';
 
 const Products = () => {
-  const [products, setProducts] = useState([
-    { id: 1, name: 'Luxury Lounge Chair', category: 'Furniture', price: 299.99, stock: 15, status: 'In Stock' },
-    { id: 2, name: 'Premium Desk Set', category: 'Office', price: 149.99, stock: 8, status: 'Low Stock' },
-    { id: 3, name: 'Executive Leather Sofa', category: 'Furniture', price: 899.99, stock: 0, status: 'Out of Stock' },
-    { id: 4, name: 'Ergonomic Foot Rest', category: 'Accessories', price: 49.99, stock: 25, status: 'In Stock' },
-  ]);
+  const [products, setProducts] = useState([]);
 
   const [searchTerm, setSearchTerm] = useState('');
-  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsPerPage] = useState(8);
+
+  useEffect(() => {
+    // Simulate API call
+    setTimeout(() => {
+      setProducts(mockProducts);
+    }, 500);
+  }, []);
+
   // Filter products based on search term
   const filteredProducts = products.filter(product => 
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.category.toLowerCase().includes(searchTerm.toLowerCase())
+    product.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Pagination
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   const deleteProduct = (id) => {
     setProducts(products.filter(product => product.id !== id));
@@ -36,7 +48,7 @@ const Products = () => {
       <Card>
         <CardHeader>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <CardTitle>Products List</CardTitle>
+            <CardTitle>Products Catalog</CardTitle>
             <div className="flex gap-3">
               <div className="relative">
                 <input
@@ -56,7 +68,6 @@ const Products = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
@@ -68,11 +79,13 @@ const Products = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredProducts.map((product) => (
                   <tr key={product.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.id}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <Tag className="text-gray-400 mr-2" size={18} />
+                        <div>
                         <div className="text-sm font-medium text-gray-900">{product.name}</div>
+                        <div className="text-sm text-gray-500 truncate max-w-xs">{product.description}</div>
+                      </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.category}</td>
@@ -114,17 +127,38 @@ const Products = () => {
           {/* Pagination */}
           <div className="flex items-center justify-between border-t border-gray-200 px-6 py-3">
             <div className="text-sm text-gray-700">
-              Showing <span className="font-medium">1</span> to <span className="font-medium">4</span> of{' '}
-              <span className="font-medium">4</span> results
+              Showing <span className="font-medium">{indexOfFirstProduct + 1}</span> to <span className="font-medium">
+                {Math.min(indexOfLastProduct, filteredProducts.length)}
+              </span> of <span className="font-medium">{filteredProducts.length}</span> results
             </div>
             <div className="flex space-x-2">
-              <button className="px-3 py-1 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50">
+              <button 
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50"
+              >
                 Previous
               </button>
-              <button className="px-3 py-1 rounded-md bg-blue-600 text-white hover:bg-blue-700">
-                1
-              </button>
-              <button className="px-3 py-1 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50">
+                          
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`px-3 py-1 rounded-md ${
+                    currentPage === page 
+                      ? 'bg-blue-600 text-white' 
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+                          
+              <button 
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50"
+              >
                 Next
               </button>
             </div>
