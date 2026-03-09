@@ -24,6 +24,7 @@ import CreateProduct from './pages/CreateProduct';
 import CreateOrder from './pages/CreateOrder';
 import CreateBooking from './pages/CreateBooking';
 import CreateInvoice from './pages/CreateInvoice';
+import Categories from './pages/Categories';
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ function App() {
                     <Route path="/users/:id/email" element={<EmailAdmin />} />
                     <Route path="/products" element={<Products />} />
                     <Route path="/products/create" element={<CreateProduct />} />
+                    <Route path="/categories" element={<Categories />} />
                     <Route path="/bookings" element={<Bookings />} />
                     <Route path="/bookings/create" element={<CreateBooking />} />
                     <Route path="/orders" element={<Orders />} />

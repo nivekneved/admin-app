@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/Card';
+// import { Link } from 'react-router-dom'; // removed: no routing needed on this page
+import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
 import {
   Tag, Loader2, RefreshCw, Plus, Search, Edit2, Trash2, Eye,
@@ -232,7 +232,8 @@ const Products = () => {
       if (error) throw error;
       showAlert('Deleted', 'Product removed');
       setProducts(prev => prev.filter(p => p.id !== id));
-    } catch (err) {
+    } catch (e) {
+      void e;
       showAlert('Error', 'Failed to delete product', 'error');
     }
   };
@@ -632,8 +633,8 @@ const Products = () => {
                         type="button"
                         onClick={() => handlePageChange(p)}
                         className={`w-9 h-9 text-sm font-bold rounded-xl transition-all ${currentPage === p
-                            ? 'bg-brand-red text-white shadow-lg shadow-red-100'
-                            : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
+                          ? 'bg-brand-red text-white shadow-lg shadow-red-100'
+                          : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
                           }`}
                       >
                         {p}
