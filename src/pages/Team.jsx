@@ -46,6 +46,7 @@ const Team = () => {
         photo_url: '',
         linkedin_url: '',
         is_active: true,
+        show_on_front_page: true,
         display_order: 0
     };
     const [formData, setFormData] = useState(defaultMember);
@@ -260,7 +261,10 @@ const Team = () => {
                                                         )}
                                                     </div>
                                                     <div>
-                                                        <p className="text-sm font-bold text-gray-900 leading-none mb-1">{member.name || member.username}</p>
+                                                        <p className="flex items-center text-sm font-bold text-gray-900 leading-none mb-1">
+                                                            {member.name || member.username}
+                                                            {member.show_on_front_page && <Globe size={12} className="text-brand-red ml-2" title="Visible on Front Page" />}
+                                                        </p>
                                                         <p className="text-[10px] text-gray-400 font-mono">@{member.username}</p>
                                                     </div>
                                                 </div>
@@ -328,7 +332,10 @@ const Team = () => {
                                             </span>
                                             <span className="text-[10px] font-mono text-gray-300">Order #{member.display_order}</span>
                                         </div>
-                                        <h3 className="text-lg font-black text-gray-900 mb-0.5">{member.name || member.username}</h3>
+                                        <h3 className="flex items-center text-lg font-black text-gray-900 mb-0.5">
+                                            {member.name || member.username}
+                                            {member.show_on_front_page && <Globe size={14} className="text-brand-red ml-2" title="Visible on Front Page" />}
+                                        </h3>
                                         <p className="text-brand-red text-xs font-bold italic mb-3">@{member.username}</p>
 
                                         {member.bio && (
@@ -467,6 +474,23 @@ const Team = () => {
                                         <span className="text-[8px] text-gray-400 uppercase text-center mt-1 font-bold">Sort Index</span>
                                     </div>
                                 </div>
+                            </div>
+
+                            <div className="p-4 bg-brand-charcoal text-white rounded-2xl border border-white/5 space-y-4 shadow-lg">
+                                <h4 className="flex items-center gap-2 text-[10px] font-black text-brand-red uppercase tracking-[0.2em] mb-2">
+                                    <Globe size={14} /> Website Visibility
+                                </h4>
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData({ ...formData, show_on_front_page: !formData.show_on_front_page })}
+                                    className="flex items-center justify-between w-full group py-2"
+                                >
+                                    <div className="text-left">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-white">Show on Front Page</p>
+                                        <p className="text-[8px] text-gray-400 font-medium normal-case">Display this staff member in the public &quot;Our Team&quot; section</p>
+                                    </div>
+                                    {formData.show_on_front_page ? <ToggleRight size={32} className="text-brand-red" /> : <ToggleLeft size={32} className="text-white/20" />}
+                                </button>
                             </div>
                         </div>
 

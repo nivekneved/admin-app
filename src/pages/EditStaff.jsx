@@ -35,6 +35,7 @@ const EditStaff = () => {
         photo_url: '',
         linkedin_url: '',
         is_active: true,
+        show_on_front_page: true,
         display_order: 0
     });
 
@@ -63,6 +64,7 @@ const EditStaff = () => {
                     photo_url: data.photo_url || '',
                     linkedin_url: data.linkedin_url || '',
                     is_active: data.is_active ?? true,
+                    show_on_front_page: data.show_on_front_page ?? true,
                     display_order: data.display_order || 0
                 });
             }
@@ -284,6 +286,25 @@ const EditStaff = () => {
                                         </span>
                                     </label>
                                 </div>
+                                <div className="pt-4 border-t border-white/5">
+                                    <label className="flex items-center justify-between cursor-pointer group">
+                                        <div className="flex-1">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-gray-300 group-hover:text-white transition-colors">Front Page Visibility</p>
+                                            <p className="text-[8px] text-gray-500 italic">Display in public &quot;Our Team&quot; list</p>
+                                        </div>
+                                        <div className="relative">
+                                            <input
+                                                type="checkbox"
+                                                className="hidden"
+                                                checked={formData.show_on_front_page}
+                                                onChange={e => setFormData({ ...formData, show_on_front_page: e.target.checked })}
+                                            />
+                                            <div className={`w-12 h-6 rounded-full p-1 transition-all ${formData.show_on_front_page ? 'bg-brand-red' : 'bg-white/10'}`}>
+                                                <div className={`w-4 h-4 rounded-full bg-white transition-all shadow-sm ${formData.show_on_front_page ? 'translate-x-6' : 'translate-x-0'}`}></div>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
                             </div>
                         </section>
                     </div>
@@ -345,7 +366,7 @@ const EditStaff = () => {
                             </div>
                         </section>
                     </div>
-                </div>
+                </div >
 
                 <div className="flex justify-end gap-4 p-8 bg-gray-50/50 rounded-3xl border border-gray-100 border-dashed">
                     <button
@@ -364,8 +385,8 @@ const EditStaff = () => {
                         Finalize & Update Identity
                     </Button>
                 </div>
-            </form>
-        </div>
+            </form >
+        </div >
     );
 };
 
