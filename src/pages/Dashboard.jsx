@@ -117,7 +117,7 @@ const Dashboard = () => {
                   </div>
                   <span className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">System</span>
                 </div>
-                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">Admins</h3>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">Total Staff</h3>
                 <div className="text-3xl font-black text-gray-900">{stats.totalAdmins}</div>
               </CardContent>
             </Card>
@@ -169,7 +169,7 @@ const Dashboard = () => {
             <Card className="border-0 shadow-sm overflow-hidden">
               <CardHeader className="bg-gray-50/50 border-b border-gray-100 px-6 py-4">
                 <CardTitle className="text-sm font-black uppercase tracking-widest text-gray-500 flex items-center">
-                  <Users size={16} className="mr-2" /> Recent Admins
+                  <Users size={16} className="mr-2" /> Recent Staff Activity
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
@@ -180,11 +180,15 @@ const Dashboard = () => {
                         <tr key={admin.id} className="hover:bg-gray-50/50 transition-colors">
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center text-left">
-                              <div className="h-9 w-9 rounded-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center text-xs font-bold text-gray-400 mr-3 border border-gray-100">
-                                {admin.username?.charAt(0).toUpperCase()}
+                              <div className="h-9 w-9 rounded-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center text-xs font-bold text-gray-400 mr-3 border border-gray-100 overflow-hidden">
+                                {admin.photo_url ? (
+                                  <img src={admin.photo_url} alt={admin.name} className="w-full h-full object-cover" />
+                                ) : (
+                                  admin.name?.charAt(0).toUpperCase() || admin.username?.charAt(0).toUpperCase()
+                                )}
                               </div>
                               <div className="text-left">
-                                <div className="text-sm font-bold text-gray-900">{admin.username}</div>
+                                <div className="text-sm font-bold text-gray-900">{admin.name || admin.username}</div>
                                 <div className="text-[10px] text-gray-400 font-medium">{admin.email}</div>
                               </div>
                             </div>

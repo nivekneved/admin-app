@@ -5,7 +5,6 @@ import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
-import Users from './pages/Users';
 import Products from './pages/Products';
 import Orders from './pages/Orders';
 import Bookings from './pages/Bookings';
@@ -13,11 +12,8 @@ import Reports from './pages/Reports';
 import Invoices from './pages/Invoices';
 import Customers from './pages/Customers';
 import Settings from './pages/Settings';
-import CreateAdmin from './pages/CreateAdmin';
-import ViewAdmin from './pages/ViewAdmin';
-import EditAdmin from './pages/EditAdmin';
-import ChangePasswordAdmin from './pages/ChangePasswordAdmin';
-import EmailAdmin from './pages/EmailAdmin';
+import Team from './pages/Team';
+import EditStaff from './pages/EditStaff';
 import CreateCustomer from './pages/CreateCustomer';
 import ViewCustomer from './pages/ViewCustomer';
 import CreateProduct from './pages/CreateProduct';
@@ -44,12 +40,9 @@ function App() {
                 <Layout>
                   <Routes>
                     <Route path="/" element={<Dashboard />} />
-                    <Route path="/users" element={<Users />} />
-                    <Route path="/users/create" element={<CreateAdmin />} />
-                    <Route path="/users/:id" element={<ViewAdmin />} />
-                    <Route path="/users/:id/edit" element={<EditAdmin />} />
-                    <Route path="/users/:id/password" element={<ChangePasswordAdmin />} />
-                    <Route path="/users/:id/email" element={<EmailAdmin />} />
+                    <Route path="/team" element={<Team />} />
+                    <Route path="/team/edit/:id" element={<EditStaff />} />
+                    <Route path="/users" element={<Navigate to="/team" replace />} />
                     <Route path="/products" element={<Products />} />
                     <Route path="/products/create" element={<CreateProduct />} />
                     <Route path="/categories" element={<Categories />} />

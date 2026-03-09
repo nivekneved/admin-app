@@ -35,8 +35,8 @@ const Sidebar = () => {
       icon: <Home size={20} />
     },
     {
-      title: 'Admins',
-      path: '/users',
+      title: 'Team & Access',
+      path: '/team',
       icon: <Users size={20} />
     },
     {
