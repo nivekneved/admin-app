@@ -7,9 +7,6 @@
     "doc": "docs",
     "test": "tests"
   },
-  "engines": {
-    "node": "22.x"
-  },
   "dependencies": {
     "@supabase/supabase-js": "^2.98.0",
     "@tailwindcss/vite": "^4.2.1",
