@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/Card';
 import { Button } from '../components/Button';
-import { Search, Plus, Edit, Trash2, Mail, Phone, MapPin, Loader2, RefreshCw, UserCheck, UserPlus, Filter } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Mail, Phone, MapPin, Loader2, RefreshCw, UserCheck, UserPlus, Filter, Eye } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import Modal from '../components/Modal';
 import { showAlert, showConfirm } from '../utils/swal';
@@ -348,6 +348,14 @@ const Customers = () => {
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                 <div className="flex justify-end space-x-2">
+                                                    <Link to={`/customers/${customer.id}`}>
+                                                        <button
+                                                            className="text-gray-400 hover:text-brand-red transition-colors p-1"
+                                                            title="View Customer History"
+                                                        >
+                                                            <Eye size={18} />
+                                                        </button>
+                                                    </Link>
                                                     <button
                                                         onClick={() => openEditModal(customer)}
                                                         className="text-gray-400 hover:text-brand-red transition-colors p-1"

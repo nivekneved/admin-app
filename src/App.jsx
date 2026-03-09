@@ -19,6 +19,7 @@ import EditAdmin from './pages/EditAdmin';
 import ChangePasswordAdmin from './pages/ChangePasswordAdmin';
 import EmailAdmin from './pages/EmailAdmin';
 import CreateCustomer from './pages/CreateCustomer';
+import ViewCustomer from './pages/ViewCustomer';
 import CreateProduct from './pages/CreateProduct';
 import CreateOrder from './pages/CreateOrder';
 import CreateBooking from './pages/CreateBooking';
@@ -59,6 +60,7 @@ function App() {
                     <Route path="/invoices/create" element={<CreateInvoice />} />
                     <Route path="/customers" element={<Customers />} />
                     <Route path="/customers/create" element={<CreateCustomer />} />
+                    <Route path="/customers/:id" element={<ViewCustomer />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="*" element={<Navigate to="/" />} />
                   </Routes>
