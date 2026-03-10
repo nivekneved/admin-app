@@ -10,16 +10,19 @@ const Layout = ({ children }) => {
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Universal Header (for Toggle) */}
         <header className="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-6 sticky top-0 z-10">
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-2 -ml-2 text-gray-400 hover:text-brand-red transition-all duration-300 hover:bg-red-50 rounded-xl"
-          >
-            <Menu size={24} className={isSidebarOpen ? '' : 'rotate-90'} />
-          </button>
           <div className="flex items-center gap-4">
+            {!isSidebarOpen && (
+              <button
+                onClick={() => setIsSidebarOpen(true)}
+                className="p-2 -ml-2 text-gray-400 hover:text-brand-red transition-all duration-300 hover:bg-red-50 rounded-xl mr-2"
+              >
+                <Menu size={24} />
+              </button>
+            )}
             <span className="hidden md:block text-[10px] font-black uppercase tracking-widest text-gray-400">Security Cleared Admin</span>
+          </div>
+          <div className="flex items-center gap-4">
             <div className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-[10px] font-black text-gray-300">TL</div>
           </div>
         </header>

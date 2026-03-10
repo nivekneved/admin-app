@@ -94,15 +94,15 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       <div className={`fixed inset-y-0 left-0 w-64 bg-brand-charcoal text-white z-30 border-r border-white/5 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'
         } shadow-2xl lg:shadow-none`}>
 
-        {/* Mobile Close Button */}
-        <button
-          onClick={() => setIsOpen(false)}
-          className="lg:hidden absolute top-6 right-4 p-2 text-gray-400 hover:text-white transition-colors"
-        >
-          <X size={20} />
-        </button>
 
-        <div className="flex flex-col items-center justify-center py-5 px-4 border-b border-white/5 bg-white/5">
+        <div className="flex flex-col items-center justify-center py-5 px-4 border-b border-white/5 bg-white/5 relative">
+          <button
+            onClick={() => setIsOpen(false)}
+            className="absolute top-4 right-4 p-2 text-gray-500 hover:text-white hover:bg-white/5 rounded-xl transition-all duration-300"
+            title="Collapse Sidebar"
+          >
+            <X size={18} />
+          </button>
           <img src={logo} alt="Travel Lounge" className="h-8 mb-3 brightness-0 invert" />
           <h1 className="text-[10px] font-black tracking-[0.2em] uppercase text-gray-500">Security Terminal</h1>
         </div>
