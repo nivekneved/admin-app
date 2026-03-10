@@ -104,13 +104,33 @@ const Products = () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from('services').select('*').order('created_at', { ascending: false });
+        .from('services')
+        .select(`
+          *,
+          product_categories (
+            categories (
+              id,
+              name
+            )
+          )
+        `)
+        .order('created_at', { ascending: false });
+
       if (error) {
         if (error.message.includes('relation "public.services" does not exist')) setProducts([]);
         else throw error;
-      } else setProducts(data || []);
+      } else {
+        // Map the complicated nested relation into a simpler categories_list for the UI/filters
+        const mappedData = (data || []).map(p => ({
+          ...p,
+          categories_list: p.product_categories
+            ? p.product_categories.map(pc => pc.categories).filter(Boolean)
+            : []
+        }));
+        setProducts(mappedData);
+      }
     } catch (e) {
-      void e;
+      console.error(e);
       showAlert('Error', 'Failed to load products', 'error');
     } finally { setLoading(false); }
   };
