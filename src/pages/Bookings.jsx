@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
 import {
   Search, Plus, Trash2, Eye, Calendar, MapPin, Loader2, RefreshCw,
   Star, Coffee, Plane, Sun, Edit2, CheckCircle, XCircle,
-  Hash, Tag, CreditCard, Clock, DollarSign, Users
+  Hash, Tag, CreditCard, Clock, DollarSign, Users, ArrowUpDown, ChevronDown
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import Modal from '../components/Modal';
 import { showAlert, showConfirm } from '../utils/swal';
+
+const selectCls = "bg-gray-50 border border-gray-300 text-gray-900 text-[11px] font-black uppercase tracking-widest rounded-2xl focus:ring-brand-red focus:border-brand-red block w-full p-2.5 appearance-none pr-8 transition-all cursor-pointer hover:bg-white";
 
 const Bookings = () => {
   const [bookings, setBookings] = useState([]);
@@ -17,6 +19,11 @@ const Bookings = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [bookingsPerPage] = useState(8);
+
+  // — Filtering & Sorting State —
+  const [filterStatus, setFilterStatus] = useState('All');
+  const [filterType, setFilterType] = useState('All');
+  const [sortBy, setSortBy] = useState('created_at:desc');
 
   // — Add Booking Modal —
   const [showModal, setShowModal] = useState(false);
@@ -278,15 +285,73 @@ const Bookings = () => {
   };
 
   // ─── Filter + Pagination ──────────────────────────────────────────────────
-  const filteredBookings = bookings.filter(booking => {
-    const customerFullName = booking.customers
-      ? `${booking.customers.first_name} ${booking.customers.last_name}`.toLowerCase()
-      : (booking.customer?.toLowerCase() || 'guest');
+  const filteredBookings = useMemo(() => {
+    let list = [...bookings];
 
-    return customerFullName.includes(searchTerm.toLowerCase()) ||
-      (booking.activity_name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-      (booking.id?.toString() || '').includes(searchTerm);
-  });
+    // 1. Search filter
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      list = list.filter(b => {
+        const customerName = b.customers
+          ? `${b.customers.first_name} ${b.customers.last_name}`.toLowerCase()
+          : (b.customer?.toLowerCase() || 'guest');
+        return customerName.includes(term) ||
+          (b.activity_name?.toLowerCase() || '').includes(term) ||
+          (b.id?.toString() || '').includes(term);
+      });
+    }
+
+    // 2. Status filter
+    if (filterStatus !== 'All') {
+      list = list.filter(b => b.status === filterStatus);
+    }
+
+    // 3. Activity Type filter
+    if (filterType !== 'All') {
+      list = list.filter(b => b.activity_type === filterType);
+    }
+
+    // 4. Sorting
+    const [field, dir] = sortBy.split(':');
+    list.sort((a, b) => {
+      let vA, vB;
+
+      if (field === 'amount') {
+        vA = Number(a.total_amount || a.amount || 0);
+        vB = Number(b.total_amount || b.amount || 0);
+      } else if (field === 'start_date') {
+        vA = new Date(a.start_date || a.date || a.created_at);
+        vB = new Date(b.start_date || b.date || b.created_at);
+      } else {
+        vA = a[field] || '';
+        vB = b[field] || '';
+        if (field === 'created_at') {
+          vA = new Date(vA);
+          vB = new Date(vB);
+        }
+      }
+
+      if (vA < vB) return dir === 'asc' ? -1 : 1;
+      if (vA > vB) return dir === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return list;
+  }, [bookings, searchTerm, filterStatus, filterType, sortBy]);
+
+  const hasActiveFilters = searchTerm !== '' || filterStatus !== 'All' || filterType !== 'All';
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setFilterStatus('All');
+    setFilterType('All');
+    setSortBy('created_at:desc');
+    setCurrentPage(1);
+  };
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterStatus, filterType]);
 
   const indexOfLastBooking = currentPage * bookingsPerPage;
   const indexOfFirstBooking = indexOfLastBooking - bookingsPerPage;
@@ -323,18 +388,74 @@ const Bookings = () => {
       <Card className="border border-gray-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
         <CardHeader className="border-b border-gray-200 pb-4 bg-white px-8 pt-8">
           <div className="flex flex-col gap-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div className="relative flex-1 min-w-0 max-w-md">
-                <Search className="absolute left-3 top-3 text-gray-300" size={16} />
-                <input
-                  type="text"
-                  placeholder="Query global reservations…"
-                  className="pl-9 pr-9 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+            <div className="relative flex-1 min-w-0 max-w-md">
+              <Search className="absolute left-3 top-2.5 text-gray-300" size={16} />
+              <input
+                type="text"
+                placeholder="Query global reservations…"
+                className="pl-9 pr-9 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="relative min-w-[140px]">
+                <select
+                  className={selectCls}
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                >
+                  <option value="All">All Statuses</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Confirmed">Confirmed</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
+                <ChevronDown size={12} className="absolute right-2.5 top-3.5 text-gray-400 pointer-events-none" />
               </div>
-              <span className="text-[10px] text-gray-400 font-black uppercase tracking-widest">{filteredBookings.length} Entries Found</span>
+
+              <div className="relative min-w-[140px]">
+                <select
+                  className={selectCls}
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
+                >
+                  <option value="All">All Types</option>
+                  <option value="Lounge">Lounge</option>
+                  <option value="Hotel">Hotel</option>
+                  <option value="Tour">Tour</option>
+                  <option value="Cruise">Cruise</option>
+                </select>
+                <ChevronDown size={12} className="absolute right-2.5 top-3.5 text-gray-400 pointer-events-none" />
+              </div>
+
+              <div className="relative min-w-[140px]">
+                <select
+                  className={selectCls}
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  <option value="created_at:desc">Newest First</option>
+                  <option value="created_at:asc">Oldest First</option>
+                  <option value="start_date:asc">Upcoming</option>
+                  <option value="amount:desc">Highest Rate</option>
+                  <option value="amount:asc">Lowest Rate</option>
+                </select>
+                <ArrowUpDown size={12} className="absolute right-2.5 top-3.5 text-gray-400 pointer-events-none" />
+              </div>
+
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="text-brand-red text-[10px] font-black uppercase tracking-widest px-4 py-2 hover:bg-red-50 rounded-xl transition-colors"
+                >
+                  Clear Filters
+                </button>
+              )}
+
+              <span className="ml-auto text-[10px] text-gray-400 font-black uppercase tracking-widest">
+                {filteredBookings.length} Entries Found
+              </span>
             </div>
           </div>
         </CardHeader>
@@ -870,7 +991,7 @@ const Bookings = () => {
           </div>
         </form>
       </Modal>
-    </div>
+    </div >
   );
 };
 
