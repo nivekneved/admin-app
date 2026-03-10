@@ -109,52 +109,52 @@ const Dashboard = () => {
         <>
           {/* Dashboard Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all">
+            <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all h-full">
               <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
+                <div className="flex justify-between items-center mb-4">
                   <div className="p-3 bg-red-50 text-brand-red rounded-2xl">
                     <Users size={24} />
                   </div>
-                  <span className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">System</span>
+                  <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest bg-gray-50 px-2 py-0.5 rounded-lg border border-gray-100">System</span>
                 </div>
                 <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">Total Staff</h3>
                 <div className="text-3xl font-black text-gray-900">{stats.totalAdmins}</div>
               </CardContent>
             </Card>
 
-            <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all">
+            <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all h-full">
               <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="p-3 bg-red-50 text-red-600 rounded-2xl">
+                <div className="flex justify-between items-center mb-4">
+                  <div className="p-3 bg-red-50 text-brand-red rounded-2xl">
                     <UserCheck size={24} />
                   </div>
-                  <span className="text-[10px] font-bold text-red-300 uppercase tracking-widest">Growth</span>
+                  <span className="text-[10px] font-black text-red-400 uppercase tracking-widest bg-red-50/50 px-2 py-0.5 rounded-lg border border-red-100/50">Growth</span>
                 </div>
                 <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">Customers</h3>
                 <div className="text-3xl font-black text-gray-900">{stats.totalCustomers}</div>
               </CardContent>
             </Card>
 
-            <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all">
+            <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all h-full">
               <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
+                <div className="flex justify-between items-center mb-4">
                   <div className="p-3 bg-green-50 text-green-600 rounded-2xl">
                     <Calendar size={24} />
                   </div>
-                  <span className="text-[10px] font-bold text-green-300 uppercase tracking-widest">Activity</span>
+                  <span className="text-[10px] font-black text-green-400 uppercase tracking-widest bg-green-50 px-2 py-0.5 rounded-lg border border-green-100">Activity</span>
                 </div>
                 <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">Bookings</h3>
                 <div className="text-3xl font-black text-gray-900">{stats.totalBookings}</div>
               </CardContent>
             </Card>
 
-            <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all">
+            <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all h-full">
               <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="p-3 bg-red-50 text-red-600 rounded-2xl">
+                <div className="flex justify-between items-center mb-4">
+                  <div className="p-3 bg-red-50 text-brand-red rounded-2xl">
                     <DollarSign size={24} />
                   </div>
-                  <div className="flex items-center text-green-500 font-bold text-[10px]">
+                  <div className="flex items-center text-green-600 font-black text-[10px] bg-green-50 px-2 py-0.5 rounded-lg border border-green-100">
                     <TrendingUp size={12} className="mr-1" /> LIVE
                   </div>
                 </div>
