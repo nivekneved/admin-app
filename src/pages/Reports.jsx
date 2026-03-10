@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/Card';
+import { Card, CardContent, CardHeader } from '../components/Card';
 import {
-  Loader2, RefreshCw, TrendingUp, Users, Calendar, CreditCard,
+  RefreshCw, TrendingUp, Users, Calendar,
   ShoppingBag, FileText, CheckCircle, Clock, XCircle, BarChart2,
   Activity, Coffee, Star, MapPin, Plane, Sun
 } from 'lucide-react';
@@ -40,20 +40,20 @@ const StatCard = ({ icon: Icon, label, value, sub, color = 'red', loading }) => 
     amber: 'bg-amber-50 text-amber-600 border-amber-100',
   };
   return (
-    <Card>
-      <CardContent className="p-5">
-        <div className="flex items-start justify-between">
-          <div className={`p-2.5 rounded-xl border ${colors[color]}`}>
-            <Icon size={20} />
+    <Card className="border-0 shadow-lg shadow-gray-100 rounded-3xl overflow-hidden bg-white">
+      <CardContent className="p-6">
+        <div className="flex items-start justify-between mb-4">
+          <div className={`p-3 rounded-2xl border ${colors[color]}`}>
+            <Icon size={24} />
           </div>
         </div>
         {loading ? (
-          <div className="mt-3 h-8 w-24 bg-gray-100 animate-pulse rounded-lg" />
+          <div className="h-10 w-32 bg-gray-50 animate-pulse rounded-xl" />
         ) : (
-          <div className="mt-3">
-            <p className="text-2xl font-black text-gray-900">{value}</p>
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mt-0.5">{label}</p>
-            {sub && <p className="text-[11px] text-gray-400 mt-1">{sub}</p>}
+          <div>
+            <h3 className="text-2xl font-black text-gray-900 tracking-tight">{value}</h3>
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">{label}</p>
+            {sub && <p className="text-[10px] font-bold text-gray-300 mt-1 uppercase tracking-tight">{sub}</p>}
           </div>
         )}
       </CardContent>
@@ -265,26 +265,25 @@ const Reports = () => {
   };
 
   const maxCount = monthlyBookings.reduce((m, r) => Math.max(m, r.count), 0);
-  const maxRevenue = monthlyBookings.reduce((m, r) => Math.max(m, r.revenue), 0);
   const maxActivity = topActivities.reduce((m, r) => Math.max(m, r.count), 0);
 
   // ═══════════════════════════════════════════════════════════════════════════
   return (
     <div>
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Reports &amp; Summary</h1>
-          <p className="text-sm text-gray-400 mt-0.5">Live data from your Supabase database</p>
+          <h1 className="text-2xl font-black text-gray-900 tracking-tight">Intelligence & Analytics</h1>
+          <p className="text-gray-400 text-sm font-medium">Real-time performance metrics and architectural data insights</p>
         </div>
         <Button
           variant="outline"
           onClick={fetchAll}
           disabled={loading}
-          className="flex items-center gap-2 border-gray-200"
+          className="text-gray-500 border-gray-200 flex items-center gap-2"
         >
           <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
-          Refresh
+          Synchronize
         </Button>
       </div>
 
@@ -307,14 +306,14 @@ const Reports = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
 
         {/* Monthly Trend (2/3 width) */}
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart2 size={16} className="text-brand-red" />
-              Monthly Bookings — Last 6 Months
-            </CardTitle>
+        <Card className="lg:col-span-2 border-0 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
+          <CardHeader className="border-b border-gray-50 pb-5 px-8 pt-8">
+            <div className="flex items-center gap-2">
+              <BarChart2 size={18} className="text-brand-red" />
+              <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">Revenue Velocity — 6 Months</h3>
+            </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-8 py-6">
             {loading ? (
               <div className="flex items-end gap-3 h-40">
                 {[...Array(6)].map((_, i) => (
@@ -347,24 +346,24 @@ const Reports = () => {
                 </div>
 
                 {/* Table below chart */}
-                <div className="border-t border-gray-50 pt-4 overflow-x-auto">
+                <div className="border-t border-gray-50 pt-6 overflow-x-auto">
                   <table className="min-w-full">
                     <thead>
-                      <tr className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                        <th className="text-left pb-2">Month</th>
-                        <th className="text-right pb-2">Bookings</th>
-                        <th className="text-right pb-2">Revenue</th>
-                        <th className="text-right pb-2">Avg / Booking</th>
+                      <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                        <th className="text-left pb-4">Lifecycle Period</th>
+                        <th className="text-right pb-4">Volume</th>
+                        <th className="text-right pb-4">Revenue</th>
+                        <th className="text-right pb-4">Unit Valuation</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
                       {monthlyBookings.map((row, i) => (
-                        <tr key={i} className="text-sm">
-                          <td className="py-2 font-semibold text-gray-700">{row.month} {row.year}</td>
-                          <td className="py-2 text-right font-bold text-gray-900">{row.count}</td>
-                          <td className="py-2 text-right text-gray-700">{fmtRs(row.revenue)}</td>
-                          <td className="py-2 text-right text-gray-400 text-xs">
-                            {row.count > 0 ? fmtRs(row.revenue / row.count) : '—'}
+                        <tr key={i} className="group hover:bg-gray-50/30 transition-colors">
+                          <td className="py-4 text-xs font-black text-gray-900 uppercase tracking-tight">{row.month} {row.year}</td>
+                          <td className="py-4 text-right text-sm font-black text-gray-900">{row.count}</td>
+                          <td className="py-4 text-right text-sm font-black text-brand-red">{fmtRs(row.revenue)}</td>
+                          <td className="py-4 text-right text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                            {row.count > 0 ? fmtRs(row.revenue / row.count) : 'N/A'}
                           </td>
                         </tr>
                       ))}
@@ -377,14 +376,14 @@ const Reports = () => {
         </Card>
 
         {/* Status Breakdown (1/3 width) */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Activity size={16} className="text-brand-red" />
-              Booking Status Breakdown
-            </CardTitle>
+        <Card className="border-0 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
+          <CardHeader className="border-b border-gray-50 pb-5 px-8 pt-8">
+            <div className="flex items-center gap-2">
+              <Activity size={18} className="text-brand-red" />
+              <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">Service Distribution</h3>
+            </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-8 py-8">
             {loading ? (
               <div className="space-y-4">
                 {[...Array(3)].map((_, i) => <div key={i} className="h-10 bg-gray-100 animate-pulse rounded-lg" />)}
@@ -407,20 +406,20 @@ const Reports = () => {
 
                 {/* Totals summary */}
                 {stats.totalBookings > 0 && (
-                  <div className="border-t border-gray-50 pt-4 space-y-2">
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>Total Revenue</span>
-                      <span className="font-black text-gray-900">{fmtRs(stats.totalRevenue)}</span>
+                  <div className="border-t border-gray-50 pt-6 mt-2 space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Gross Revenue</span>
+                      <span className="text-sm font-black text-gray-900">{fmtRs(stats.totalRevenue)}</span>
                     </div>
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>Avg per Booking</span>
-                      <span className="font-bold text-gray-700">
+                    <div className="flex justify-between items-center">
+                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Avg Transaction</span>
+                      <span className="text-sm font-black text-gray-900">
                         {stats.totalBookings > 0 ? fmtRs(stats.totalRevenue / stats.totalBookings) : '—'}
                       </span>
                     </div>
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>Invoice Revenue</span>
-                      <span className="font-bold text-gray-700">{fmtRs(stats.totalInvoiceRevenue)}</span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Invoiced Value</span>
+                      <span className="text-sm font-black text-brand-red">{fmtRs(stats.totalInvoiceRevenue)}</span>
                     </div>
                   </div>
                 )}
@@ -435,14 +434,14 @@ const Reports = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         {/* Top Activities */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp size={16} className="text-brand-red" />
-              Top Activities by Bookings
-            </CardTitle>
+        <Card className="border-0 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
+          <CardHeader className="border-b border-gray-50 pb-5 px-8 pt-8">
+            <div className="flex items-center gap-2">
+              <TrendingUp size={18} className="text-brand-red" />
+              <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">Product Performance</h3>
+            </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-8 py-6">
             {loading ? (
               <div className="space-y-3">
                 {[...Array(5)].map((_, i) => <div key={i} className="h-8 bg-gray-100 animate-pulse rounded-lg" />)}
@@ -453,28 +452,28 @@ const Reports = () => {
               <div className="overflow-x-auto">
                 <table className="min-w-full">
                   <thead>
-                    <tr className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                      <th className="text-left pb-3">#</th>
-                      <th className="text-left pb-3">Activity</th>
-                      <th className="text-right pb-3">Bookings</th>
-                      <th className="text-right pb-3">Revenue</th>
+                    <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                      <th className="text-left pb-4">Rank</th>
+                      <th className="text-left pb-4">Service Asset</th>
+                      <th className="text-right pb-4">Volume</th>
+                      <th className="text-right pb-4">Revenue</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">
                     {topActivities.map((row, i) => (
-                      <tr key={i} className="group">
-                        <td className="py-2.5 text-xs font-bold text-gray-300 pr-3">{i + 1}</td>
-                        <td className="py-2.5">
-                          <div className="flex items-center gap-2">
+                      <tr key={i} className="group hover:bg-gray-50/30 transition-colors">
+                        <td className="py-4 text-xs font-black text-gray-300 pr-3">{(i + 1).toString().padStart(2, '0')}</td>
+                        <td className="py-4">
+                          <div className="flex items-center gap-3">
                             <ActivityIcon type={row.type} />
-                            <div>
-                              <p className="text-sm font-semibold text-gray-800 truncate max-w-[140px]">{row.name}</p>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-black text-gray-900 truncate leading-tight mb-1">{row.name}</p>
                               <MiniBar value={row.count} max={maxActivity} color="bg-brand-red" />
                             </div>
                           </div>
                         </td>
-                        <td className="py-2.5 text-right text-sm font-black text-gray-900">{row.count}</td>
-                        <td className="py-2.5 text-right text-xs text-gray-500">{fmtRs(row.revenue)}</td>
+                        <td className="py-4 text-right text-sm font-black text-gray-900">{row.count}</td>
+                        <td className="py-4 text-right text-xs font-bold text-gray-400 uppercase tracking-tighter">{fmtRs(row.revenue)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -485,14 +484,14 @@ const Reports = () => {
         </Card>
 
         {/* Recent Bookings */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar size={16} className="text-brand-red" />
-              Recent Bookings
-            </CardTitle>
+        <Card className="border-0 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
+          <CardHeader className="border-b border-gray-50 pb-5 px-8 pt-8">
+            <div className="flex items-center gap-2">
+              <Calendar size={18} className="text-brand-red" />
+              <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">Recent Transmissions</h3>
+            </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-8 py-6">
             {loading ? (
               <div className="space-y-3">
                 {[...Array(6)].map((_, i) => <div key={i} className="h-10 bg-gray-100 animate-pulse rounded-lg" />)}
@@ -503,39 +502,39 @@ const Reports = () => {
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-50">
                   <thead>
-                    <tr className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                      <th className="text-left pb-3">Customer</th>
-                      <th className="text-left pb-3">Activity</th>
-                      <th className="text-right pb-3">Amount</th>
-                      <th className="text-right pb-3">Status</th>
+                    <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                      <th className="text-left pb-4">Client Identity</th>
+                      <th className="text-left pb-4">Service</th>
+                      <th className="text-right pb-4">Valuation</th>
+                      <th className="text-right pb-4">Status</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">
                     {recentBookings.map((b) => (
-                      <tr key={b.id} className="hover:bg-gray-50/50 transition-colors">
-                        <td className="py-2.5">
-                          <div className="flex items-center gap-2">
-                            <div className="h-6 w-6 rounded-full bg-gray-100 border border-gray-50 flex items-center justify-center text-[10px] font-bold text-gray-400">
+                      <tr key={b.id} className="hover:bg-gray-50/30 transition-colors">
+                        <td className="py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="h-7 w-7 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-[10px] font-black text-gray-400 shrink-0">
                               {b.customers?.first_name?.charAt(0) || 'G'}
                             </div>
-                            <span className="text-xs font-semibold text-gray-700 truncate max-w-[80px]">
+                            <span className="text-xs font-black text-gray-900 truncate max-w-[80px] tracking-tight">
                               {b.customers
                                 ? `${b.customers.first_name} ${b.customers.last_name}`
-                                : 'Guest'}
+                                : 'Guest Account'}
                             </span>
                           </div>
                         </td>
-                        <td className="py-2.5">
-                          <div className="flex items-center gap-1.5 text-xs text-gray-600 truncate max-w-[100px]">
+                        <td className="py-4">
+                          <div className="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-tight truncate max-w-[100px]">
                             <ActivityIcon type={b.activity_type} />
                             {b.activity_name || '—'}
                           </div>
                         </td>
-                        <td className="py-2.5 text-right text-xs font-black text-gray-900">
+                        <td className="py-4 text-right text-xs font-black text-gray-900 tracking-tighter">
                           Rs {Number(b.total_amount || b.amount || 0).toFixed(2)}
                         </td>
-                        <td className="py-2.5 text-right">
-                          <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full border ${statusColor(b.status)}`}>
+                        <td className="py-4 text-right">
+                          <span className={`px-2 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border ${statusColor(b.status)}`}>
                             {b.status || 'Pending'}
                           </span>
                         </td>

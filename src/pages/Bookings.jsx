@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/Card';
+import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
 import {
   Search, Plus, Trash2, Eye, Calendar, MapPin, Loader2, RefreshCw,
-  Star, Coffee, Plane, Sun, DollarSign, Users, Edit2, CheckCircle,
-  XCircle, Clock, User, Mail, Hash, Tag, CreditCard
+  Star, Coffee, Plane, Sun, Edit2, CheckCircle, XCircle,
+  Hash, Tag, CreditCard, Clock, DollarSign, Users
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import Modal from '../components/Modal';
@@ -96,8 +96,8 @@ const Bookings = () => {
 
       if (error) throw error;
       setCustomers(data || []);
-    } catch (err) {
-      console.error('Error fetching customers for select:', err);
+    } catch (error) {
+      console.error('Error loading customers:', error);
     }
   };
 
@@ -208,8 +208,9 @@ const Bookings = () => {
       showAlert('Updated', 'Booking updated successfully');
       setShowEditModal(false);
       fetchBookings();
-    } catch (err) {
-      showAlert('Update Failed', err.message || 'Error updating booking', 'error');
+    } catch (error) {
+      console.error('Update error:', error);
+      showAlert('Update Failed', error.message || 'Error updating booking', 'error');
     } finally {
       setEditLoading(false);
     }
@@ -236,7 +237,8 @@ const Bookings = () => {
       setBookings(prev =>
         prev.map(b => b.id === booking.id ? { ...b, status: nextStatus } : b)
       );
-    } catch (err) {
+    } catch (error) {
+      console.error('Status toggle error:', error);
       showAlert('Error', 'Could not update booking status', 'error');
     } finally {
       setTogglingId(null);
@@ -263,8 +265,8 @@ const Bookings = () => {
       showAlert('Success', 'Booking deleted successfully');
       setBookings(bookings.filter(booking => booking.id !== id));
     } catch (error) {
-      showAlert('Error', 'Error deleting booking', 'error');
-      console.error(error);
+      console.error('Delete error:', error);
+      showAlert('Error', 'Failed to delete order', 'error');
     }
   };
 
@@ -293,141 +295,135 @@ const Bookings = () => {
   // ─────────────────────────────────────────────────────────────────────────
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Bookings Management</h1>
-        <div className="flex gap-3">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div>
+          <h1 className="text-2xl font-black text-gray-900 tracking-tight">Bookings Management</h1>
+          <p className="text-gray-400 text-sm font-medium">Coordinate and track global travel luxury reservations</p>
+        </div>
+        <div className="flex items-center gap-2">
           <Button
             variant="outline"
             onClick={fetchBookings}
-            className="flex items-center gap-2 border-gray-200"
+            className="text-gray-500 border-gray-200 flex items-center gap-2"
             disabled={loading}
           >
-            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
             Sync
           </Button>
           <Link to="/bookings/create">
-            <Button className="bg-brand-red hover:opacity-90 text-white flex items-center">
-              <Plus size={18} className="mr-2" />
+            <Button className="bg-brand-red hover:opacity-90 text-white flex items-center gap-2 shadow-lg shadow-red-100 font-bold">
+              <Plus size={16} />
               Add Booking
             </Button>
           </Link>
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <CardTitle>Global Bookings List</CardTitle>
-            <div className="flex gap-3">
-              <div className="relative">
+      <Card className="border-0 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
+        <CardHeader className="border-b border-gray-50 pb-4 bg-white px-8 pt-8">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="relative flex-1 min-w-0 max-w-md">
+                <Search className="absolute left-3 top-3 text-gray-300" size={16} />
                 <input
                   type="text"
-                  placeholder="Search by name or activity..."
-                  className="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent w-full md:w-64"
+                  placeholder="Query global reservations…"
+                  className="pl-9 pr-9 py-2.5 w-full border border-gray-100 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
               </div>
+              <span className="text-[10px] text-gray-400 font-black uppercase tracking-widest">{filteredBookings.length} Entries Found</span>
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0 bg-white">
           <div className="overflow-x-auto min-h-[400px]">
             {loading ? (
-              <div className="flex flex-col items-center justify-center py-20">
-                <Loader2 className="animate-spin text-brand-red mb-4" size={40} />
-                <p className="text-gray-500">Retrieving relational data...</p>
+              <div className="py-32 flex flex-col items-center">
+                <Loader2 className="animate-spin text-brand-red mb-4" size={48} />
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Syncing with Registry...</p>
               </div>
             ) : currentBookings.length > 0 ? (
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y divide-gray-50">
+                <thead className="bg-gray-50/30">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Booking ID</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Customer</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Activity</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Schedule</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Amount</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-3 text-right text-xs font-bold text-gray-400 uppercase tracking-wider">Actions</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Reservation ID</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Customer</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Activity Specification</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Scheduled For</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Premium Rate</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
+                    <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-50">
+                <tbody className="divide-y divide-gray-50">
                   {currentBookings.map((booking) => (
-                    <tr key={booking.id} className="hover:bg-gray-50/50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap text-[10px] font-mono text-gray-300">
-                        {booking.id?.toString().slice(0, 8)}
+                    <tr key={booking.id} className="hover:bg-gray-50/30 transition-colors group">
+                      <td className="px-8 py-5 whitespace-nowrap">
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">#{booking.id?.toString().slice(0, 8)}</p>
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center text-left">
-                          <div className="h-8 w-8 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-xs font-bold text-gray-400 mr-3">
+                      <td className="px-8 py-5">
+                        <div className="flex items-center text-left gap-3">
+                          <div className="h-9 w-9 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center text-xs font-black text-gray-400 shrink-0">
                             {booking.customers?.first_name?.charAt(0) || 'G'}
                           </div>
                           <div className="text-left">
-                            <div className="text-sm font-bold text-gray-900">
+                            <div className="text-sm font-black text-gray-900 leading-tight">
                               {booking.customers
                                 ? `${booking.customers.first_name} ${booking.customers.last_name}`
                                 : (booking.customer || 'Guest User')}
                             </div>
-                            <div className="text-[10px] text-gray-400">{booking.customers?.email || booking.customer_email}</div>
+                            <div className="text-[10px] font-black text-gray-400 uppercase tracking-tighter mt-0.5">{booking.customers?.email || booking.customer_email || 'No registry entry'}</div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-left">
-                        <div className="flex items-center text-sm font-medium text-gray-700">
-                          <span className="mr-2">{getActivityIcon(booking.activity_type)}</span>
-                          {booking.activity_name || booking.lounge_name || 'Generic Booking'}
+                      <td className="px-8 py-5 whitespace-nowrap text-left">
+                        <div className="flex items-center text-sm font-black text-gray-900 leading-tight mb-1">
+                          <span className="mr-2 shrink-0">{getActivityIcon(booking.activity_type)}</span>
+                          <span className="truncate max-w-[180px]">{booking.activity_name || booking.lounge_name || 'Generic Booking'}</span>
                         </div>
-                        <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">{booking.activity_type || 'Unknown'}</div>
+                        <div className="text-[10px] text-gray-400 font-black uppercase tracking-widest">{booking.activity_type || 'Unknown'}</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 text-left">
-                        <div className="flex items-center">
+                      <td className="px-8 py-5 whitespace-nowrap text-left text-gray-600">
+                        <div className="flex items-center text-xs font-semibold">
                           <Calendar className="text-gray-300 mr-2" size={14} />
                           {formatDate(booking.start_date || booking.date || booking.created_at)}
                         </div>
-                        {(booking.start_time) && (
-                          <div className="flex items-center mt-1 text-[10px] text-gray-400 font-medium ml-5">
-                            {booking.start_time} - {booking.end_time || 'Done'}
-                          </div>
-                        )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-black text-gray-900 text-left">
-                        Rs {(booking.total_amount || booking.amount || 0).toFixed(2)}
+                      <td className="px-8 py-5 whitespace-nowrap text-left">
+                        <p className="text-sm font-black text-brand-red">Rs {(booking.total_amount || booking.amount || 0).toLocaleString()}</p>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-left">
-                        <span className={`px-2 py-0.5 inline-flex text-[10px] leading-4 font-bold rounded-full border ${getStatusBadge(booking.status)}`}>
+                      <td className="px-8 py-5 whitespace-nowrap text-left">
+                        <span className={`px-2.5 py-1 inline-flex text-[9px] font-black uppercase tracking-widest rounded-lg border ${getStatusBadge(booking.status)}`}>
                           {booking.status || 'Pending'}
                         </span>
                       </td>
 
                       {/* ── CRUD Action Buttons ── */}
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex justify-end items-center space-x-1">
-
-                          {/* View */}
+                      <td className="px-8 py-5 whitespace-nowrap text-right">
+                        <div className="flex justify-end items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
                             onClick={() => openViewModal(booking)}
-                            className="text-gray-400 hover:text-blue-500 transition-colors p-1.5 rounded-lg hover:bg-blue-50"
-                            title="View booking details"
+                            className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
+                            title="View Reservation Details"
                           >
                             <Eye size={16} />
                           </button>
 
-                          {/* Edit */}
                           <button
                             onClick={() => openEditModal(booking)}
-                            className="text-gray-400 hover:text-amber-500 transition-colors p-1.5 rounded-lg hover:bg-amber-50"
-                            title="Edit booking"
+                            className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
+                            title="Edit Reservation"
                           >
                             <Edit2 size={16} />
                           </button>
 
-                          {/* Quick Status Toggle */}
                           <button
                             onClick={() => cycleStatus(booking)}
                             disabled={togglingId === booking.id}
-                            className="text-gray-400 hover:text-green-500 transition-colors p-1.5 rounded-lg hover:bg-green-50 disabled:opacity-40"
-                            title={`Cycle status → ${booking.status === 'Pending' ? 'Confirmed' : booking.status === 'Confirmed' ? 'Cancelled' : 'Pending'}`}
+                            className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all disabled:opacity-40"
+                            title={`Toggle status → ${booking.status === 'Pending' ? 'Confirmed' : booking.status === 'Confirmed' ? 'Cancelled' : 'Pending'}`}
                           >
                             {togglingId === booking.id
                               ? <Loader2 size={16} className="animate-spin" />
@@ -437,15 +433,13 @@ const Bookings = () => {
                             }
                           </button>
 
-                          {/* Delete */}
                           <button
                             onClick={() => deleteBooking(booking.id)}
-                            className="text-gray-400 hover:text-brand-red transition-colors p-1.5 rounded-lg hover:bg-red-50"
-                            title="Delete booking"
+                            className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
+                            title="Archive Reservation"
                           >
                             <Trash2 size={16} />
                           </button>
-
                         </div>
                       </td>
                     </tr>
@@ -474,22 +468,22 @@ const Bookings = () => {
 
           {/* Pagination */}
           {filteredBookings.length > bookingsPerPage && (
-            <div className="flex items-center justify-between border-t border-gray-100 px-6 py-4 bg-gray-50/30">
-              <div className="text-sm text-gray-500 font-medium text-left">
-                Showing <span className="text-gray-900 font-bold">{currentBookings.length}</span> of <span className="text-gray-900 font-bold">{filteredBookings.length}</span> global results
-              </div>
-              <div className="flex space-x-2">
+            <div className="flex items-center justify-between px-8 py-6 bg-gray-50/50 border-t border-gray-100">
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                Page {currentPage} of {totalPages}
+              </span>
+              <div className="flex gap-2">
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className="px-4 py-2 text-sm font-bold rounded-xl bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-all shadow-sm"
+                  className="p-3 bg-white border border-gray-100 rounded-xl disabled:opacity-30 shadow-sm hover:border-gray-300 transition-all font-bold text-xs"
                 >
                   Previous
                 </button>
                 <button
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
-                  className="px-4 py-2 text-sm font-bold rounded-xl bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-all shadow-sm"
+                  className="p-3 bg-white border border-gray-100 rounded-xl disabled:opacity-30 shadow-sm hover:border-gray-300 transition-all font-bold text-xs"
                 >
                   Next
                 </button>

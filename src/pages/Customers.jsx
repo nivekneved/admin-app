@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/Card';
+import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
 import { Search, Plus, Edit, Trash2, Mail, Phone, MapPin, Loader2, RefreshCw, UserCheck, UserPlus, Filter, Eye } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -188,183 +188,187 @@ const Customers = () => {
 
     return (
         <div>
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">Customer Management</h1>
-                <div className="flex gap-3">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <div>
+                    <h1 className="text-2xl font-black text-gray-900 tracking-tight">Customer Management</h1>
+                    <p className="text-gray-400 text-sm font-medium">Coordinate global relationships and luxury clientele data</p>
+                </div>
+                <div className="flex items-center gap-2">
                     <Button
                         variant="outline"
                         onClick={fetchCustomers}
-                        className="flex items-center gap-2 border-gray-200"
+                        className="text-gray-500 border-gray-200 flex items-center gap-2"
                         disabled={loading}
                     >
-                        <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+                        <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
                         Sync
                     </Button>
                     <Link to="/customers/create">
-                        <Button
-                            className="bg-brand-red hover:opacity-90 text-white flex items-center"
-                        >
-                            <Plus size={18} className="mr-2" />
+                        <Button className="bg-brand-red hover:opacity-90 text-white flex items-center gap-2 shadow-lg shadow-red-100 font-bold">
+                            <Plus size={16} />
                             Add Customer
                         </Button>
                     </Link>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <Card className="bg-red-50/50 border-red-100">
-                    <CardContent className="flex items-center p-4">
-                        <div className="p-3 bg-red-100 text-brand-red rounded-xl mr-4">
-                            <UserCheck size={24} />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <Card className="border-0 shadow-lg shadow-gray-100 rounded-3xl overflow-hidden bg-white">
+                    <CardContent className="flex items-center p-6">
+                        <div className="p-4 bg-red-50 text-brand-red rounded-2xl mr-4">
+                            <UserCheck size={28} />
                         </div>
                         <div>
-                            <p className="text-xs text-red-600 font-bold uppercase tracking-wider">Subscribers</p>
-                            <h3 className="text-2xl font-bold text-gray-900">{customers.filter(c => c.is_subscriber).length}</h3>
+                            <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Subscribers</p>
+                            <h3 className="text-3xl font-black text-gray-900 tracking-tight">{customers.filter(c => c.is_subscriber).length}</h3>
                         </div>
                     </CardContent>
                 </Card>
-                <Card className="bg-green-50/50 border-green-100">
-                    <CardContent className="flex items-center p-4">
-                        <div className="p-3 bg-green-100 text-green-600 rounded-xl mr-4">
-                            <UserPlus size={24} />
+                <Card className="border-0 shadow-lg shadow-gray-100 rounded-3xl overflow-hidden bg-white">
+                    <CardContent className="flex items-center p-6">
+                        <div className="p-4 bg-gray-50 text-gray-400 rounded-2xl mr-4">
+                            <UserPlus size={28} />
                         </div>
                         <div>
-                            <p className="text-xs text-green-600 font-bold uppercase tracking-wider">Total Customers</p>
-                            <h3 className="text-2xl font-bold text-gray-900">{customers.length}</h3>
+                            <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Total Registry</p>
+                            <h3 className="text-3xl font-black text-gray-900 tracking-tight">{customers.length}</h3>
                         </div>
                     </CardContent>
                 </Card>
-                <Card className="bg-red-50/50 border-red-100">
-                    <CardContent className="flex items-center p-4">
-                        <div className="p-3 bg-red-100 text-red-600 rounded-xl mr-4">
-                            <Mail size={24} />
+                <Card className="border-0 shadow-lg shadow-gray-100 rounded-3xl overflow-hidden bg-white">
+                    <CardContent className="flex items-center p-6">
+                        <div className="p-4 bg-red-50 text-brand-red rounded-2xl mr-4">
+                            <Mail size={28} />
                         </div>
                         <div>
-                            <p className="text-xs text-red-600 font-bold uppercase tracking-wider">Leads</p>
-                            <h3 className="text-2xl font-bold text-gray-900">{customers.filter(c => c.status === 'Lead').length}</h3>
+                            <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Prospect Leads</p>
+                            <h3 className="text-3xl font-black text-gray-900 tracking-tight">{customers.filter(c => c.status === 'Lead').length}</h3>
                         </div>
                     </CardContent>
                 </Card>
             </div>
 
-            <Card>
-                <CardHeader>
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                        <CardTitle>Global Customers</CardTitle>
-                        <div className="flex flex-wrap gap-3">
-                            <div className="relative">
-                                <input
-                                    type="text"
-                                    placeholder="Name, email or phone..."
-                                    className="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent w-full md:w-64"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                />
-                                <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
+            <Card className="border-0 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
+                <CardHeader className="border-b border-gray-50 pb-4 bg-white px-8 pt-8">
+                    <div className="flex flex-col gap-4">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                            <div className="flex flex-wrap items-center gap-3 flex-1 min-w-0">
+                                <div className="relative flex-1 min-w-0 max-w-md">
+                                    <Search className="absolute left-3 top-3 text-gray-300" size={16} />
+                                    <input
+                                        type="text"
+                                        placeholder="Identify luxury clients…"
+                                        className="pl-9 pr-9 py-2.5 w-full border border-gray-100 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                </div>
+                                <div className="flex items-center bg-gray-50 border border-gray-100 rounded-2xl px-4 py-2.5 transition-all">
+                                    <Filter size={14} className="text-gray-400 mr-2" />
+                                    <select
+                                        className="bg-transparent text-sm font-black uppercase tracking-widest text-gray-500 focus:outline-none cursor-pointer"
+                                        value={filterSubscriber}
+                                        onChange={(e) => setFilterSubscriber(e.target.value)}
+                                    >
+                                        <option value="all">Every State</option>
+                                        <option value="yes">Subscriber</option>
+                                        <option value="no">Unlinked</option>
+                                    </select>
+                                </div>
                             </div>
-
-                            <div className="flex items-center bg-gray-50 border rounded-lg px-3">
-                                <Filter size={16} className="text-gray-400 mr-2" />
-                                <select
-                                    className="bg-transparent text-sm focus:outline-none py-2"
-                                    value={filterSubscriber}
-                                    onChange={(e) => setFilterSubscriber(e.target.value)}
-                                >
-                                    <option value="all">Every Newsletter State</option>
-                                    <option value="yes">Subscribed</option>
-                                    <option value="no">Not Subscribed</option>
-                                </select>
-                            </div>
+                            <span className="text-[10px] text-gray-400 font-black uppercase tracking-widest shrink-0">{filteredCustomers.length} Global Accounts</span>
                         </div>
                     </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-0 bg-white">
                     <div className="overflow-x-auto min-h-[400px]">
                         {loading ? (
-                            <div className="flex flex-col items-center justify-center py-20">
-                                <Loader2 className="animate-spin text-brand-red mb-4" size={40} />
-                                <p className="text-gray-500 font-medium">Fetching global customer base...</p>
+                            <div className="py-32 flex flex-col items-center">
+                                <Loader2 className="animate-spin text-brand-red mb-4" size={48} />
+                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Scanning Customer Cryptos...</p>
                             </div>
                         ) : currentCustomers.length > 0 ? (
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
+                            <table className="min-w-full divide-y divide-gray-50">
+                                <thead className="bg-gray-50/30">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Customer</th>
-                                        <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Contact</th>
-                                        <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Location</th>
-                                        <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Marketing</th>
-                                        <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Status</th>
-                                        <th className="px-6 py-3 text-right text-xs font-bold text-gray-400 uppercase tracking-wider">Actions</th>
+                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Client Identity</th>
+                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Communications</th>
+                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Coordinates</th>
+                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Marketing Opt-in</th>
+                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Lifecycle</th>
+                                        <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="bg-white divide-y divide-gray-50">
+                                <tbody className="divide-y divide-gray-50">
                                     {currentCustomers.map((customer) => (
-                                        <tr key={customer.id} className="hover:bg-gray-50/50 transition-colors">
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="flex items-center">
-                                                    <div className="h-10 w-10 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-sm font-bold text-gray-500 mr-3 border border-gray-100">
+                                        <tr key={customer.id} className="hover:bg-gray-50/30 transition-colors group">
+                                            <td className="px-8 py-5 whitespace-nowrap">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="h-10 w-10 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center text-sm font-black text-gray-400 shrink-0">
                                                         {customer.first_name?.charAt(0)}{customer.last_name?.charAt(0)}
                                                     </div>
                                                     <div>
-                                                        <div className="text-sm font-bold text-gray-900">{customer.first_name} {customer.last_name}</div>
-                                                        <div className="text-[10px] text-gray-400 font-mono">ID: {customer.id?.slice(0, 8)}</div>
+                                                        <div className="text-sm font-black text-gray-900 leading-tight">{customer.first_name} {customer.last_name}</div>
+                                                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-0.5">#{customer.id?.slice(0, 8)}</div>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="flex items-center text-sm text-gray-600 mb-1">
-                                                    <Mail size={14} className="mr-2 text-gray-400" />
+                                            <td className="px-8 py-5 whitespace-nowrap">
+                                                <div className="flex items-center text-xs font-black text-gray-900 mb-1 leading-tight tracking-tight">
+                                                    <Mail size={12} className="mr-2 text-gray-300 shrink-0" />
                                                     {customer.email}
                                                 </div>
-                                                <div className="flex items-center text-[11px] text-gray-500">
-                                                    <Phone size={14} className="mr-2 text-gray-400" />
-                                                    {customer.phone || 'No phone'}
+                                                <div className="flex items-center text-[10px] font-bold text-gray-400 leading-tight">
+                                                    <Phone size={12} className="mr-2 text-gray-300 shrink-0" />
+                                                    {customer.phone || 'NO VOX DATA'}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="flex items-center text-sm text-gray-700">
-                                                    <MapPin size={14} className="mr-2 text-gray-400" />
-                                                    {customer.country || 'International'}
+                                            <td className="px-8 py-5 whitespace-nowrap">
+                                                <div className="flex items-center text-xs font-black text-gray-400 uppercase tracking-widest">
+                                                    <MapPin size={12} className="mr-2 text-gray-300 shrink-0" />
+                                                    {customer.country || 'GLOBAL'}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
+                                            <td className="px-8 py-5 whitespace-nowrap">
                                                 {customer.is_subscriber ? (
-                                                    <span className="px-2 py-0.5 text-[10px] font-bold bg-green-50 text-green-600 rounded-full border border-green-100">
-                                                        Newsletter SUB
+                                                    <span className="px-2.5 py-1 text-[9px] font-black uppercase tracking-widest bg-green-50 text-green-600 rounded-lg border border-green-100">
+                                                        Subscribed
                                                     </span>
                                                 ) : (
-                                                    <span className="px-2 py-0.5 text-[10px] font-bold bg-gray-50 text-gray-400 rounded-full border border-gray-100">
-                                                        No Marketing
+                                                    <span className="px-2.5 py-1 text-[9px] font-black uppercase tracking-widest bg-gray-50 text-gray-400 rounded-lg border border-gray-100">
+                                                        Unlinked
                                                     </span>
                                                 )}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-left">
-                                                <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full ${customer.status === 'Active' ? 'bg-red-50 text-brand-red border border-red-100' :
-                                                    customer.status === 'Lead' ? 'bg-orange-50 text-orange-600 border border-orange-100' :
-                                                        'bg-gray-100 text-gray-400 border border-gray-100'
+                                            <td className="px-8 py-5 whitespace-nowrap text-left">
+                                                <span className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border ${customer.status === 'Active' ? 'bg-red-50 text-brand-red border-red-100' :
+                                                    customer.status === 'Lead' ? 'bg-orange-50 text-orange-600 border-orange-100' :
+                                                        'bg-gray-100 text-gray-400 border-gray-100'
                                                     }`}>
                                                     {customer.status}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <div className="flex justify-end space-x-2">
+                                            <td className="px-8 py-5 whitespace-nowrap text-right">
+                                                <div className="flex justify-end items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <Link to={`/customers/${customer.id}`}>
                                                         <button
-                                                            className="text-gray-400 hover:text-brand-red transition-colors p-1"
-                                                            title="View Customer History"
+                                                            className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
+                                                            title="Historical Inspection"
                                                         >
                                                             <Eye size={18} />
                                                         </button>
                                                     </Link>
                                                     <button
                                                         onClick={() => openEditModal(customer)}
-                                                        className="text-gray-400 hover:text-brand-red transition-colors p-1"
+                                                        className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
+                                                        title="Modify Registry"
                                                     >
                                                         <Edit size={18} />
                                                     </button>
                                                     <button
                                                         onClick={() => deleteCustomer(customer.id)}
-                                                        className="text-gray-400 hover:text-brand-red transition-colors p-1"
+                                                        className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
+                                                        title="Archive Identity"
                                                     >
                                                         <Trash2 size={18} />
                                                     </button>
@@ -395,22 +399,22 @@ const Customers = () => {
 
                     {/* Pagination */}
                     {filteredCustomers.length > customersPerPage && (
-                        <div className="flex items-center justify-between border-t border-gray-100 px-6 py-4 bg-gray-50/30">
-                            <div className="text-sm text-gray-500">
-                                Displaying <span className="font-bold text-gray-900">{currentCustomers.length}</span> of <span className="font-bold text-gray-900">{filteredCustomers.length}</span> customers
-                            </div>
-                            <div className="flex space-x-2">
+                        <div className="flex items-center justify-between px-8 py-6 bg-gray-50/50 border-t border-gray-100">
+                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                Page {currentPage} of {totalPages}
+                            </span>
+                            <div className="flex gap-2">
                                 <button
                                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                                     disabled={currentPage === 1}
-                                    className="px-4 py-2 text-sm font-semibold rounded-xl bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-all shadow-sm"
+                                    className="p-3 bg-white border border-gray-100 rounded-xl disabled:opacity-30 shadow-sm hover:border-gray-300 transition-all font-bold text-xs"
                                 >
                                     Previous
                                 </button>
                                 <button
                                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                                     disabled={currentPage === totalPages}
-                                    className="px-4 py-2 text-sm font-semibold rounded-xl bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-all shadow-sm"
+                                    className="p-3 bg-white border border-gray-100 rounded-xl disabled:opacity-30 shadow-sm hover:border-gray-300 transition-all font-bold text-xs"
                                 >
                                     Next
                                 </button>

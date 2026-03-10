@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/Card';
+import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
 import {
   Download, Eye, Send, Calendar, Loader2, RefreshCw, Search, Plus,
@@ -282,129 +282,127 @@ Due Date  : ${formatDate(invoice.due_date)}
   return (
     <div>
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Invoices Management</h1>
-        <div className="flex gap-3">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div>
+          <h1 className="text-2xl font-black text-gray-900 tracking-tight">Invoice Management</h1>
+          <p className="text-gray-400 text-sm font-medium">Bespoke financial tracking and premium billing services</p>
+        </div>
+        <div className="flex items-center gap-2">
           <Button
             variant="outline"
             onClick={fetchInvoices}
-            className="flex items-center gap-2 border-gray-200"
+            className="text-gray-500 border-gray-200 flex items-center gap-2"
             disabled={loading}
           >
-            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
             Sync
           </Button>
           <Link to="/invoices/create">
-            <Button className="bg-brand-red hover:opacity-90 text-white flex items-center">
-              <Plus size={18} className="mr-2" />
+            <Button className="bg-brand-red hover:opacity-90 text-white flex items-center gap-2 shadow-lg shadow-red-100 font-bold">
+              <Plus size={16} />
               Create Invoice
             </Button>
           </Link>
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <CardTitle>Invoices List</CardTitle>
-            <div className="relative">
+      <Card className="border-0 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
+        <CardHeader className="border-b border-gray-50 pb-4 bg-white px-8 pt-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="relative flex-1 min-w-0 max-w-md">
+              <Search className="absolute left-3 top-3 text-gray-300" size={16} />
               <input
                 type="text"
-                placeholder="Search by customer, reference or service..."
-                className="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent w-full md:w-72"
+                placeholder="Locate financial records…"
+                className="pl-9 pr-4 py-2.5 w-full border border-gray-100 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
             </div>
+            <span className="text-[10px] text-gray-400 font-black uppercase tracking-widest shrink-0">{filteredInvoices.length} Registered Invoices</span>
           </div>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="p-0 bg-white">
           <div className="overflow-x-auto min-h-[400px]">
             {loading ? (
-              <div className="flex flex-col items-center justify-center py-20">
-                <Loader2 className="animate-spin text-brand-red mb-4" size={40} />
-                <p className="text-gray-500 font-medium">Loading invoices...</p>
+              <div className="py-32 flex flex-col items-center">
+                <Loader2 className="animate-spin text-brand-red mb-4" size={48} />
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Compiling Ledger Data...</p>
               </div>
             ) : currentInvoices.length > 0 ? (
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y divide-gray-50">
+                <thead className="bg-gray-50/30">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Reference</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Customer</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Issued</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Due Date</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Service</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Amount</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-3 text-right text-xs font-bold text-gray-400 uppercase tracking-wider">Actions</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Reference</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Customer Entity</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Issuance</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Maturity</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Service Provision</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Valuation</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Lifecycle</th>
+                    <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-50">
+                <tbody className="divide-y divide-gray-50">
                   {currentInvoices.map((invoice) => (
-                    <tr key={invoice.id} className="hover:bg-gray-50/50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 font-mono">
+                    <tr key={invoice.id} className="hover:bg-gray-50/30 transition-colors group">
+                      <td className="px-8 py-5 whitespace-nowrap text-xs font-black text-gray-900 tracking-tighter font-mono">
                         {invoice.reference}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">
-                        {invoice.customer_name || '—'}
+                      <td className="px-8 py-5 whitespace-nowrap text-sm font-black text-gray-900 leading-tight">
+                        {invoice.customer_name || 'NO IDENTITY'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <div className="flex items-center">
-                          <Calendar className="text-gray-300 mr-2" size={13} />
+                      <td className="px-8 py-5 whitespace-nowrap">
+                        <div className="flex items-center text-[11px] font-bold text-gray-400 uppercase">
+                          <Clock className="text-gray-300 mr-2" size={12} />
                           {formatDate(invoice.created_at)}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <div className="flex items-center">
-                          <Calendar className="text-gray-300 mr-2" size={13} />
+                      <td className="px-8 py-5 whitespace-nowrap">
+                        <div className="flex items-center text-[11px] font-bold text-gray-400 uppercase">
+                          <Calendar className="text-gray-300 mr-2" size={12} />
                           {formatDate(invoice.due_date)}
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-500 max-w-[160px] truncate" title={invoice.service}>
+                      <td className="px-8 py-5 text-[11px] font-bold text-gray-400 max-w-[160px] truncate" title={invoice.service}>
                         {invoice.service || '—'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-black text-gray-900">
+                      <td className="px-8 py-5 whitespace-nowrap text-sm font-black text-gray-900 tracking-tight">
                         Rs {Number(invoice.amount || 0).toFixed(2)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full border ${statusBadge(invoice.status)}`}>
+                      <td className="px-8 py-5 whitespace-nowrap">
+                        <span className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border ${statusBadge(invoice.status)}`}>
                           {invoice.status || 'Pending'}
                         </span>
                       </td>
 
-                      {/* ── CRUD Action Buttons ── */}
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex justify-end items-center space-x-1">
-
-                          {/* View */}
+                      <td className="px-8 py-5 whitespace-nowrap text-right">
+                        <div className="flex justify-end items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); openViewModal(invoice); }}
-                            className="text-gray-400 hover:text-blue-500 transition-colors p-1.5 rounded-lg hover:bg-blue-50"
-                            title="View invoice details"
+                            className="p-2 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
+                            title="X-Ray View"
                           >
                             <Eye size={16} />
                           </button>
 
-                          {/* Edit */}
                           <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); openEditModal(invoice); }}
-                            className="text-gray-400 hover:text-amber-500 transition-colors p-1.5 rounded-lg hover:bg-amber-50"
-                            title="Edit invoice"
+                            className="p-2 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
+                            title="Registry Modification"
                           >
                             <Edit2 size={16} />
                           </button>
 
-                          {/* Mark as Paid toggle */}
                           <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); togglePaid(invoice); }}
                             disabled={togglingId === invoice.id}
-                            className="text-gray-400 hover:text-green-500 transition-colors p-1.5 rounded-lg hover:bg-green-50 disabled:opacity-40"
-                            title={invoice.status === 'Paid' ? 'Mark as Pending' : 'Mark as Paid'}
+                            className="p-2 text-gray-300 hover:text-green-500 hover:bg-green-50 rounded-xl transition-all disabled:opacity-40"
+                            title={invoice.status === 'Paid' ? 'Revert to Pending' : 'Finalize Payment'}
                           >
                             {togglingId === invoice.id
                               ? <Loader2 size={16} className="animate-spin" />
@@ -412,36 +410,32 @@ Due Date  : ${formatDate(invoice.due_date)}
                             }
                           </button>
 
-                          {/* Download */}
                           <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); handleDownload(invoice); }}
-                            className="text-gray-400 hover:text-purple-500 transition-colors p-1.5 rounded-lg hover:bg-purple-50"
-                            title="Download invoice"
+                            className="p-2 text-gray-300 hover:text-purple-500 hover:bg-purple-50 rounded-xl transition-all"
+                            title="Export Artifact"
                           >
                             <Download size={16} />
                           </button>
 
-                          {/* Send */}
                           <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); handleSendInvoice(invoice); }}
-                            className="text-gray-400 hover:text-sky-500 transition-colors p-1.5 rounded-lg hover:bg-sky-50"
-                            title="Send invoice to customer"
+                            className="p-2 text-gray-300 hover:text-sky-500 hover:bg-sky-50 rounded-xl transition-all"
+                            title="Dispatch to Client"
                           >
                             <Send size={16} />
                           </button>
 
-                          {/* Delete */}
                           <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); deleteInvoice(invoice.id); }}
-                            className="text-gray-400 hover:text-brand-red transition-colors p-1.5 rounded-lg hover:bg-red-50"
-                            title="Delete invoice"
+                            className="p-2 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
+                            title="Terminate Invoice"
                           >
                             <Trash2 size={16} />
                           </button>
-
                         </div>
                       </td>
                     </tr>
@@ -469,24 +463,22 @@ Due Date  : ${formatDate(invoice.due_date)}
 
           {/* Pagination */}
           {filteredInvoices.length > invoicesPerPage && (
-            <div className="flex items-center justify-between border-t border-gray-100 px-6 py-4 bg-gray-50/30">
-              <div className="text-sm text-gray-500">
-                Showing <span className="font-bold text-gray-900">{indexOfFirstInvoice + 1}</span> to{' '}
-                <span className="font-bold text-gray-900">{Math.min(indexOfLastInvoice, filteredInvoices.length)}</span> of{' '}
-                <span className="font-bold text-gray-900">{filteredInvoices.length}</span> invoices
-              </div>
-              <div className="flex space-x-2">
+            <div className="flex items-center justify-between px-8 py-6 bg-gray-50/50 border-t border-gray-100">
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                Page {currentPage} of {totalPages}
+              </span>
+              <div className="flex gap-2">
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className="px-4 py-2 text-sm font-bold rounded-xl bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-all shadow-sm"
+                  className="p-3 bg-white border border-gray-100 rounded-xl disabled:opacity-30 shadow-sm hover:border-gray-300 transition-all font-bold text-xs"
                 >
                   Previous
                 </button>
                 <button
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
-                  className="px-4 py-2 text-sm font-bold rounded-xl bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-all shadow-sm"
+                  className="p-3 bg-white border border-gray-100 rounded-xl disabled:opacity-30 shadow-sm hover:border-gray-300 transition-all font-bold text-xs"
                 >
                   Next
                 </button>

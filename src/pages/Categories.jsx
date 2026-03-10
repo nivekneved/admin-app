@@ -4,7 +4,8 @@ import { Button } from '../components/Button';
 import {
     Loader2, RefreshCw, Plus, Search, Edit2, Trash2, Eye,
     ToggleLeft, ToggleRight, ArrowUp, ArrowDown, X, ChevronDown,
-    Layers, Link as LinkIcon, Hash, FileText, Home
+    Layers, Link as LinkIcon, Hash, FileText, Home, Hotel,
+    Activity, Users, Sun, Ship, Map
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import Modal from '../components/Modal';
@@ -13,6 +14,20 @@ import { showAlert, showConfirm } from '../utils/swal';
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const slugify = (str) =>
     str.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+// — Icon Mapping —
+const categoryIcons = {
+    'hotels': <Hotel size={18} strokeWidth={2.5} className="text-brand-red" />,
+    'activities': <Activity size={18} strokeWidth={2.5} className="text-brand-red" />,
+    'group tours': <Users size={18} strokeWidth={2.5} className="text-brand-red" />,
+    'day packages': <Sun size={18} strokeWidth={2.5} className="text-brand-red" />,
+    'cruises': <Ship size={18} strokeWidth={2.5} className="text-brand-red" />,
+    'rodrigues': <Map size={18} strokeWidth={2.5} className="text-brand-red" />,
+};
+
+const getCategoryIcon = (name) => {
+    return categoryIcons[name?.toLowerCase()] || <Layers size={18} strokeWidth={2.5} className="text-gray-300" />;
+};
 
 const defaultForm = () => ({
     name: '',
@@ -231,24 +246,24 @@ const Categories = () => {
     return (
         <div>
             {/* Header */}
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                 <div>
-                    <h1 className="text-2xl font-bold">Categories</h1>
-                    <p className="text-sm text-gray-400 mt-0.5">{processed.length} categor{processed.length !== 1 ? 'ies' : 'y'}</p>
+                    <h1 className="text-2xl font-black text-gray-900 tracking-tight">Categories</h1>
+                    <p className="text-gray-400 text-sm font-medium">Manage your agency services and rental inventory categories</p>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex items-center gap-2">
                     <Button
                         variant="outline"
                         onClick={fetchCategories}
                         disabled={loading}
-                        className="flex items-center gap-2 border-gray-200"
+                        className="text-gray-500 border-gray-200 flex items-center gap-2"
                     >
                         <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
                         Sync
                     </Button>
                     <Button
                         onClick={openCreateModal}
-                        className="bg-brand-red hover:opacity-90 text-white flex items-center gap-2"
+                        className="bg-brand-red hover:opacity-90 text-white flex items-center gap-2 shadow-lg shadow-red-100 font-bold"
                     >
                         <Plus size={16} />
                         Add Category
@@ -256,23 +271,23 @@ const Categories = () => {
                 </div>
             </div>
 
-            <Card>
+            <Card className="border-0 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
                 {/* Toolbar */}
-                <CardHeader className="border-b border-gray-50 pb-4">
-                    <div className="flex flex-col gap-3">
+                <CardHeader className="border-b border-gray-50 pb-4 bg-white px-8 pt-8">
+                    <div className="flex flex-col gap-4">
                         {/* Search */}
                         <div className="relative">
-                            <Search className="absolute left-3 top-2.5 text-gray-400" size={16} />
+                            <Search className="absolute left-3 top-3 text-gray-300" size={16} />
                             <input
                                 type="text"
                                 placeholder="Search categories…"
-                                className="pl-9 pr-9 py-2 w-full border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                                className="pl-9 pr-9 py-2.5 w-full border border-gray-100 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                             {searchTerm && (
                                 <button type="button" onClick={() => setSearchTerm('')}
-                                    className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600">
+                                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600">
                                     <X size={14} />
                                 </button>
                             )}
@@ -281,16 +296,16 @@ const Categories = () => {
                         {/* Filters + Sort */}
                         <div className="flex flex-wrap items-center gap-2">
                             <div className="relative">
-                                <select className={selectCls} value={filterActive} onChange={(e) => setFilterActive(e.target.value)}>
-                                    <option value="All">All statuses</option>
+                                <select className={`${selectCls} bg-gray-50 border-gray-100 rounded-2xl py-2.5`} value={filterActive} onChange={(e) => setFilterActive(e.target.value)}>
+                                    <option value="All">All Statuses</option>
                                     <option value="Active">Active only</option>
                                     <option value="Inactive">Inactive only</option>
                                 </select>
-                                <ChevronDown size={12} className="absolute right-2.5 top-3 text-gray-400 pointer-events-none" />
+                                <ChevronDown size={12} className="absolute right-2.5 top-4 text-gray-400 pointer-events-none" />
                             </div>
 
                             <div className="relative">
-                                <select className={selectCls} value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                                <select className={`${selectCls} bg-gray-50 border-gray-100 rounded-2xl py-2.5`} value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                                     <option value="display_order:asc">Order ↑</option>
                                     <option value="display_order:desc">Order ↓</option>
                                     <option value="name:asc">Name A → Z</option>
@@ -298,145 +313,136 @@ const Categories = () => {
                                     <option value="created_at:desc">Newest first</option>
                                     <option value="created_at:asc">Oldest first</option>
                                 </select>
-                                <ChevronDown size={12} className="absolute right-2.5 top-3 text-gray-400 pointer-events-none" />
+                                <ChevronDown size={12} className="absolute right-2.5 top-4 text-gray-400 pointer-events-none" />
                             </div>
 
                             {hasActiveFilters && (
                                 <button type="button" onClick={clearFilters}
-                                    className="flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-brand-red bg-red-50 border border-red-100 rounded-xl hover:bg-red-100 transition-all">
-                                    <X size={13} /> Clear
+                                    className="text-brand-red text-[10px] font-black uppercase tracking-widest px-4 py-2 hover:bg-red-50 rounded-xl transition-colors">
+                                    Clear Registry
                                 </button>
                             )}
 
-                            <span className="ml-auto text-xs text-gray-400 font-medium">
-                                {processed.length} result{processed.length !== 1 ? 's' : ''}
+                            <span className="ml-auto text-[10px] text-gray-400 font-black uppercase tracking-widest">
+                                {processed.length} Entries
                             </span>
                         </div>
                     </div>
                 </CardHeader>
 
-                <CardContent className="p-0">
+                <CardContent className="p-0 bg-white">
                     {loading ? (
-                        <div className="flex flex-col items-center justify-center py-24">
-                            <Loader2 className="animate-spin text-brand-red mb-3" size={36} />
-                            <p className="text-gray-400 font-medium text-sm">Loading categories…</p>
+                        <div className="py-32 flex flex-col items-center">
+                            <Loader2 className="animate-spin text-brand-red mb-4" size={48} />
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Syncing with Registry...</p>
                         </div>
                     ) : processed.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-24 text-center px-4">
-                            <Layers className="text-gray-200 mb-4" size={56} />
-                            <h3 className="text-lg font-bold text-gray-800">
-                                {hasActiveFilters ? 'No categories match your filters' : 'No categories yet'}
-                            </h3>
-                            <p className="text-gray-400 text-sm mt-1 max-w-xs">
-                                {hasActiveFilters ? 'Try adjusting your search or clearing filters.' : 'Add your first category to get started.'}
-                            </p>
-                            {hasActiveFilters
-                                ? <button type="button" onClick={clearFilters} className="mt-4 px-5 py-2 text-sm font-bold text-brand-red bg-red-50 rounded-xl hover:bg-red-100 transition-all">Clear filters</button>
-                                : <Button onClick={openCreateModal} className="mt-5 bg-brand-red text-white">Add First Category</Button>
-                            }
+                        <div className="py-32 text-center text-gray-300 font-black uppercase tracking-widest text-xs flex flex-col items-center gap-4">
+                            <Layers size={56} className="opacity-20" />
+                            No matching specifications found
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-100">
-                                <thead className="bg-gray-50/80">
+                            <table className="min-w-full divide-y divide-gray-50">
+                                <thead className="bg-gray-50/30">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">Category</th>
-                                        <th className="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">Slug</th>
-                                        <th className="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">Description</th>
-                                        <th className="px-6 py-3 text-center text-[10px] font-bold text-gray-400 uppercase tracking-wider">Order</th>
-                                        <th className="px-6 py-3 text-center text-[10px] font-bold text-gray-400 uppercase tracking-wider">Home</th>
-                                        <th className="px-6 py-3 text-center text-[10px] font-bold text-gray-400 uppercase tracking-wider">Status</th>
-                                        <th className="px-6 py-3 text-right text-[10px] font-bold text-gray-400 uppercase tracking-wider">Actions</th>
+                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Category</th>
+                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Slug</th>
+                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Description</th>
+                                        <th className="px-8 py-5 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">Display Order</th>
+                                        <th className="px-8 py-5 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">Visibility</th>
+                                        <th className="px-8 py-5 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
+                                        <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="bg-white divide-y divide-gray-50">
+                                <tbody className="divide-y divide-gray-50">
                                     {processed.map((cat) => (
-                                        <tr key={cat.id} className="hover:bg-gray-50/60 transition-colors">
+                                        <tr key={cat.id} className="hover:bg-gray-50/30 transition-colors group">
                                             {/* Name + icon */}
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="h-9 w-9 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-xl shrink-0">
-                                                        {cat.icon || <Layers size={14} className="text-gray-300" />}
+                                            <td className="px-8 py-5">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="h-10 w-10 rounded-2xl bg-red-50/50 border border-red-100/50 flex items-center justify-center shrink-0">
+                                                        {getCategoryIcon(cat.name)}
                                                     </div>
                                                     <div>
-                                                        <p className="text-sm font-bold text-gray-900">{cat.name}</p>
-                                                        <p className="text-[10px] font-mono text-gray-300">{cat.id?.slice(0, 8)}</p>
+                                                        <p className="text-sm font-black text-gray-900 leading-tight mb-1">{cat.name}</p>
+                                                        <p className="text-[10px] font-black uppercase tracking-tighter text-gray-400">ID: {cat.id?.slice(0, 8)}</p>
                                                     </div>
                                                 </div>
                                             </td>
 
                                             {/* Slug */}
-                                            <td className="px-6 py-4">
-                                                <code className="text-xs bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-lg text-gray-500 font-mono">
+                                            <td className="px-8 py-5">
+                                                <code className="text-[10px] font-black uppercase tracking-widest bg-gray-50 border border-gray-100 px-2 py-1 rounded-lg text-gray-500 font-mono">
                                                     /{cat.slug}
                                                 </code>
                                             </td>
 
                                             {/* Description */}
-                                            <td className="px-6 py-4 max-w-[220px]">
-                                                <p className="text-xs text-gray-500 truncate" title={cat.description}>
-                                                    {cat.description || <span className="text-gray-300 italic">No description</span>}
+                                            <td className="px-8 py-5 max-w-[220px]">
+                                                <p className="text-xs font-medium text-gray-500 truncate" title={cat.description}>
+                                                    {cat.description || <span className="text-gray-300 italic">No narrative provided</span>}
                                                 </p>
                                             </td>
 
                                             {/* Display Order */}
-                                            <td className="px-6 py-4 text-center">
-                                                <div className="flex items-center justify-center gap-1">
+                                            <td className="px-8 py-5 text-center">
+                                                <div className="flex items-center justify-center gap-2">
                                                     <button type="button" onClick={() => shiftOrder(cat, -1)}
-                                                        className="p-0.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded transition-colors" title="Move up">
-                                                        <ArrowUp size={12} />
+                                                        className="p-1.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Move up">
+                                                        <ArrowUp size={14} />
                                                     </button>
-                                                    <span className="text-sm font-bold text-gray-700 w-6 text-center">{cat.display_order ?? '—'}</span>
+                                                    <span className="text-sm font-black text-gray-900 w-6 text-center">{cat.display_order ?? '—'}</span>
                                                     <button type="button" onClick={() => shiftOrder(cat, 1)}
-                                                        className="p-0.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded transition-colors" title="Move down">
-                                                        <ArrowDown size={12} />
+                                                        className="p-1.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Move down">
+                                                        <ArrowDown size={14} />
                                                     </button>
                                                 </div>
                                             </td>
 
                                             {/* Show on home */}
-                                            <td className="px-6 py-4 text-center">
+                                            <td className="px-8 py-5 text-center">
                                                 {cat.show_on_home
-                                                    ? <span className="inline-flex items-center gap-1 text-[10px] font-bold text-green-600 bg-green-50 border border-green-100 px-2 py-0.5 rounded-full"><Home size={9} /> Yes</span>
-                                                    : <span className="text-[10px] text-gray-300 font-medium">—</span>
+                                                    ? <span className="inline-flex items-center gap-1.5 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-green-600 bg-green-50 border border-green-100 rounded-lg"><Home size={10} /> Homepage</span>
+                                                    : <span className="text-[10px] text-gray-300 font-black uppercase tracking-widest italic pt-1 inline-block">— Hidden</span>
                                                 }
                                             </td>
 
                                             {/* Active toggle */}
-                                            <td className="px-6 py-4 text-center">
+                                            <td className="px-8 py-5 text-center">
                                                 <button
                                                     type="button"
                                                     onClick={() => toggleActive(cat)}
                                                     disabled={togglingId === cat.id}
-                                                    className="flex items-center justify-center mx-auto transition-opacity disabled:opacity-40"
+                                                    className="inline-flex items-center justify-center transition-opacity disabled:opacity-40"
                                                     title={cat.is_active ? 'Deactivate' : 'Activate'}
                                                 >
                                                     {togglingId === cat.id
-                                                        ? <Loader2 size={18} className="animate-spin text-gray-400" />
+                                                        ? <Loader2 size={20} className="animate-spin text-gray-400" />
                                                         : cat.is_active
-                                                            ? <ToggleRight size={22} className="text-green-500" />
-                                                            : <ToggleLeft size={22} className="text-gray-300" />
+                                                            ? <ToggleRight size={28} className="text-brand-red" />
+                                                            : <ToggleLeft size={28} className="text-gray-200" />
                                                     }
                                                 </button>
                                             </td>
 
                                             {/* Actions */}
-                                            <td className="px-6 py-4 text-right">
-                                                <div className="flex justify-end items-center gap-1">
+                                            <td className="px-8 py-5 text-right">
+                                                <div className="flex justify-end items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <button type="button"
                                                         onClick={(e) => { e.stopPropagation(); openViewModal(cat); }}
-                                                        className="p-1.5 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="View">
-                                                        <Eye size={15} />
+                                                        className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="View Specification">
+                                                        <Eye size={16} />
                                                     </button>
                                                     <button type="button"
                                                         onClick={(e) => { e.stopPropagation(); openEditModal(cat); }}
-                                                        className="p-1.5 text-gray-400 hover:text-amber-500 hover:bg-amber-50 rounded-lg transition-colors" title="Edit">
-                                                        <Edit2 size={15} />
+                                                        className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Edit Specification">
+                                                        <Edit2 size={16} />
                                                     </button>
                                                     <button type="button"
                                                         onClick={(e) => { e.stopPropagation(); deleteCategory(cat.id); }}
-                                                        className="p-1.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-lg transition-colors" title="Delete">
-                                                        <Trash2 size={15} />
+                                                        className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Archive Listing">
+                                                        <Trash2 size={16} />
                                                     </button>
                                                 </div>
                                             </td>
@@ -457,8 +463,8 @@ const Categories = () => {
                     <div className="space-y-4">
                         {/* Header */}
                         <div className="flex items-center gap-4 bg-gray-50 rounded-xl p-4 border border-gray-100">
-                            <div className="h-12 w-12 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-2xl shadow-sm">
-                                {viewingCat.icon || <Layers size={20} className="text-gray-300" />}
+                            <div className="h-12 w-12 rounded-2xl bg-red-50/50 border border-red-100/50 flex items-center justify-center text-2xl shadow-sm">
+                                {getCategoryIcon(viewingCat.name)}
                             </div>
                             <div className="flex-1 min-w-0">
                                 <p className="font-black text-gray-900">{viewingCat.name}</p>
@@ -531,12 +537,10 @@ const Categories = () => {
                             />
                         </div>
                         <div>
-                            <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Icon (emoji)</label>
-                            <input type="text" name="icon"
-                                placeholder="e.g. 🏨"
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-xl text-center"
-                                value={formData.icon} onChange={handleInputChange}
-                            />
+                            <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">System Icon</label>
+                            <div className="w-full px-4 py-2.5 bg-gray-100 border border-gray-50 rounded-xl text-center text-brand-red flex items-center justify-center">
+                                {getCategoryIcon(formData.name)}
+                            </div>
                         </div>
                     </div>
 
