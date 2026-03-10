@@ -329,13 +329,13 @@ const Reports = () => {
                   {monthlyBookings.map((row, i) => {
                     const h = maxCount > 0 ? Math.max((row.count / maxCount) * 100, 4) : 4;
                     return (
-                      <div key={i} className="flex-1 flex flex-col items-center gap-1 group">
+                      <div key={i} className="flex-1 flex flex-col items-center gap-1">
                         <div className="relative w-full flex justify-center">
                           <div
                             className="w-full bg-brand-red/80 hover:bg-brand-red rounded-t-md transition-all cursor-default"
                             style={{ height: `${(h / 100) * 140}px` }}
                           />
-                          <span className="absolute -top-5 text-[10px] font-bold text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <span className="absolute -top-5 text-[10px] font-bold text-gray-500">
                             {row.count}
                           </span>
                         </div>
@@ -358,7 +358,7 @@ const Reports = () => {
                     </thead>
                     <tbody className="divide-y divide-gray-50">
                       {monthlyBookings.map((row, i) => (
-                        <tr key={i} className="group hover:bg-gray-50/30 transition-colors">
+                        <tr key={i} className="hover:bg-gray-50/30 transition-colors">
                           <td className="py-4 text-xs font-black text-gray-900 uppercase tracking-tight">{row.month} {row.year}</td>
                           <td className="py-4 text-right text-sm font-black text-gray-900">{row.count}</td>
                           <td className="py-4 text-right text-sm font-black text-brand-red">{fmtRs(row.revenue)}</td>
@@ -461,7 +461,7 @@ const Reports = () => {
                   </thead>
                   <tbody className="divide-y divide-gray-50">
                     {topActivities.map((row, i) => (
-                      <tr key={i} className="group hover:bg-gray-50/30 transition-colors">
+                      <tr key={i} className="hover:bg-gray-50/30 transition-colors">
                         <td className="py-4 text-xs font-black text-gray-300 pr-3">{(i + 1).toString().padStart(2, '0')}</td>
                         <td className="py-4">
                           <div className="flex items-center gap-3">

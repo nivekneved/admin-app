@@ -357,7 +357,7 @@ const Categories = () => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-50">
                                     {processed.map((cat) => (
-                                        <tr key={cat.id} className="hover:bg-gray-50/30 transition-colors group">
+                                        <tr key={cat.id} className="hover:bg-gray-50/30 transition-colors">
                                             {/* Name + icon */}
                                             <td className="px-8 py-5">
                                                 <div className="flex items-center gap-4">
@@ -428,7 +428,7 @@ const Categories = () => {
 
                                             {/* Actions */}
                                             <td className="px-8 py-5 text-right">
-                                                <div className="flex justify-end items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <div className="flex justify-end items-center gap-1">
                                                     <button type="button"
                                                         onClick={(e) => { e.stopPropagation(); openViewModal(cat); }}
                                                         className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="View Specification">

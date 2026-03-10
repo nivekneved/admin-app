@@ -359,7 +359,7 @@ const Bookings = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-50">
                   {currentBookings.map((booking) => (
-                    <tr key={booking.id} className="hover:bg-gray-50/30 transition-colors group">
+                    <tr key={booking.id} className="hover:bg-gray-50/30 transition-colors">
                       <td className="px-8 py-5 whitespace-nowrap">
                         <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">#{booking.id?.toString().slice(0, 8)}</p>
                       </td>
@@ -402,7 +402,7 @@ const Bookings = () => {
 
                       {/* ── CRUD Action Buttons ── */}
                       <td className="px-8 py-5 whitespace-nowrap text-right">
-                        <div className="flex justify-end items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex justify-end items-center gap-1">
                           <button
                             onClick={() => openViewModal(booking)}
                             className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"

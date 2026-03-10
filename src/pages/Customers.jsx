@@ -301,7 +301,7 @@ const Customers = () => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-50">
                                     {currentCustomers.map((customer) => (
-                                        <tr key={customer.id} className="hover:bg-gray-50/30 transition-colors group">
+                                        <tr key={customer.id} className="hover:bg-gray-50/30 transition-colors">
                                             <td className="px-8 py-5 whitespace-nowrap">
                                                 <div className="flex items-center gap-3">
                                                     <div className="h-10 w-10 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center text-sm font-black text-gray-400 shrink-0">
@@ -349,7 +349,7 @@ const Customers = () => {
                                                 </span>
                                             </td>
                                             <td className="px-8 py-5 whitespace-nowrap text-right">
-                                                <div className="flex justify-end items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <div className="flex justify-end items-center gap-1">
                                                     <Link to={`/customers/${customer.id}`}>
                                                         <button
                                                             className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"

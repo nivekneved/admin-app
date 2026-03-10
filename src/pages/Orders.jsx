@@ -236,7 +236,7 @@ const Orders = () => {
                 <tbody className="divide-y divide-gray-50">
                   {currentOrders.map((order) => (
                     <React.Fragment key={order.id}>
-                      <tr className="hover:bg-gray-50/30 transition-colors group">
+                      <tr key={order.id} className="hover:bg-gray-50/30 transition-colors">
                         <td className="px-8 py-5 whitespace-nowrap text-[10px] font-black text-gray-400 uppercase tracking-widest">#{order.id?.slice(0, 8)}</td>
                         <td className="px-8 py-5 whitespace-nowrap">
                           <div className="text-sm font-black text-gray-900 leading-tight">{order.customer_name}</div>
@@ -269,7 +269,7 @@ const Orders = () => {
                           </span>
                         </td>
                         <td className="px-8 py-5 whitespace-nowrap text-right">
-                          <div className="flex justify-end items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="flex justify-end items-center gap-1">
                             <button
                               onClick={() => toggleExpand(order.id)}
                               className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"

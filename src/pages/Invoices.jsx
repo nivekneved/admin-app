@@ -346,7 +346,7 @@ Due Date  : ${formatDate(invoice.due_date)}
                 </thead>
                 <tbody className="divide-y divide-gray-50">
                   {currentInvoices.map((invoice) => (
-                    <tr key={invoice.id} className="hover:bg-gray-50/30 transition-colors group">
+                    <tr key={invoice.id} className="hover:bg-gray-50/30 transition-colors">
                       <td className="px-8 py-5 whitespace-nowrap text-xs font-black text-gray-900 tracking-tighter font-mono">
                         {invoice.reference}
                       </td>
@@ -378,7 +378,7 @@ Due Date  : ${formatDate(invoice.due_date)}
                       </td>
 
                       <td className="px-8 py-5 whitespace-nowrap text-right">
-                        <div className="flex justify-end items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex justify-end items-center gap-1">
                           <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); openViewModal(invoice); }}

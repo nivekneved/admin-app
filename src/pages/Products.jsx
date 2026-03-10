@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Tag, Loader2, RefreshCw, Plus, Search, Edit2, Trash2, Eye,
+Tag, Loader2, RefreshCw, Plus, Search, Edit2, Trash2,
   LayoutGrid, List, ArrowUpDown, ArrowUp, ArrowDown, Package,
   ChevronDown
 } from 'lucide-react';
@@ -250,7 +249,7 @@ const Products = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-50">
                   {currentItems.map(p => (
-                    <tr key={p.id} className="hover:bg-gray-50/30 transition-colors group">
+                    <tr key={p.id} className="hover:bg-gray-50/30 transition-colors">
                       <td className="px-8 py-5">
                         <div className="flex items-center gap-4">
                           <Thumb src={p.image_url} size="md" />
@@ -267,7 +266,7 @@ const Products = () => {
                         <span className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border ${statusBadge(p.status)}`}>{p.status}</span>
                       </td>
                       <td className="px-8 py-5 text-right">
-                        <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex justify-end items-center gap-1">
                           <button onClick={() => openEdit(p)} className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Edit Specification"><Edit2 size={16} /></button>
                           <button onClick={() => deleteProduct(p.id)} className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Archive Listing"><Trash2 size={16} /></button>
                         </div>

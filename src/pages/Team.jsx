@@ -2,8 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Users, UserPlus, Search, Edit2, Trash2, Mail, Globe,
-    Linkedin, Loader2, LayoutGrid, List, ChevronLeft, ChevronRight,
-    Key
+    Linkedin, Loader2, LayoutGrid, List, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Card, CardContent, CardHeader } from '../components/Card';
@@ -161,7 +160,7 @@ const Team = () => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-50">
                                     {currentItems.map((member) => (
-                                        <tr key={member.id} className="hover:bg-gray-50/50 transition-colors group">
+                                        <tr key={member.id} className="hover:bg-gray-50/30 transition-colors">
                                             <td className="px-8 py-5">
                                                 <div className="flex items-center gap-4">
                                                     <div className="w-10 h-10 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 shrink-0">
@@ -200,7 +199,7 @@ const Team = () => {
                                                 </span>
                                             </td>
                                             <td className="px-8 py-5 text-right">
-                                                <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <div className="flex justify-end items-center gap-1">
                                                     <button onClick={() => openEdit(member)} className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Edit Profile">
                                                         <Edit2 size={16} />
                                                     </button>
