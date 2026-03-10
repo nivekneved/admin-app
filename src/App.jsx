@@ -13,7 +13,7 @@ import Invoices from './pages/Invoices';
 import Customers from './pages/Customers';
 import Settings from './pages/Settings';
 import Team from './pages/Team';
-import EditStaff from './pages/EditStaff';
+import ManageStaff from './pages/ManageStaff';
 import CreateCustomer from './pages/CreateCustomer';
 import ViewCustomer from './pages/ViewCustomer';
 import CreateProduct from './pages/CreateProduct';
@@ -41,10 +41,12 @@ function App() {
                   <Routes>
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/team" element={<Team />} />
-                    <Route path="/team/edit/:id" element={<EditStaff />} />
+                    <Route path="/team/create" element={<ManageStaff />} />
+                    <Route path="/team/edit/:id" element={<ManageStaff />} />
                     <Route path="/users" element={<Navigate to="/team" replace />} />
                     <Route path="/products" element={<Products />} />
                     <Route path="/products/create" element={<CreateProduct />} />
+                    <Route path="/products/edit/:id" element={<CreateProduct />} />
                     <Route path="/categories" element={<Categories />} />
                     <Route path="/bookings" element={<Bookings />} />
                     <Route path="/bookings/create" element={<CreateBooking />} />
