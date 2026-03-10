@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import {
     Video, Plus, Search, Edit2, Trash2,
     RefreshCw, Loader2, X,
-    Layout, AlignLeft, Center, AlignRight, Check
+    Layout, AlignLeft, AlignCenter, AlignRight, Check
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Card, CardContent, CardHeader } from '../components/Card';
@@ -250,8 +250,8 @@ const HeroSlider = () => {
                                             </td>
                                             <td className="px-8 py-4">
                                                 <span className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border ${slide.is_active
-                                                        ? 'bg-green-50 text-green-700 border-green-100'
-                                                        : 'bg-red-50 text-red-700 border-red-100'
+                                                    ? 'bg-green-50 text-green-700 border-green-100'
+                                                    : 'bg-red-50 text-red-700 border-red-100'
                                                     }`}>
                                                     {slide.is_active ? 'Active' : 'Hidden'}
                                                 </span>
@@ -394,7 +394,7 @@ const HeroSlider = () => {
                                                             }`}
                                                     >
                                                         {align === 'left' && <AlignLeft size={16} />}
-                                                        {align === 'center' && <Center size={16} />}
+                                                        {align === 'center' && <AlignCenter size={16} />}
                                                         {align === 'right' && <AlignRight size={16} />}
                                                     </button>
                                                 ))}
@@ -455,8 +455,8 @@ const HeroSlider = () => {
                                             type="button"
                                             onClick={() => setFormData({ ...formData, is_active: !formData.is_active })}
                                             className={`flex items-center gap-3 w-full p-4 rounded-2xl border-2 transition-all ${formData.is_active
-                                                    ? 'bg-green-50/50 border-green-200 text-green-700'
-                                                    : 'bg-red-50/50 border-red-200 text-red-700'
+                                                ? 'bg-green-50/50 border-green-200 text-green-700'
+                                                : 'bg-red-50/50 border-red-200 text-red-700'
                                                 }`}
                                         >
                                             <div className={`w-10 h-6 rounded-full relative transition-colors ${formData.is_active ? 'bg-green-500' : 'bg-red-500'}`}>
