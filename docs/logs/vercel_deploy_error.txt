@@ -1,0 +1,11 @@
+Vercel CLI 48.6.6
+Retrieving projectΓÇª
+Deploying travellounges-projects-de948577/admin-app
+Uploading [--------------------] (0.0B/98B)
+Uploading [====================] (98.0B/98B)
+Inspect: https://vercel.com/travellounges-projects-de948577/admin-app/iwTfgooVa7bAdpwZuGPEsxKgQhrR [3s]
+Production: https://admin-n6ejih4ke-travellounges-projects-de948577.vercel.app [3s]
+Building
+Building
+Error: Command "npm install --legacy-peer-deps" exited with 1
+https://admin-n6ejih4ke-travellounges-projects-de948577.vercel.app

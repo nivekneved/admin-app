@@ -1,0 +1,36 @@
+
+C:\Users\deven\Desktop\admin-app\src\components\ProtectedRoute.jsx
+  16:22  warning  'error' is defined but never used  unused-imports/no-unused-vars
+
+C:\Users\deven\Desktop\admin-app\src\pages\CreateAdmin.jsx
+  40:27  warning  'authData' is assigned a value but never used. Allowed unused vars must match /^_/u  unused-imports/no-unused-vars
+
+C:\Users\deven\Desktop\admin-app\src\pages\CreateBooking.jsx
+  33:18  warning  'e' is defined but never used  unused-imports/no-unused-vars
+
+C:\Users\deven\Desktop\admin-app\src\pages\CreateInvoice.jsx
+   34:18   warning  'e' is defined but never used                                    unused-imports/no-unused-vars
+  304:149  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  304:159  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+C:\Users\deven\Desktop\admin-app\src\pages\CreateOrder.jsx
+  34:18  warning  'e' is defined but never used  unused-imports/no-unused-vars
+
+C:\Users\deven\Desktop\admin-app\src\pages\EmailAdmin.jsx
+  57:18  warning  'error' is defined but never used  unused-imports/no-unused-vars
+
+C:\Users\deven\Desktop\admin-app\src\pages\Invoices.jsx
+  67:14  warning  'e' is defined but never used  unused-imports/no-unused-vars
+
+C:\Users\deven\Desktop\admin-app\src\pages\Login.jsx
+  19:21  warning  'data' is assigned a value but never used. Allowed unused vars must match /^_/u  unused-imports/no-unused-vars
+
+C:\Users\deven\Desktop\admin-app\src\pages\Orders.jsx
+   68:14  warning  'e' is defined but never used      unused-imports/no-unused-vars
+  119:14  warning  'error' is defined but never used  unused-imports/no-unused-vars
+
+C:\Users\deven\Desktop\admin-app\src\pages\Products.jsx
+  94:14  warning  'error' is defined but never used  unused-imports/no-unused-vars
+
+Γ£û 13 problems (2 errors, 11 warnings)
+
