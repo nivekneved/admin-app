@@ -159,12 +159,9 @@ const Orders = () => {
               <table className="min-w-full divide-y divide-gray-50">
                 <thead className="bg-gray-50/30">
                   <tr>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Order Identifier</th>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Account Holder</th>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Transaction Date</th>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Cargo Volume</th>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Gross value</th>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Order & Linkage</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Account & Volume</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Financials & Status</th>
                     <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
                   </tr>
                 </thead>
@@ -172,25 +169,23 @@ const Orders = () => {
                   {currentOrders.map((order) => (
                     <React.Fragment key={order.id}>
                       <tr key={order.id} className="hover:bg-gray-50/30 transition-colors">
-                        <td className="px-8 py-5 whitespace-nowrap text-[10px] font-black text-gray-400 uppercase tracking-widest">#{order.id?.slice(0, 8)}</td>
                         <td className="px-8 py-5 whitespace-nowrap">
-                          <div className="text-sm font-black text-gray-900 leading-tight">{order.customer_name}</div>
+                          <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">#{order.id?.slice(0, 8)}</div>
+                          <div className="text-xs font-semibold text-gray-500">{formatDate(order.created_at)}</div>
                         </td>
-                        <td className="px-8 py-5 whitespace-nowrap text-xs font-semibold text-gray-600">{formatDate(order.created_at)}</td>
                         <td className="px-8 py-5 whitespace-nowrap">
-                          <div className="flex items-center text-xs font-black text-gray-400 uppercase tracking-widest">
-                            <Package className="mr-2 shrink-0" size={14} />
+                          <div className="text-sm font-black text-gray-900 leading-tight mb-1">{order.customer_name}</div>
+                          <div className="flex items-center text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                            <Package className="mr-1.5 shrink-0" size={12} />
                             {order.total_items || 0} Units
                           </div>
                         </td>
                         <td className="px-8 py-5 whitespace-nowrap">
-                          <div className="text-sm font-black text-brand-red">
+                          <div className="text-sm font-black text-brand-red mb-1.5">
                             <span className="text-[10px] opacity-70 mr-0.5 tracking-tighter">Rs</span>
                             {Number(order.amount).toLocaleString()}
                           </div>
-                        </td>
-                        <td className="px-8 py-5 whitespace-nowrap">
-                          <span className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border ${order.status === 'Completed'
+                          <span className={`px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-lg border ${order.status === 'Completed'
                             ? 'bg-green-50 text-green-700 border-green-100'
                             : order.status === 'Pending'
                               ? 'bg-yellow-50 text-yellow-700 border-yellow-100'

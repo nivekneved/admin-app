@@ -242,9 +242,8 @@ const Products = () => {
               <table className="min-w-full divide-y divide-gray-50">
                 <thead className="bg-gray-50/30">
                   <tr>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Specification</th>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Base Rate</th>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Inventory</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Specification & Pricing</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Inventory Status</th>
                     <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
                   </tr>
                 </thead>
@@ -256,22 +255,22 @@ const Products = () => {
                           <Thumb src={p.image_url} size="md" />
                           <div>
                             <p className="text-sm font-black text-gray-900 leading-tight mb-1">{p.name}</p>
-                            <div className="flex flex-wrap gap-1">
-                              {(p.categories_list && p.categories_list.length > 0) ? (
-                                p.categories_list.map(cat => (
-                                  <span key={cat.id} className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-red-50 text-brand-red border border-red-100">
-                                    {cat.name}
-                                  </span>
-                                ))
-                              ) : (
-                                <span className="text-[9px] font-bold text-gray-400">Unassigned</span>
-                              )}
+                            <div className="flex flex-wrap items-center gap-2">
+                              <p className="text-xs font-black text-brand-red leading-none">MUR {Number(p.price).toLocaleString()}</p>
+                              <div className="flex flex-wrap gap-1">
+                                {(p.categories_list && p.categories_list.length > 0) ? (
+                                  p.categories_list.map(cat => (
+                                    <span key={cat.id} className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-red-50 text-brand-red border border-red-100">
+                                      {cat.name}
+                                    </span>
+                                  ))
+                                ) : (
+                                  <span className="text-[9px] font-bold text-gray-400">Unassigned</span>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </td>
-                      <td className="px-8 py-5">
-                        <p className="text-sm font-black text-brand-red">MUR {Number(p.price).toLocaleString()}</p>
                       </td>
                       <td className="px-8 py-5">
                         <div className="flex flex-col gap-1">

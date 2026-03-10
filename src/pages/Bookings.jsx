@@ -349,12 +349,10 @@ const Bookings = () => {
               <table className="min-w-full divide-y divide-gray-50">
                 <thead className="bg-gray-50/30">
                   <tr>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Reservation ID</th>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Customer</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Reservation & Timing</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Customer Details</th>
                     <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Activity Specification</th>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Scheduled For</th>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Premium Rate</th>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Rate & Status</th>
                     <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
                   </tr>
                 </thead>
@@ -362,11 +360,15 @@ const Bookings = () => {
                   {currentBookings.map((booking) => (
                     <tr key={booking.id} className="hover:bg-gray-50/30 transition-colors">
                       <td className="px-8 py-5 whitespace-nowrap">
-                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">#{booking.id?.toString().slice(0, 8)}</p>
+                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">#{booking.id?.toString().slice(0, 8)}</div>
+                        <div className="flex items-center text-[10px] font-semibold text-gray-500">
+                          <Clock className="text-gray-300 mr-1" size={12} />
+                          {formatDate(booking.start_date || booking.date || booking.created_at)}
+                        </div>
                       </td>
                       <td className="px-8 py-5">
                         <div className="flex items-center text-left gap-3">
-                          <div className="h-9 w-9 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center text-xs font-black text-gray-400 shrink-0">
+                          <div className="h-8 w-8 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-[10px] font-black text-gray-400 shrink-0">
                             {booking.customers?.first_name?.charAt(0) || 'G'}
                           </div>
                           <div className="text-left">
@@ -375,36 +377,26 @@ const Bookings = () => {
                                 ? `${booking.customers.first_name} ${booking.customers.last_name}`
                                 : (booking.customer || 'Guest User')}
                             </div>
-                            <div className="text-[10px] font-black text-gray-400 uppercase tracking-tighter mt-0.5">{booking.customers?.email || booking.customer_email || 'No registry entry'}</div>
+                            <div className="text-[9px] font-black text-gray-400 uppercase tracking-tighter">{booking.customers?.email || 'No registry entry'}</div>
                           </div>
                         </div>
                       </td>
                       <td className="px-8 py-5 whitespace-nowrap text-left">
                         <div className="flex items-center text-sm font-black text-gray-900 leading-tight mb-1">
-                          <span className="mr-2 shrink-0">{getActivityIcon(booking.activity_type)}</span>
-                          <span className="truncate max-w-[180px]">
+                          <span className="mr-1.5 shrink-0">{getActivityIcon(booking.activity_type)}</span>
+                          <span className="truncate max-w-[150px]">
                             {booking.booking_items && booking.booking_items.length > 1
-                              ? `${booking.booking_items[0].product_name} (+${booking.booking_items.length - 1} more)`
-                              : (booking.activity_name || booking.lounge_name || 'Generic Booking')}
+                              ? `${booking.booking_items[0].product_name} (+${booking.booking_items.length - 1})`
+                              : (booking.activity_name || booking.lounge_name || 'Generic')}
                           </span>
                         </div>
-                        <div className="text-[10px] text-gray-400 font-black uppercase tracking-widest">
-                          {booking.booking_items && booking.booking_items.length > 1
-                            ? 'Multi-Service Bundle'
-                            : (booking.activity_type || 'Unknown')}
-                        </div>
-                      </td>
-                      <td className="px-8 py-5 whitespace-nowrap text-left text-gray-600">
-                        <div className="flex items-center text-xs font-semibold">
-                          <Calendar className="text-gray-300 mr-2" size={14} />
-                          {formatDate(booking.start_date || booking.date || booking.created_at)}
+                        <div className="text-[9px] text-gray-400 font-black uppercase tracking-widest">
+                          {booking.activity_type || 'Unknown'}
                         </div>
                       </td>
                       <td className="px-8 py-5 whitespace-nowrap text-left">
-                        <p className="text-sm font-black text-brand-red">Rs {(booking.total_amount || booking.amount || 0).toLocaleString()}</p>
-                      </td>
-                      <td className="px-8 py-5 whitespace-nowrap text-left">
-                        <span className={`px-2.5 py-1 inline-flex text-[9px] font-black uppercase tracking-widest rounded-lg border ${getStatusBadge(booking.status)}`}>
+                        <div className="text-sm font-black text-brand-red mb-1.5">Rs {(booking.total_amount || booking.amount || 0).toLocaleString()}</div>
+                        <span className={`px-2 py-0.5 inline-flex text-[8px] font-black uppercase tracking-widest rounded-lg border ${getStatusBadge(booking.status)}`}>
                           {booking.status || 'Pending'}
                         </span>
                       </td>
