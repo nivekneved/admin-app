@@ -66,7 +66,8 @@ const Bookings = () => {
             first_name,
             last_name,
             email
-          )
+          ),
+          booking_items (*)
         `)
         .order('created_at', { ascending: false });
 
@@ -381,9 +382,17 @@ const Bookings = () => {
                       <td className="px-8 py-5 whitespace-nowrap text-left">
                         <div className="flex items-center text-sm font-black text-gray-900 leading-tight mb-1">
                           <span className="mr-2 shrink-0">{getActivityIcon(booking.activity_type)}</span>
-                          <span className="truncate max-w-[180px]">{booking.activity_name || booking.lounge_name || 'Generic Booking'}</span>
+                          <span className="truncate max-w-[180px]">
+                            {booking.booking_items && booking.booking_items.length > 1
+                              ? `${booking.booking_items[0].product_name} (+${booking.booking_items.length - 1} more)`
+                              : (booking.activity_name || booking.lounge_name || 'Generic Booking')}
+                          </span>
                         </div>
-                        <div className="text-[10px] text-gray-400 font-black uppercase tracking-widest">{booking.activity_type || 'Unknown'}</div>
+                        <div className="text-[10px] text-gray-400 font-black uppercase tracking-widest">
+                          {booking.booking_items && booking.booking_items.length > 1
+                            ? 'Multi-Service Bundle'
+                            : (booking.activity_type || 'Unknown')}
+                        </div>
                       </td>
                       <td className="px-8 py-5 whitespace-nowrap text-left text-gray-600">
                         <div className="flex items-center text-xs font-semibold">
@@ -570,6 +579,30 @@ const Bookings = () => {
                   Rs {(viewingBooking.total_amount || viewingBooking.amount || 0).toFixed(2)}
                 </p>
               </div>
+
+              {viewingBooking.booking_items && viewingBooking.booking_items.length > 0 && (
+                <div className="bg-white rounded-2xl p-6 border border-gray-100 col-span-2 shadow-sm">
+                  <div className="flex items-center text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">
+                    <Tag size={12} className="mr-2" /> Detailed Itinerary Specification
+                  </div>
+                  <div className="space-y-4">
+                    {viewingBooking.booking_items.map((it, idx) => (
+                      <div key={it.id} className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
+                        <div className="flex items-center gap-3">
+                          <div className="w-6 h-6 rounded-lg bg-gray-50 flex items-center justify-center text-[10px] font-black text-gray-400">
+                            {idx + 1}
+                          </div>
+                          <div>
+                            <p className="text-xs font-black text-gray-900">{it.product_name}</p>
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-tighter">{it.product_category}</p>
+                          </div>
+                        </div>
+                        <p className="text-xs font-black text-gray-900 italic">MUR {Number(it.amount).toLocaleString()}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {viewingBooking.start_time && (
                 <div className="bg-gray-50 rounded-xl p-3 border border-gray-100 col-span-2">

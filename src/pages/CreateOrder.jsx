@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/Card';
 import { Button } from '../components/Button';
-import { ArrowLeft, Package, Users, DollarSign, CreditCard, Loader2, Info, CheckCircle2, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, Package, Users, CreditCard, Loader2, Info, CheckCircle2, ShoppingBag, Plus, Trash2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { showAlert } from '../utils/swal';
 
@@ -10,19 +10,33 @@ const CreateOrder = () => {
     const navigate = useNavigate();
     const [formLoading, setFormLoading] = useState(false);
     const [customers, setCustomers] = useState([]);
+    const [products, setProducts] = useState([]);
     const [formData, setFormData] = useState({
         customer_id: '',
         customer_name: '',
-        amount: '',
+        amount: 0,
         status: 'Pending',
         payment_method: 'Credit Card',
         items: [],
-        total_items: ''
+        total_items: 0
     });
 
     useEffect(() => {
         fetchCustomers();
+        fetchProducts();
     }, []);
+
+    const fetchProducts = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('products')
+                .select('id, name, price, category')
+                .order('name');
+            if (!error) setProducts(data || []);
+        } catch (error) {
+            console.error('Error loading products', error);
+        }
+    };
 
     const fetchCustomers = async () => {
         try {
@@ -31,8 +45,8 @@ const CreateOrder = () => {
                 .select('id, first_name, last_name')
                 .order('first_name');
             if (!error) setCustomers(data || []);
-        } catch (e) {
-            console.error('Error loading customers for orders');
+        } catch (error) {
+            console.error('Error loading customers for orders', error);
         }
     };
 
@@ -51,6 +65,45 @@ const CreateOrder = () => {
         }
     };
 
+    const addItem = () => {
+        setFormData(prev => ({
+            ...prev,
+            items: [...prev.items, { product_id: '', product_name: '', quantity: 1, unit_price: 0 }]
+        }));
+    };
+
+    const removeItem = (index) => {
+        const newItems = formData.items.filter((_, i) => i !== index);
+        setFormData(prev => {
+            const totals = calculateTotals(newItems);
+            return { ...prev, items: newItems, ...totals };
+        });
+    };
+
+    const updateItem = (index, field, value) => {
+        const newItems = [...formData.items];
+        const item = { ...newItems[index] };
+
+        if (field === 'product_id') {
+            const prod = products.find(p => p.id === value);
+            item.product_id = value;
+            item.product_name = prod ? prod.name : '';
+            item.unit_price = prod ? prod.price : 0;
+        } else {
+            item[field] = value;
+        }
+
+        newItems[index] = item;
+        const totals = calculateTotals(newItems);
+        setFormData(prev => ({ ...prev, items: newItems, ...totals }));
+    };
+
+    const calculateTotals = (items) => {
+        const amount = items.reduce((sum, it) => sum + (it.quantity * it.unit_price), 0);
+        const total_items = items.reduce((sum, it) => sum + Number(it.quantity), 0);
+        return { amount, total_items };
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setFormLoading(true);
@@ -61,18 +114,46 @@ const CreateOrder = () => {
             return;
         }
 
+        if (formData.items.length === 0) {
+            showAlert('Inventory Error', 'Please specify at least one product for this order.', 'warning');
+            setFormLoading(false);
+            return;
+        }
+
         try {
-            const { error } = await supabase
+            // 1. Insert Order
+            const { data: orderData, error: orderError } = await supabase
                 .from('orders')
                 .insert([{
-                    ...formData,
-                    amount: parseFloat(formData.amount) || 0,
-                    total_items: parseInt(formData.total_items) || 0,
+                    customer_id: formData.customer_id,
+                    customer_name: formData.customer_name,
+                    amount: formData.amount,
+                    status: formData.status,
+                    payment_method: formData.payment_method,
+                    total_items: formData.total_items,
+                    items: formData.items, // Keep JSONB for legacy compatibility
                     created_at: new Date().toISOString(),
                     updated_at: new Date().toISOString()
-                }]);
+                }])
+                .select()
+                .single();
 
-            if (error) throw error;
+            if (orderError) throw orderError;
+
+            // 2. Insert Order Items
+            const itemInserts = formData.items.map(it => ({
+                order_id: orderData.id,
+                product_id: it.product_id || null,
+                product_name: it.product_name,
+                quantity: parseInt(it.quantity),
+                unit_price: parseFloat(it.unit_price)
+            }));
+
+            const { error: itemsError } = await supabase
+                .from('order_items')
+                .insert(itemInserts);
+
+            if (itemsError) throw itemsError;
 
             showAlert('Success', 'Order processed and recorded successfully.', 'success');
             navigate('/orders');
@@ -138,42 +219,75 @@ const CreateOrder = () => {
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                    <div className="space-y-3">
-                                        <label className="block text-[11px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">Order Revenue (MUR)</label>
-                                        <div className="relative group">
-                                            <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 transition-colors group-focus-within:text-brand-red">
-                                                <DollarSign size={18} />
-                                            </span>
-                                            <input
-                                                type="number"
-                                                name="amount"
-                                                required
-                                                step="0.01"
-                                                className="w-full pl-14 pr-6 py-4 bg-gray-50/50 border-2 border-transparent focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700"
-                                                value={formData.amount}
-                                                onChange={handleInputChange}
-                                                placeholder="0.00"
-                                            />
-                                        </div>
+                                <div className="space-y-6 pt-4">
+                                    <div className="flex items-center justify-between ml-1">
+                                        <label className="block text-[11px] font-black text-gray-500 uppercase tracking-[0.2em]">Inventory Items</label>
+                                        <button
+                                            type="button"
+                                            onClick={addItem}
+                                            className="text-[10px] font-black text-brand-red uppercase tracking-widest flex items-center gap-1.5 hover:opacity-70 transition-all"
+                                        >
+                                            <Plus size={14} /> Add Product
+                                        </button>
                                     </div>
 
-                                    <div className="space-y-3">
-                                        <label className="block text-[11px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">Total Line Items</label>
-                                        <div className="relative group">
-                                            <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 transition-colors group-focus-within:text-brand-red">
-                                                <ShoppingBag size={18} />
-                                            </span>
-                                            <input
-                                                type="number"
-                                                name="total_items"
-                                                required
-                                                className="w-full pl-14 pr-6 py-4 bg-gray-50/50 border-2 border-transparent focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700"
-                                                value={formData.total_items}
-                                                onChange={handleInputChange}
-                                                placeholder="e.g. 1"
-                                            />
-                                        </div>
+                                    <div className="space-y-4">
+                                        {formData.items.map((it, idx) => (
+                                            <div key={idx} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end bg-gray-50/50 p-6 rounded-[2rem] border border-gray-100/50">
+                                                <div className="md:col-span-5 space-y-2">
+                                                    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">Product</label>
+                                                    <select
+                                                        className="w-full px-4 py-3 bg-white border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red font-bold text-gray-700 text-sm appearance-none"
+                                                        value={it.product_id}
+                                                        onChange={(e) => updateItem(idx, 'product_id', e.target.value)}
+                                                        required
+                                                    >
+                                                        <option value="">Select Product...</option>
+                                                        {products.map(p => (
+                                                            <option key={p.id} value={p.id}>{p.name} (MUR {p.price})</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                                <div className="md:col-span-2 space-y-2">
+                                                    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">Qty</label>
+                                                    <input
+                                                        type="number"
+                                                        min="1"
+                                                        className="w-full px-4 py-3 bg-white border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red font-bold text-center"
+                                                        value={it.quantity}
+                                                        onChange={(e) => updateItem(idx, 'quantity', e.target.value)}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="md:col-span-3 space-y-2">
+                                                    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">Unit Price</label>
+                                                    <div className="relative">
+                                                        <input
+                                                            type="number"
+                                                            className="w-full pl-4 pr-10 py-3 bg-white border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red font-bold"
+                                                            value={it.unit_price}
+                                                            readOnly
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="md:col-span-2 flex justify-end">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeItem(idx)}
+                                                        className="p-3 bg-red-50 text-brand-red rounded-2xl hover:bg-red-100 transition-all shadow-sm shadow-red-100"
+                                                    >
+                                                        <Trash2 size={18} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+
+                                        {formData.items.length === 0 && (
+                                            <div className="py-12 border-2 border-dashed border-gray-100 rounded-[2.5rem] flex flex-col items-center justify-center text-gray-300">
+                                                <ShoppingBag size={40} className="mb-4 opacity-20" />
+                                                <p className="text-[11px] font-black uppercase tracking-widest">No products added to cart</p>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 

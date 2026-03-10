@@ -23,11 +23,10 @@ const statusBadge = (s) => {
 const genDefaultForm = () => ({
   customer_id: '',
   customer_name: '',
-  amount: '',
   status: 'Pending',
-  service: '',
   reference: `INV-${Math.floor(1000 + Math.random() * 9000)}`,
-  due_date: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+  due_date: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+  items: [{ id: crypto.randomUUID(), description: '', quantity: 1, unit_price: 0 }]
 });
 
 const Invoices = () => {
@@ -65,7 +64,7 @@ const Invoices = () => {
     try {
       const { data, error } = await supabase
         .from('invoices')
-        .select('*')
+        .select('*, invoice_items(*)')
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -129,13 +128,71 @@ const Invoices = () => {
     }
   };
 
+  const addFormItem = () => {
+    setFormData(prev => ({
+      ...prev,
+      items: [...prev.items, { id: crypto.randomUUID(), description: '', quantity: 1, unit_price: 0 }]
+    }));
+  };
+
+  const removeFormItem = (id) => {
+    setFormData(prev => ({
+      ...prev,
+      items: prev.items.length > 1 ? prev.items.filter(item => item.id !== id) : prev.items
+    }));
+  };
+
+  const handleItemChange = (id, field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      items: prev.items.map(item =>
+        item.id === id ? { ...item, [field]: value } : item
+      )
+    }));
+  };
+
+  const calculateTotal = (items) => {
+    return items.reduce((sum, item) => sum + (item.quantity * (parseFloat(item.unit_price) || 0)), 0);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormLoading(true);
+    const totalAmount = calculateTotal(formData.items);
+
     try {
-      const { error } = await supabase.from('invoices').insert([formData]);
-      if (error) throw error;
-      showAlert('Success', 'Invoice created successfully');
+      // 1. Create Invoice
+      const { data: invoice, error: invError } = await supabase
+        .from('invoices')
+        .insert([{
+          customer_id: formData.customer_id,
+          customer_name: formData.customer_name,
+          amount: totalAmount,
+          status: formData.status,
+          reference: formData.reference,
+          due_date: formData.due_date,
+          service: formData.items[0].description // Primary service for legacy views
+        }])
+        .select()
+        .single();
+
+      if (invError) throw invError;
+
+      // 2. Create Invoice Items
+      const invoiceItems = formData.items.map(it => ({
+        invoice_id: invoice.id,
+        item_description: it.description,
+        quantity: parseInt(it.quantity) || 1,
+        unit_price: parseFloat(it.unit_price) || 0
+      }));
+
+      const { error: itemsError } = await supabase
+        .from('invoice_items')
+        .insert(invoiceItems);
+
+      if (itemsError) throw itemsError;
+
+      showAlert('Success', 'Multi-item invoice generated successfully');
       setShowModal(false);
       setFormData(genDefaultForm());
       fetchInvoices();
@@ -513,7 +570,6 @@ Due Date  : ${formatDate(invoice.due_date)}
 
             {/* Detail grid */}
             <div className="grid grid-cols-2 gap-3">
-
               <div className="bg-gray-50 rounded-xl p-3 border border-gray-100">
                 <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
                   <User size={10} className="mr-1" /> Customer
@@ -523,18 +579,51 @@ Due Date  : ${formatDate(invoice.due_date)}
 
               <div className="bg-gray-50 rounded-xl p-3 border border-gray-100">
                 <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
-                  <CreditCard size={10} className="mr-1" /> Amount
+                  <CreditCard size={10} className="mr-1" /> Total Amount
                 </div>
-                <p className="text-lg font-black text-gray-900">
-                  Rs {Number(viewingInvoice.amount || 0).toFixed(2)}
+                <p className="text-lg font-black text-gray-900 text-brand-red">
+                  MUR {Number(viewingInvoice.amount || 0).toFixed(2)}
                 </p>
               </div>
 
-              <div className="bg-gray-50 rounded-xl p-3 border border-gray-100 col-span-2">
-                <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
-                  <FileText size={10} className="mr-1" /> Service / Description
+              {/* Line Items Breakdown */}
+              <div className="bg-white rounded-2xl p-5 border border-gray-100 col-span-2 shadow-sm">
+                <div className="flex items-center text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">
+                  <Hash size={12} className="mr-2" /> Line Item Specification
                 </div>
-                <p className="text-sm font-semibold text-gray-800">{viewingInvoice.service || '—'}</p>
+                <div className="space-y-3">
+                  {viewingInvoice.invoice_items && viewingInvoice.invoice_items.length > 0 ? (
+                    viewingInvoice.invoice_items.map((it, idx) => (
+                      <div key={it.id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+                        <div className="flex items-center gap-3">
+                          <div className="w-6 h-6 rounded bg-gray-50 flex items-center justify-center text-[10px] font-black text-gray-400">
+                            {idx + 1}
+                          </div>
+                          <div>
+                            <p className="text-xs font-black text-gray-900">{it.item_description}</p>
+                            <p className="text-[10px] text-gray-400">Qty: {it.quantity} x MUR {Number(it.unit_price).toFixed(2)}</p>
+                          </div>
+                        </div>
+                        <p className="text-xs font-black text-gray-900">MUR {Number(it.amount).toFixed(2)}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="py-2 border-b border-gray-50 last:border-0">
+                      <div className="flex items-center gap-3">
+                        <div className="w-6 h-6 rounded bg-gray-50 flex items-center justify-center text-[10px] font-black text-gray-400">
+                          1
+                        </div>
+                        <div>
+                          <p className="text-xs font-black text-gray-900">{viewingInvoice.service}</p>
+                          <p className="text-[10px] text-gray-400">Standard Service Provisioning</p>
+                        </div>
+                        <div className="ml-auto">
+                          <p className="text-xs font-black text-gray-900">MUR {Number(viewingInvoice.amount).toFixed(2)}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="bg-gray-50 rounded-xl p-3 border border-gray-100">
@@ -546,14 +635,7 @@ Due Date  : ${formatDate(invoice.due_date)}
 
               <div className="bg-gray-50 rounded-xl p-3 border border-gray-100">
                 <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
-                  <Hash size={10} className="mr-1" /> Reference
-                </div>
-                <p className="text-xs font-mono text-gray-700">{viewingInvoice.reference}</p>
-              </div>
-
-              <div className="bg-gray-50 rounded-xl p-3 border border-gray-100 col-span-2">
-                <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
-                  <Clock size={10} className="mr-1" /> Created
+                  <Clock size={10} className="mr-1" /> Issuance Date
                 </div>
                 <p className="text-xs text-gray-500">
                   {viewingInvoice.created_at ? new Date(viewingInvoice.created_at).toLocaleString() : '—'}
@@ -721,7 +803,7 @@ Due Date  : ${formatDate(invoice.due_date)}
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Customer</label>
+            <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Customer Selection</label>
             <select
               name="customer_id"
               required
@@ -729,53 +811,83 @@ Due Date  : ${formatDate(invoice.due_date)}
               value={formData.customer_id}
               onChange={handleInputChange}
             >
-              <option value="">Select a customer...</option>
+              <option value="">Select identity...</option>
               {customers.map(c => (
                 <option key={c.id} value={c.id}>{c.first_name} {c.last_name}</option>
               ))}
             </select>
           </div>
 
-          <div>
-            <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Service / Description</label>
-            <input
-              type="text"
-              name="service"
-              required
-              placeholder="e.g. VIP Lounge Access + Airport Pickup"
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
-              value={formData.service}
-              onChange={handleInputChange}
-            />
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest">Financial Line Items</label>
+              <button
+                type="button"
+                onClick={addFormItem}
+                className="text-brand-red text-xs font-black flex items-center gap-1 uppercase tracking-tighter hover:opacity-80 transition-opacity"
+              >
+                <Plus size={14} /> Add Service
+              </button>
+            </div>
+
+            <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+              {formData.items.map((item, index) => (
+                <div key={item.id} className="p-4 bg-gray-50 rounded-2xl border border-gray-100 relative animate-in fade-in slide-in-from-top-2 duration-300">
+                  <div className="grid grid-cols-12 gap-3 items-end">
+                    <div className="col-span-6">
+                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Service Description</label>
+                      <input
+                        type="text"
+                        required
+                        className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-brand-red outline-none"
+                        value={item.description}
+                        onChange={(e) => handleItemChange(item.id, 'description', e.target.value)}
+                        placeholder="e.g. Flight Booking"
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Qty</label>
+                      <input
+                        type="number"
+                        required
+                        min="1"
+                        className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-brand-red outline-none"
+                        value={item.quantity}
+                        onChange={(e) => handleItemChange(item.id, 'quantity', e.target.value)}
+                      />
+                    </div>
+                    <div className="col-span-3">
+                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Unit Price</label>
+                      <input
+                        type="number"
+                        required
+                        step="0.01"
+                        className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-brand-red outline-none"
+                        value={item.unit_price}
+                        onChange={(e) => handleItemChange(item.id, 'unit_price', e.target.value)}
+                      />
+                    </div>
+                    <div className="col-span-1 flex justify-center pb-2">
+                      <button
+                        type="button"
+                        onClick={() => removeFormItem(item.id)}
+                        disabled={formData.items.length === 1}
+                        className="text-gray-300 hover:text-brand-red disabled:opacity-30 transition-colors"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Amount (Rs)</label>
-              <input
-                type="number"
-                name="amount"
-                required
-                step="0.01"
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold"
-                value={formData.amount}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div>
-              <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Status</label>
-              <select
-                name="status"
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all appearance-none font-bold text-sm text-gray-700"
-                value={formData.status}
-                onChange={handleInputChange}
-              >
-                <option value="Pending">Pending</option>
-                <option value="Paid">Paid</option>
-                <option value="Overdue">Overdue</option>
-                <option value="Cancelled">Cancelled</option>
-              </select>
-            </div>
+          <div className="p-4 bg-brand-red/5 rounded-2xl border border-brand-red/10 flex items-center justify-between">
+            <span className="text-[10px] font-black text-brand-red uppercase tracking-widest leading-none">Total Valuation</span>
+            <span className="text-xl font-black text-brand-red tracking-tight leading-none">
+              MUR {calculateTotal(formData.items).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+            </span>
           </div>
 
           <div className="pt-4 flex justify-end gap-3">

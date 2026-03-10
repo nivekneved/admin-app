@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
 import { Package, Info, Loader2, RefreshCw, Plus, Search, Trash2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import Modal from '../components/Modal';
 import { showAlert, showConfirm } from '../utils/swal';
 
 const Orders = () => {
@@ -12,25 +11,11 @@ const Orders = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [ordersPerPage] = useState(8);
+  const [ordersPerPage] = useState(10);
   const [expandedOrderId, setExpandedOrderId] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [customers, setCustomers] = useState([]);
-  const [formLoading, setFormLoading] = useState(false);
-
-  const [formData, setFormData] = useState({
-    customer_id: '',
-    customer_name: '',
-    amount: 0,
-    status: 'Pending',
-    payment_method: 'Credit Card',
-    items: [],
-    total_items: 0
-  });
 
   useEffect(() => {
     fetchOrders();
-    fetchCustomers();
   }, []);
 
   const fetchOrders = async () => {
@@ -38,7 +23,16 @@ const Orders = () => {
     try {
       const { data, error } = await supabase
         .from('orders')
-        .select('*')
+        .select(`
+          *,
+          order_items (
+            id,
+            product_name,
+            quantity,
+            unit_price,
+            total_price
+          )
+        `)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -55,46 +49,6 @@ const Orders = () => {
       showAlert('Error', 'Failed to load orders', 'error');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchCustomers = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('customers')
-        .select('id, first_name, last_name')
-        .order('first_name');
-      if (!error) setCustomers(data || []);
-    } catch (error) {
-      console.error('Error loading customers:', error);
-    }
-  };
-
-  // Filter orders based on search term
-  const filteredOrders = orders.filter(order =>
-    (order.customer_name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    order.id?.toString().includes(searchTerm) ||
-    (order.payment_method?.toLowerCase() || '').includes(searchTerm.toLowerCase())
-  );
-
-  // Pagination
-  const indexOfLastOrder = currentPage * ordersPerPage;
-  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
-  const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
-  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-
-    if (name === 'customer_id') {
-      const customer = customers.find(c => c.id === value);
-      setFormData(prev => ({
-        ...prev,
-        customer_id: value,
-        customer_name: customer ? `${customer.first_name} ${customer.last_name}` : ''
-      }));
-    } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
 
@@ -122,45 +76,8 @@ const Orders = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setFormLoading(true);
-
-    try {
-      const { error } = await supabase
-        .from('orders')
-        .insert([formData]);
-
-      if (error) throw error;
-
-      showAlert('Success', 'Order created successfully');
-      closeModal();
-      fetchOrders();
-    } catch (error) {
-      showAlert('Error', error.message || 'Error creating order', 'error');
-    } finally {
-      setFormLoading(false);
-    }
-  };
-
-  const openCreateModal = () => {
-    setFormData({
-      customer_id: '',
-      customer_name: '',
-      amount: 0,
-      status: 'Pending',
-      payment_method: 'Credit Card',
-      items: [],
-      total_items: 0
-    });
-    setShowModal(true);
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-  };
-
   const formatDate = (dateString) => {
+    if (!dateString) return '—';
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
@@ -168,6 +85,24 @@ const Orders = () => {
   const toggleExpand = (orderId) => {
     setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
   };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
+
+  // Filter orders based on search term
+  const filteredOrders = orders.filter(order =>
+    (order.customer_name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    order.id?.toString().includes(searchTerm) ||
+    (order.payment_method?.toLowerCase() || '').includes(searchTerm.toLowerCase())
+  );
+
+  // Pagination
+  const indexOfLastOrder = currentPage * ordersPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
+  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
 
   return (
     <div>
@@ -206,7 +141,7 @@ const Orders = () => {
                   placeholder="Intercept order streams…"
                   className="pl-9 pr-9 py-2.5 w-full border border-gray-100 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={handleSearchChange}
                 />
               </div>
               <span className="text-[10px] text-gray-400 font-black uppercase tracking-widest">{filteredOrders.length} Global Orders</span>
@@ -290,11 +225,51 @@ const Orders = () => {
 
                       {expandedOrderId === order.id && (
                         <tr>
-                          <td colSpan="7" className="px-6 py-4 bg-gray-50/50">
-                            <div className="text-sm text-gray-700">
-                              <h4 className="font-bold text-gray-500 uppercase text-[10px] tracking-wider mb-2">Order Context:</h4>
-                              <p><span className="font-medium">Payment:</span> {order.payment_method}</p>
-                              <p className="mt-1"><span className="font-medium">Full Identifier:</span> <span className="font-mono text-[10px]">{order.id}</span></p>
+                          <td colSpan="7" className="px-8 py-6 bg-gray-50/50">
+                            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+                              <div className="flex items-center justify-between mb-4">
+                                <h4 className="font-black text-gray-400 uppercase text-[10px] tracking-widest flex items-center gap-2">
+                                  <Package size={14} /> Itemized Manifest
+                                </h4>
+                                <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                  Payment Method: {order.payment_method}
+                                </div>
+                              </div>
+
+                              <div className="space-y-3">
+                                {order.order_items && order.order_items.length > 0 ? (
+                                  order.order_items.map((item, idx) => (
+                                    <div key={item.id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0 border-dashed">
+                                      <div className="flex items-center gap-3">
+                                        <div className="w-6 h-6 rounded-lg bg-gray-50 flex items-center justify-center text-[10px] font-black text-gray-400">
+                                          {idx + 1}
+                                        </div>
+                                        <div>
+                                          <p className="text-sm font-black text-gray-900 leading-none mb-1">{item.product_name}</p>
+                                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Qty: {item.quantity} × Rs {Number(item.unit_price).toLocaleString()}</p>
+                                        </div>
+                                      </div>
+                                      <div className="text-sm font-black text-gray-900">
+                                        Rs {Number(item.total_price).toLocaleString()}
+                                      </div>
+                                    </div>
+                                  ))
+                                ) : (
+                                  <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest italic py-4 text-center bg-gray-50/50 rounded-xl border border-dashed border-gray-200">
+                                    No itemized data available for this legacy transactional record.
+                                  </div>
+                                )}
+                              </div>
+
+                              <div className="mt-6 pt-4 border-t border-gray-50 flex justify-between items-center text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                <div className="flex items-center gap-4">
+                                  <span>System Trace: <span className="font-mono text-gray-300 ml-1">{order.id}</span></span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="opacity-50">Total Gross:</span>
+                                  <span className="text-brand-red text-base">Rs {Number(order.amount).toLocaleString()}</span>
+                                </div>
+                              </div>
                             </div>
                           </td>
                         </tr>
@@ -312,12 +287,13 @@ const Orders = () => {
                 <p className="text-gray-500 max-w-xs mt-2 mx-auto">
                   Manage your sales and shipments from here. Link them to your global customer base.
                 </p>
-                <Button
-                  onClick={openCreateModal}
-                  className="mt-6 bg-brand-red text-white"
-                >
-                  Create Your First Order
-                </Button>
+                <Link to="/orders/create">
+                  <Button
+                    className="mt-6 bg-brand-red text-white"
+                  >
+                    Create Your First Order
+                  </Button>
+                </Link>
               </div>
             )}
           </div>
@@ -348,109 +324,6 @@ const Orders = () => {
           )}
         </CardContent>
       </Card>
-
-      {/* Order Modal */}
-      <Modal
-        isOpen={showModal}
-        onClose={closeModal}
-        title="Create New Order"
-      >
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Customer</label>
-            <select
-              name="customer_id"
-              required
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all appearance-none font-bold text-sm text-gray-700"
-              value={formData.customer_id}
-              onChange={handleInputChange}
-            >
-              <option value="">Select a customer...</option>
-              {customers.map(customer => (
-                <option key={customer.id} value={customer.id}>
-                  {customer.first_name} {customer.last_name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Total Amount (Rs)</label>
-              <input
-                type="number"
-                name="amount"
-                required
-                step="0.01"
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold"
-                value={formData.amount}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div>
-              <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Total Items</label>
-              <input
-                type="number"
-                name="total_items"
-                required
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
-                value={formData.total_items}
-                onChange={handleInputChange}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Status</label>
-              <select
-                name="status"
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all appearance-none font-bold text-sm text-gray-700"
-                value={formData.status}
-                onChange={handleInputChange}
-              >
-                <option value="Pending">Pending</option>
-                <option value="Processing">Processing</option>
-                <option value="Shipped">Shipped</option>
-                <option value="Completed">Completed</option>
-                <option value="Cancelled">Cancelled</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Payment Method</label>
-              <select
-                name="payment_method"
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all appearance-none font-bold text-sm text-gray-700"
-                value={formData.payment_method}
-                onChange={handleInputChange}
-              >
-                <option value="Credit Card">Credit Card</option>
-                <option value="PayPal">PayPal</option>
-                <option value="Bank Transfer">Bank Transfer</option>
-                <option value="Cash">Cash on Delivery</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="pt-4 flex justify-end gap-3">
-            <button
-              type="button"
-              onClick={closeModal}
-              className="px-6 py-2.5 text-sm font-bold text-gray-500 hover:bg-gray-50 rounded-xl transition-all"
-            >
-              Cancel
-            </button>
-            <Button
-              type="submit"
-              disabled={formLoading}
-              className="bg-brand-red text-white px-8 py-2.5 rounded-xl shadow-lg shadow-red-100 flex items-center font-bold"
-            >
-              {formLoading && <Loader2 className="animate-spin mr-2" size={16} />}
-              Place Order
-            </Button>
-          </div>
-        </form>
-      </Modal>
     </div>
   );
 };

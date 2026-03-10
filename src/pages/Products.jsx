@@ -138,7 +138,7 @@ const Products = () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from('products').select('*').order('created_at', { ascending: false });
+        .from('product_with_categories').select('*').order('created_at', { ascending: false });
       if (error) {
         if (error.message.includes('relation "public.products" does not exist')) setProducts([]);
         else throw error;
@@ -175,11 +175,13 @@ const Products = () => {
       const q = searchTerm.toLowerCase();
       list = list.filter(p =>
         (p.name || '').toLowerCase().includes(q) ||
-        (p.category || '').toLowerCase().includes(q) ||
+        (p.categories_list || []).some(cat => (cat.name || '').toLowerCase().includes(q)) ||
         (p.description || '').toLowerCase().includes(q)
       );
     }
-    if (filterCategory !== 'All') list = list.filter(p => p.category === filterCategory);
+    if (filterCategory !== 'All') {
+      list = list.filter(p => (p.categories_list || []).some(cat => cat.name === filterCategory));
+    }
     if (filterStatus !== 'All') list = list.filter(p => p.status === filterStatus);
 
     const [field, dir] = sortBy.split(':');
@@ -285,7 +287,17 @@ const Products = () => {
                           <Thumb src={p.image_url} size="md" />
                           <div>
                             <p className="text-sm font-black text-gray-900 leading-tight mb-1">{p.name}</p>
-                            <p className="text-[10px] font-black uppercase tracking-tighter text-gray-400">Registry: {p.category}</p>
+                            <div className="flex flex-wrap gap-1">
+                              {(p.categories_list && p.categories_list.length > 0) ? (
+                                p.categories_list.map(cat => (
+                                  <span key={cat.id} className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-red-50 text-brand-red border border-red-100">
+                                    {cat.name}
+                                  </span>
+                                ))
+                              ) : (
+                                <span className="text-[9px] font-bold text-gray-400">Unassigned</span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </td>
@@ -321,7 +333,17 @@ const Products = () => {
                   </div>
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-brand-red">{p.category}</span>
+                      <div className="flex flex-wrap gap-1">
+                        {(p.categories_list && p.categories_list.length > 0) ? (
+                          p.categories_list.slice(0, 2).map(cat => (
+                            <span key={cat.id} className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-red-50 text-brand-red border border-red-100">
+                              {cat.name}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-[9px] font-bold text-gray-400">Unassigned</span>
+                        )}
+                      </div>
                       <div className={`w-2 h-2 rounded-full ${p.status === 'In Stock' ? 'bg-green-500' : p.status === 'Low Stock' ? 'bg-amber-500' : 'bg-red-500'}`}></div>
                     </div>
                     <h3 className="text-sm font-black text-gray-900 leading-snug mb-4 line-clamp-2 h-10">{p.name}</h3>

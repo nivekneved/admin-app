@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/Card';
 import { Button } from '../components/Button';
-import { ArrowLeft, Calendar, Users, MapPin, Loader2, Info, CheckCircle2, Coffee, Star, Plane, Sun, Clock, DollarSign } from 'lucide-react';
+import { ArrowLeft, Calendar, Users, MapPin, Loader2, Info, CheckCircle2, Coffee, Star, Plane, Sun, Clock, PlusCircle, Trash2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { showAlert } from '../utils/swal';
 
@@ -11,15 +11,17 @@ const CreateBooking = () => {
     const [formLoading, setFormLoading] = useState(false);
     const [customers, setCustomers] = useState([]);
     const [products, setProducts] = useState([]);
-    const [isManualEntry, setIsManualEntry] = useState(false);
     const [formData, setFormData] = useState({
         customer_id: '',
-        activity_type: 'Lounge',
-        activity_name: '',
         start_date: '',
-        amount: '',
-        status: 'Pending'
+        status: 'Pending',
+        pax_adults: 1,
+        pax_children: 0
     });
+
+    const [items, setItems] = useState([
+        { id: crypto.randomUUID(), type: 'Lounge', name: '', amount: '', isManual: false }
+    ]);
 
     useEffect(() => {
         fetchCustomers();
@@ -33,7 +35,7 @@ const CreateBooking = () => {
                 .select('id, name, category, price')
                 .order('name');
             if (!error) setProducts(data || []);
-        } catch (e) {
+        } catch (error) {
             console.error('Error loading products for bookings');
         }
     };
@@ -45,7 +47,7 @@ const CreateBooking = () => {
                 .select('id, first_name, last_name, email')
                 .order('first_name');
             if (!error) setCustomers(data || []);
-        } catch (e) {
+        } catch (error) {
             console.error('Error loading customers for bookings');
         }
     };
@@ -53,22 +55,54 @@ const CreateBooking = () => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+    };
 
-        // Auto-fill price when activity/destination is selected
-        if (name === 'activity_name' && value !== 'Other') {
-            const selectedProduct = products.find(p => p.name === value);
-            if (selectedProduct) {
-                setFormData(prev => ({ ...prev, amount: selectedProduct.price }));
+    const addItem = () => {
+        setItems([...items, { id: crypto.randomUUID(), type: 'Hotel', name: '', amount: '', isManual: false }]);
+    };
+
+    const removeItem = (id) => {
+        if (items.length > 1) {
+            setItems(items.filter(item => item.id !== id));
+        }
+    };
+
+    const handleItemChange = (id, field, value) => {
+        setItems(prev => prev.map(item => {
+            if (item.id !== id) return item;
+
+            let updated = { ...item, [field]: value };
+
+            if (field === 'type') {
+                updated.name = '';
+                updated.amount = '';
+                updated.isManual = false;
             }
-        }
 
-        if (name === 'activity_name' && value === 'Other') {
-            setIsManualEntry(true);
-            setFormData(prev => ({ ...prev, activity_name: '' }));
-        } else if (name === 'activity_type') {
-            setIsManualEntry(false);
-            setFormData(prev => ({ ...prev, activity_name: '', amount: '' }));
-        }
+            if (field === 'name') {
+                if (value === 'Other') {
+                    updated.isManual = true;
+                    updated.name = '';
+                } else {
+                    const product = products.find(p => p.name === value);
+                    if (product) {
+                        updated.amount = product.price;
+                    }
+                }
+            }
+
+            return updated;
+        }));
+    };
+
+    const toggleManual = (id) => {
+        setItems(prev => prev.map(item =>
+            item.id === id ? { ...item, isManual: !item.isManual, name: '' } : item
+        ));
+    };
+
+    const calculateTotal = () => {
+        return items.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
     };
 
     const handleSubmit = async (e) => {
@@ -81,23 +115,54 @@ const CreateBooking = () => {
             return;
         }
 
+        const totalAmount = calculateTotal();
+        if (totalAmount <= 0) {
+            showAlert('Invalid Total', 'The booking total must be greater than zero.', 'error');
+            setFormLoading(false);
+            return;
+        }
+
         try {
-            const { error } = await supabase
+            // 1. Insert Master Booking
+            const { data: booking, error: bError } = await supabase
                 .from('bookings')
                 .insert([{
-                    ...formData,
-                    amount: parseFloat(formData.amount) || 0,
+                    customer_id: formData.customer_id,
+                    start_date: formData.start_date,
+                    status: formData.status,
+                    pax_adults: formData.pax_adults,
+                    pax_children: formData.pax_children,
+                    amount: totalAmount,
+                    // We keep these for backwards compatibility or legacy views
+                    activity_type: items[0].type,
+                    activity_name: items.length > 1 ? `${items[0].name} (+${items.length - 1} more)` : items[0].name,
                     created_at: new Date().toISOString(),
                     updated_at: new Date().toISOString()
-                }]);
+                }])
+                .select()
+                .single();
 
-            if (error) throw error;
+            if (bError) throw bError;
 
-            showAlert('Success', 'Travel itinerary has been reserved and synchronized.', 'success');
+            // 2. Insert Booking Items
+            const itemInserts = items.map(it => ({
+                booking_id: booking.id,
+                product_name: it.name,
+                product_category: it.type,
+                amount: parseFloat(it.amount) || 0
+            }));
+
+            const { error: iError } = await supabase
+                .from('booking_items')
+                .insert(itemInserts);
+
+            if (iError) throw iError;
+
+            showAlert('Success', 'Multi-itinerary booking finalized and synced.', 'success');
             navigate('/bookings');
         } catch (error) {
             console.error('Create Booking Error:', error);
-            showAlert('Reservation Failed', error.message || 'Could not finalize booking entry', 'error');
+            showAlert('Reservation Failed', error.message || 'Could not finalize multi-product booking', 'error');
         } finally {
             setFormLoading(false);
         }
@@ -138,9 +203,9 @@ const CreateBooking = () => {
                         <CardHeader className="pt-10 px-10">
                             <div className="flex items-center gap-4">
                                 <div className="p-4 bg-red-50 text-brand-red rounded-3xl">
-                                    {getActivityIcon(formData.activity_type)}
+                                    <Plane size={24} />
                                 </div>
-                                <CardTitle className="text-xl font-black text-gray-900 uppercase tracking-tight">Traveler & Service Matrix</CardTitle>
+                                <CardTitle className="text-xl font-black text-gray-900 uppercase tracking-tight">Multi-Service Itinerary Matrix</CardTitle>
                             </div>
                         </CardHeader>
                         <CardContent className="p-10">
@@ -168,94 +233,7 @@ const CreateBooking = () => {
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                    <div className="space-y-3">
-                                        <label className="block text-[11px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">Specialized Activity</label>
-                                        <div className="relative group">
-                                            <select
-                                                name="activity_type"
-                                                className="w-full px-6 py-4 bg-gray-50/50 border-2 border-transparent focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 appearance-none"
-                                                value={formData.activity_type}
-                                                onChange={handleInputChange}
-                                            >
-                                                <option value="Lounge">Lounge Access</option>
-                                                <option value="Hotel">Hotel / Resort</option>
-                                                <option value="Activity">Local Activity</option>
-                                                <option value="Tour">Guided Tour</option>
-                                                <option value="Cruise">Ocean Cruise</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-3">
-                                        <label className="block text-[11px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">Itinerary Status</label>
-                                        <select
-                                            name="status"
-                                            className="w-full px-6 py-4 bg-gray-50/50 border-2 border-transparent focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 appearance-none"
-                                            value={formData.status}
-                                            onChange={handleInputChange}
-                                        >
-                                            <option value="Pending">Pending Confirmation</option>
-                                            <option value="Confirmed">Confirmed / Active</option>
-                                            <option value="Cancelled">Cancelled / Void</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-3">
-                                    <label className="block text-[11px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">Destination / Building Name</label>
-                                    <div className="relative group">
-                                        <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 transition-colors group-focus-within:text-brand-red">
-                                            <MapPin size={18} />
-                                        </span>
-                                        {isManualEntry ? (
-                                            <div className="flex gap-2">
-                                                <input
-                                                    type="text"
-                                                    name="activity_name"
-                                                    required
-                                                    className="w-full pl-14 pr-6 py-4 bg-gray-50/50 border-2 border-transparent focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 placeholder:text-gray-300"
-                                                    value={formData.activity_name}
-                                                    onChange={handleInputChange}
-                                                    placeholder="Specify custom destination..."
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setIsManualEntry(false)}
-                                                    className="px-6 py-2 bg-gray-100 hover:bg-gray-200 text-gray-500 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all"
-                                                >
-                                                    List
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <select
-                                                name="activity_name"
-                                                required
-                                                className="w-full pl-14 pr-10 py-4 bg-gray-50/50 border-2 border-transparent focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 appearance-none"
-                                                value={formData.activity_name}
-                                                onChange={handleInputChange}
-                                            >
-                                                <option value="">Select destination for {formData.activity_type}...</option>
-                                                {products
-                                                    .filter(p => {
-                                                        if (formData.activity_type === 'Hotel') return p.category === 'Hotels';
-                                                        if (formData.activity_type === 'Activity') return p.category === 'Activities';
-                                                        if (formData.activity_type === 'Tour') return p.category === 'Group Tours';
-                                                        if (formData.activity_type === 'Cruise') return p.category === 'Cruises';
-                                                        if (formData.activity_type === 'Lounge') return p.name.toLowerCase().includes('lounge');
-                                                        return true;
-                                                    })
-                                                    .map(p => (
-                                                        <option key={p.id} value={p.name}>{p.name} (MUR {Number(p.price).toLocaleString()})</option>
-                                                    ))
-                                                }
-                                                <option value="Other">+ Other / Manual Entry</option>
-                                            </select>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     <div className="space-y-3">
                                         <label className="block text-[11px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">Execution Date</label>
                                         <div className="relative group">
@@ -274,23 +252,165 @@ const CreateBooking = () => {
                                     </div>
 
                                     <div className="space-y-3">
-                                        <label className="block text-[11px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">Booking Revenue (MUR)</label>
-                                        <div className="relative group">
-                                            <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 transition-colors group-focus-within:text-brand-red">
-                                                <DollarSign size={18} />
-                                            </span>
-                                            <input
-                                                type="number"
-                                                name="amount"
-                                                required
-                                                step="0.01"
-                                                className="w-full pl-14 pr-6 py-4 bg-gray-50/50 border-2 border-transparent focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 font-mono"
-                                                value={formData.amount}
-                                                onChange={handleInputChange}
-                                                placeholder="0.00"
-                                            />
-                                        </div>
+                                        <label className="block text-[11px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">Adults</label>
+                                        <input
+                                            type="number"
+                                            name="pax_adults"
+                                            min="1"
+                                            className="w-full px-6 py-4 bg-gray-50/50 border-2 border-transparent focus:border-brand-red/10 rounded-3xl focus:outline-none transition-all font-bold text-gray-700"
+                                            value={formData.pax_adults}
+                                            onChange={handleInputChange}
+                                        />
                                     </div>
+
+                                    <div className="space-y-3">
+                                        <label className="block text-[11px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">Children</label>
+                                        <input
+                                            type="number"
+                                            name="pax_children"
+                                            min="0"
+                                            className="w-full px-6 py-4 bg-gray-50/50 border-2 border-transparent focus:border-brand-red/10 rounded-3xl focus:outline-none transition-all font-bold text-gray-700"
+                                            value={formData.pax_children}
+                                            onChange={handleInputChange}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="pt-8 border-t border-gray-100">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">Reserved Services</h3>
+                                        <Button
+                                            type="button"
+                                            onClick={addItem}
+                                            className="bg-gray-900 hover:bg-black text-white px-6 py-2 rounded-2xl flex items-center gap-2 text-[10px] font-black uppercase tracking-widest shadow-xl"
+                                        >
+                                            <PlusCircle size={14} /> Add Service
+                                        </Button>
+                                    </div>
+
+                                    <div className="space-y-6">
+                                        {items.map((item, index) => (
+                                            <div key={item.id} className="p-8 bg-gray-50/50 rounded-[2.5rem] border border-gray-100 relative group/item hover:bg-white hover:shadow-xl transition-all duration-500">
+                                                <div className="absolute -top-3 -left-3 w-8 h-8 bg-white border border-gray-100 rounded-full flex items-center justify-center text-[10px] font-black text-gray-400">
+                                                    {index + 1}
+                                                </div>
+
+                                                {items.length > 1 && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeItem(item.id)}
+                                                        className="absolute top-6 right-6 p-2 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                )}
+
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                                    <div className="space-y-3">
+                                                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Category</label>
+                                                        <select
+                                                            className="w-full px-6 py-3 bg-white border-2 border-gray-100 focus:border-brand-red/20 rounded-2xl focus:outline-none transition-all font-bold text-gray-700 appearance-none"
+                                                            value={item.type}
+                                                            onChange={(e) => handleItemChange(item.id, 'type', e.target.value)}
+                                                        >
+                                                            <option value="Lounge">Lounge Access</option>
+                                                            <option value="Hotel">Hotel / Resort</option>
+                                                            <option value="Activity">Local Activity</option>
+                                                            <option value="Tour">Guided Tour</option>
+                                                            <option value="Cruise">Ocean Cruise</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div className="space-y-3">
+                                                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Destination</label>
+                                                        <div className="flex gap-2">
+                                                            {item.isManual ? (
+                                                                <input
+                                                                    type="text"
+                                                                    required
+                                                                    className="w-full px-6 py-3 bg-white border-2 border-gray-100 focus:border-brand-red/20 rounded-2xl focus:outline-none transition-all font-bold text-gray-700"
+                                                                    value={item.name}
+                                                                    onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
+                                                                    placeholder="Custom destination..."
+                                                                />
+                                                            ) : (
+                                                                <select
+                                                                    required
+                                                                    className="w-full px-6 py-3 bg-white border-2 border-gray-100 focus:border-brand-red/20 rounded-2xl focus:outline-none transition-all font-bold text-gray-700 appearance-none"
+                                                                    value={item.name}
+                                                                    onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
+                                                                >
+                                                                    <option value="">Select product...</option>
+                                                                    {products
+                                                                        .filter(p => {
+                                                                            if (item.type === 'Hotel') return p.category === 'Hotels';
+                                                                            if (item.type === 'Activity') return p.category === 'Activities';
+                                                                            if (item.type === 'Tour') return p.category === 'Group Tours';
+                                                                            if (item.type === 'Cruise') return p.category === 'Cruises';
+                                                                            if (item.type === 'Lounge') return p.name.toLowerCase().includes('lounge');
+                                                                            return true;
+                                                                        })
+                                                                        .map(p => (
+                                                                            <option key={p.id} value={p.name}>{p.name}</option>
+                                                                        ))
+                                                                    }
+                                                                    <option value="Other">+ Manual Entry</option>
+                                                                </select>
+                                                            )}
+                                                            {item.isManual && (
+                                                                <button type="button" onClick={() => toggleManual(item.id)} className="px-3 text-xs font-black text-gray-400 underline">List</button>
+                                                            )}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="space-y-3">
+                                                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Price (MUR)</label>
+                                                        <div className="relative">
+                                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 font-bold">MUR</span>
+                                                            <input
+                                                                type="number"
+                                                                required
+                                                                className="w-full pl-14 pr-6 py-3 bg-white border-2 border-gray-100 focus:border-brand-red/20 rounded-2xl focus:outline-none transition-all font-bold text-gray-700"
+                                                                value={item.amount}
+                                                                onChange={(e) => handleItemChange(item.id, 'amount', e.target.value)}
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex items-end pb-1">
+                                                        <div className="w-full p-4 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-between">
+                                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Service Item Total</span>
+                                                            <span className="text-sm font-black text-gray-900">MUR {Number(item.amount || 0).toLocaleString()}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="p-8 bg-red-50/50 rounded-[2.5rem] border-2 border-dashed border-red-100 flex items-center justify-between">
+                                    <div>
+                                        <h4 className="text-[10px] font-black text-brand-red uppercase tracking-widest mb-1">Total Booking Revenue</h4>
+                                        <p className="text-xs text-black/50 font-bold uppercase tracking-tight">Consolidated Multi-Service Net</p>
+                                    </div>
+                                    <div className="text-3xl font-black text-brand-red italic">
+                                        MUR {calculateTotal().toLocaleString()}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-3">
+                                    <label className="block text-[11px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">Itinerary Status</label>
+                                    <select
+                                        name="status"
+                                        className="w-full px-6 py-4 bg-gray-50/50 border-2 border-transparent focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 appearance-none"
+                                        value={formData.status}
+                                        onChange={handleInputChange}
+                                    >
+                                        <option value="Pending">Pending Confirmation</option>
+                                        <option value="Confirmed">Confirmed / Active</option>
+                                        <option value="Cancelled">Cancelled / Void</option>
+                                    </select>
                                 </div>
 
                                 <div className="pt-10 flex items-center justify-between border-t border-gray-50">

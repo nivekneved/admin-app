@@ -28,7 +28,7 @@ const CreateProduct = () => {
 
     const [formData, setFormData] = useState({
         name: '',
-        category: '',
+        category_ids: [],
         price: '',
         stock: '',
         status: 'In Stock',
@@ -55,16 +55,12 @@ const CreateProduct = () => {
         try {
             const { data, error } = await supabase
                 .from('categories')
-                .select('name')
+                .select('id, name')
                 .eq('is_active', true)
                 .order('display_order', { ascending: true });
 
             if (error) throw error;
-            if (data && data.length > 0) {
-                const names = data.map(c => c.name);
-                setCategories(names);
-                if (!isEdit) setFormData(prev => ({ ...prev, category: names[0] }));
-            }
+            setCategories(data || []);
         } catch (e) {
             console.error('Error fetching categories:', e);
         }
@@ -74,7 +70,7 @@ const CreateProduct = () => {
         try {
             const { data, error } = await supabase
                 .from('products')
-                .select('*')
+                .select('*, product_categories(category_id)')
                 .eq('id', id)
                 .single();
 
@@ -82,7 +78,7 @@ const CreateProduct = () => {
             if (data) {
                 setFormData({
                     name: data.name || '',
-                    category: data.category || '',
+                    category_ids: data.product_categories?.map(pc => pc.category_id) || [],
                     price: data.price || '',
                     stock: data.stock || '',
                     status: data.status || 'In Stock',
@@ -185,33 +181,78 @@ const CreateProduct = () => {
         });
     };
 
+    const handleCategoryToggle = (catId) => {
+        setFormData(prev => {
+            const current = prev.category_ids;
+            if (current.includes(catId)) {
+                return { ...prev, category_ids: current.filter(id => id !== catId) };
+            } else {
+                return { ...prev, category_ids: [...current, catId] };
+            }
+        });
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setFormLoading(true);
 
         try {
-            const payload = {
-                ...formData,
+            const productData = {
+                name: formData.name,
                 price: parseFloat(formData.price) || 0,
                 stock: parseInt(formData.stock) || 0,
+                status: formData.status,
+                description: formData.description,
+                image_url: formData.image_url,
+                room_types: formData.room_types,
                 updated_at: new Date().toISOString()
             };
+
+            // Maintain legacy 'category' string field with the first selected category name
+            if (formData.category_ids.length > 0) {
+                const firstCat = categories.find(c => c.id === formData.category_ids[0]);
+                if (firstCat) productData.category = firstCat.name;
+            }
+
+            let productId = id;
 
             if (isEdit) {
                 const { error } = await supabase
                     .from('products')
-                    .update(payload)
+                    .update(productData)
                     .eq('id', id);
                 if (error) throw error;
-                showAlert('Success', 'Product updated successfully.', 'success');
             } else {
-                const { error } = await supabase
+                const { data, error } = await supabase
                     .from('products')
-                    .insert([{ ...payload, created_at: new Date().toISOString() }]);
+                    .insert([{ ...productData, created_at: new Date().toISOString() }])
+                    .select()
+                    .single();
                 if (error) throw error;
-                showAlert('Success', 'Product listed successfully.', 'success');
+                productId = data.id;
             }
 
+            // Sync Many-to-Many Categories
+            // First clear existing
+            const { error: deleteError } = await supabase
+                .from('product_categories')
+                .delete()
+                .eq('product_id', productId);
+            if (deleteError) throw deleteError;
+
+            // Then insert new associations
+            if (formData.category_ids.length > 0) {
+                const associations = formData.category_ids.map(catId => ({
+                    product_id: productId,
+                    category_id: catId
+                }));
+                const { error: insertError } = await supabase
+                    .from('product_categories')
+                    .insert(associations);
+                if (insertError) throw insertError;
+            }
+
+            showAlert('Success', isEdit ? 'Product updated successfully.' : 'Product listed successfully.', 'success');
             navigate('/products');
         } catch (error) {
             console.error('Save Error:', error);
@@ -303,7 +344,7 @@ const CreateProduct = () => {
                                         )}
                                     </div>
                                     <div className={`absolute bottom-4 -right-2 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest shadow-lg border-2 border-white ${formData.status === 'In Stock' ? 'bg-green-500 text-white' :
-                                            formData.status === 'Low Stock' ? 'bg-amber-500 text-white' : 'bg-red-500 text-white'
+                                        formData.status === 'Low Stock' ? 'bg-amber-500 text-white' : 'bg-red-500 text-white'
                                         }`}>
                                         {formData.status}
                                     </div>
@@ -313,11 +354,22 @@ const CreateProduct = () => {
                                     <h2 className="text-3xl text-gray-900 tracking-tight truncate max-w-md">
                                         {formData.name || "Untitled Specification"}
                                     </h2>
-                                    <div className="flex items-center gap-3 mt-1">
-                                        <span className="px-2.5 py-1 text-[10px] uppercase tracking-widest rounded-lg bg-gray-50 text-gray-500 border border-gray-100">
-                                            {formData.category || "Unassigned"}
-                                        </span>
-                                        <span className="text-brand-red text-lg">
+                                    <div className="flex flex-wrap items-center gap-2 mt-2">
+                                        {formData.category_ids.length > 0 ? (
+                                            formData.category_ids.map(id => {
+                                                const cat = categories.find(c => c.id === id);
+                                                return cat ? (
+                                                    <span key={id} className="px-2.5 py-1 text-[9px] uppercase tracking-widest rounded-lg bg-red-50 text-brand-red border border-red-100">
+                                                        {cat.name}
+                                                    </span>
+                                                ) : null;
+                                            })
+                                        ) : (
+                                            <span className="px-2.5 py-1 text-[9px] uppercase tracking-widest rounded-lg bg-gray-50 text-gray-500 border border-gray-100">
+                                                Unassigned
+                                            </span>
+                                        )}
+                                        <span className="text-brand-red text-lg ml-2">
                                             MUR {parseFloat(formData.price || 0).toLocaleString()}
                                         </span>
                                     </div>
@@ -363,19 +415,28 @@ const CreateProduct = () => {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Service Category</label>
-                                        <select
-                                            name="category"
-                                            required
-                                            className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
-                                            value={formData.category}
-                                            onChange={handleInputChange}
-                                        >
-                                            <option value="" disabled>Select Category</option>
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Service Categories (Select Multiple)</label>
+                                        <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-4 bg-gray-50 border border-gray-100 rounded-2xl custom-scrollbar">
                                             {categories.map(cat => (
-                                                <option key={cat} value={cat}>{cat}</option>
+                                                <label key={cat.id} className="flex items-center gap-2 cursor-pointer group">
+                                                    <div className="relative flex items-center">
+                                                        <input
+                                                            type="checkbox"
+                                                            className="peer h-5 w-5 appearance-none border-2 border-gray-200 rounded-lg checked:bg-brand-red checked:border-brand-red transition-all cursor-pointer"
+                                                            checked={formData.category_ids.includes(cat.id)}
+                                                            onChange={() => handleCategoryToggle(cat.id)}
+                                                        />
+                                                        <Save size={10} className="absolute left-1.25 top-1.25 text-white opacity-0 peer-checked:opacity-100 pointer-events-none" />
+                                                    </div>
+                                                    <span className={`text-[11px] font-bold uppercase tracking-widest transition-colors ${formData.category_ids.includes(cat.id) ? 'text-brand-red' : 'text-gray-400 group-hover:text-gray-600'}`}>
+                                                        {cat.name}
+                                                    </span>
+                                                </label>
                                             ))}
-                                        </select>
+                                            {categories.length === 0 && (
+                                                <div className="col-span-2 text-[10px] text-gray-400 font-bold uppercase py-2 text-center">No active categories found</div>
+                                            )}
+                                        </div>
                                     </div>
                                     <div>
                                         <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Image URL / External Path</label>
@@ -408,7 +469,7 @@ const CreateProduct = () => {
                         </section>
 
                         {/* Section: Hotel/Room Type Specifications (Conditional) */}
-                        {formData.category === 'Hotels' && (
+                        {formData.category_ids.some(id => categories.find(c => c.id === id)?.name === 'Hotels') && (
                             <section className="bg-white p-8 rounded-3xl shadow-sm border border-gray-50 space-y-6">
                                 <div className="flex items-center justify-between mb-4">
                                     <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
@@ -457,8 +518,8 @@ const CreateProduct = () => {
                                                                 type="button"
                                                                 onClick={() => updateRoomType(idx, 'available', !rt.available)}
                                                                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all w-full md:w-auto ${rt.available
-                                                                        ? 'bg-green-50 border-green-100 text-green-600'
-                                                                        : 'bg-gray-100 border-gray-200 text-gray-400'
+                                                                    ? 'bg-green-50 border-green-100 text-green-600'
+                                                                    : 'bg-gray-100 border-gray-200 text-gray-400'
                                                                     }`}
                                                             >
                                                                 {rt.available ? <ToggleRight size={20} /> : <ToggleLeft size={20} />}
@@ -560,8 +621,8 @@ const CreateProduct = () => {
                                                 type="button"
                                                 onClick={() => setFormData(prev => ({ ...prev, status: s }))}
                                                 className={`px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${formData.status === s
-                                                        ? 'bg-brand-red text-white border-brand-red shadow-lg shadow-red-900/40'
-                                                        : 'bg-white/5 text-gray-400 border-white/5 hover:bg-white/10'
+                                                    ? 'bg-brand-red text-white border-brand-red shadow-lg shadow-red-900/40'
+                                                    : 'bg-white/5 text-gray-400 border-white/5 hover:bg-white/10'
                                                     }`}
                                             >
                                                 {s}
