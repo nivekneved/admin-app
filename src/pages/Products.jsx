@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-Tag, Loader2, RefreshCw, Plus, Search, Edit2, Trash2,
+import {
+  Tag, Loader2, RefreshCw, Plus, Search, Edit2, Trash2,
   LayoutGrid, List, ArrowUpDown, ArrowUp, ArrowDown, Package,
   ChevronDown
 } from 'lucide-react';
