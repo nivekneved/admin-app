@@ -21,6 +21,7 @@ import CreateOrder from './pages/CreateOrder';
 import CreateBooking from './pages/CreateBooking';
 import CreateInvoice from './pages/CreateInvoice';
 import Categories from './pages/Categories';
+import HeroSlider from './pages/HeroSlider';
 
 const queryClient = new QueryClient();
 
@@ -48,6 +49,7 @@ function App() {
                     <Route path="/products/create" element={<CreateProduct />} />
                     <Route path="/products/edit/:id" element={<CreateProduct />} />
                     <Route path="/categories" element={<Categories />} />
+                    <Route path="/hero-slider" element={<HeroSlider />} />
                     <Route path="/bookings" element={<Bookings />} />
                     <Route path="/bookings/create" element={<CreateBooking />} />
                     <Route path="/orders" element={<Orders />} />

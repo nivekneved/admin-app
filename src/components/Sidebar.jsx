@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Users, UserCheck, Package, ShoppingCart, Settings, LogOut, Home, Calendar, FileText, BarChart2, Layers, X } from 'lucide-react';
+import { Users, UserCheck, Package, ShoppingCart, Settings, LogOut, Home, Calendar, FileText, BarChart2, Layers, X, Layout } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { showAlert, showConfirm } from '../utils/swal';
 import logo from '../assets/logo.png';
@@ -73,6 +73,11 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       title: 'Invoices',
       path: '/invoices',
       icon: <FileText size={18} />
+    },
+    {
+      title: 'Hero Slider',
+      path: '/hero-slider',
+      icon: <Layout size={18} />
     },
     {
       title: 'Settings',
