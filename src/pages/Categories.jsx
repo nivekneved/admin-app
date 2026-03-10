@@ -344,55 +344,42 @@ const Categories = () => {
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="min-w-full divide-y divide-gray-50">
-                                <thead className="bg-gray-50/30">
+                                <thead className="bg-gray-50/50">
                                     <tr>
-                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Category</th>
-                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Slug</th>
-                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Description</th>
-                                        <th className="px-8 py-5 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">Display Order</th>
-                                        <th className="px-8 py-5 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">Visibility</th>
-                                        <th className="px-8 py-5 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
+                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Category Asset</th>
+                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Configuration</th>
+                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Lifecycle</th>
                                         <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-50">
                                     {processed.map((cat) => (
                                         <tr key={cat.id} className="hover:bg-gray-50/30 transition-colors">
-                                            {/* Name + icon */}
-                                            <td className="px-8 py-5">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="h-10 w-10 rounded-2xl bg-red-50/50 border border-red-100/50 flex items-center justify-center shrink-0">
+                                            {/* Category Asset (Name + Icon + Slug) */}
+                                            <td className="px-8 py-5 whitespace-nowrap">
+                                                <div className="flex items-center">
+                                                    <div className="w-10 h-10 rounded-2xl bg-red-50/50 border border-red-100/50 flex items-center justify-center text-brand-red mr-4 shrink-0 shadow-sm">
                                                         {getCategoryIcon(cat.name)}
                                                     </div>
                                                     <div>
-                                                        <p className="text-sm font-black text-gray-900 leading-tight mb-1">{cat.name}</p>
-                                                        <p className="text-[10px] font-black uppercase tracking-tighter text-gray-400">ID: {cat.id?.slice(0, 8)}</p>
+                                                        <div className="text-sm font-black text-gray-900 mb-0.5 tracking-tight">{cat.name}</div>
+                                                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest font-mono">/{cat.slug}</div>
                                                     </div>
                                                 </div>
                                             </td>
 
-                                            {/* Slug */}
+                                            {/* Configuration (Description + Display Order) */}
                                             <td className="px-8 py-5">
-                                                <code className="text-[10px] font-black uppercase tracking-widest bg-gray-50 border border-gray-100 px-2 py-1 rounded-lg text-gray-500 font-mono">
-                                                    /{cat.slug}
-                                                </code>
-                                            </td>
-
-                                            {/* Description */}
-                                            <td className="px-8 py-5 max-w-[220px]">
-                                                <p className="text-xs font-medium text-gray-500 truncate" title={cat.description}>
-                                                    {cat.description || <span className="text-gray-300 italic">No narrative provided</span>}
-                                                </p>
-                                            </td>
-
-                                            {/* Display Order */}
-                                            <td className="px-8 py-5 text-center">
-                                                <div className="flex items-center justify-center gap-2">
+                                                <div className="text-[11px] font-bold text-gray-400 leading-relaxed mb-1.5 max-w-[200px] line-clamp-2" title={cat.description}>
+                                                    {cat.description || 'No description provided.'}
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[10px] font-black text-gray-300 uppercase">Sort Order:</span>
+                                                    <span className="text-[11px] font-black text-gray-900 border-b-2 border-brand-red/20">{cat.display_order ?? '—'}</span>
                                                     <button type="button" onClick={() => shiftOrder(cat, -1)}
                                                         className="p-1.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Move up">
                                                         <ArrowUp size={14} />
                                                     </button>
-                                                    <span className="text-sm font-black text-gray-900 w-6 text-center">{cat.display_order ?? '—'}</span>
                                                     <button type="button" onClick={() => shiftOrder(cat, 1)}
                                                         className="p-1.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Move down">
                                                         <ArrowDown size={14} />

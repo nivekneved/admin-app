@@ -391,44 +391,42 @@ Due Date  : ${formatDate(invoice.due_date)}
               <table className="min-w-full divide-y divide-gray-50">
                 <thead className="bg-gray-50/30">
                   <tr>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Reference</th>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Customer Entity</th>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Issuance</th>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Maturity</th>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Service Provision</th>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Valuation</th>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Lifecycle</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Billing Ref & Entity</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Timeline</th>
+                    <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Valuation & Status</th>
                     <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
                   {currentInvoices.map((invoice) => (
                     <tr key={invoice.id} className="hover:bg-gray-50/30 transition-colors">
-                      <td className="px-8 py-5 whitespace-nowrap text-xs font-black text-gray-900 tracking-tighter font-mono">
-                        {invoice.reference}
-                      </td>
-                      <td className="px-8 py-5 whitespace-nowrap text-sm font-black text-gray-900 leading-tight">
-                        {invoice.customer_name || 'NO IDENTITY'}
-                      </td>
                       <td className="px-8 py-5 whitespace-nowrap">
-                        <div className="flex items-center text-[11px] font-bold text-gray-400 uppercase">
-                          <Clock className="text-gray-300 mr-2" size={12} />
-                          {formatDate(invoice.created_at)}
+                        <div className="text-xs font-black text-gray-900 tracking-tighter font-mono mb-1">
+                          {invoice.reference}
+                        </div>
+                        <div className="text-sm font-black text-gray-900 leading-tight mb-1">
+                          {invoice.customer_name || 'NO IDENTITY'}
+                        </div>
+                        <div className="text-[10px] font-bold text-gray-400 truncate max-w-[150px]" title={invoice.service}>
+                          {invoice.service || '—'}
                         </div>
                       </td>
                       <td className="px-8 py-5 whitespace-nowrap">
+                        <div className="flex items-center text-[11px] font-bold text-gray-400 uppercase mb-2">
+                          <Clock className="text-gray-300 mr-2" size={12} />
+                          <span className="mr-2">Issued:</span>
+                          <span className="text-gray-600">{formatDate(invoice.created_at)}</span>
+                        </div>
                         <div className="flex items-center text-[11px] font-bold text-gray-400 uppercase">
                           <Calendar className="text-gray-300 mr-2" size={12} />
-                          {formatDate(invoice.due_date)}
+                          <span className="mr-2">Maturity:</span>
+                          <span className={`${new Date(invoice.due_date) < new Date() && invoice.status !== 'Paid' ? 'text-red-500' : 'text-gray-600'}`}>{formatDate(invoice.due_date)}</span>
                         </div>
                       </td>
-                      <td className="px-8 py-5 text-[11px] font-bold text-gray-400 max-w-[160px] truncate" title={invoice.service}>
-                        {invoice.service || '—'}
-                      </td>
-                      <td className="px-8 py-5 whitespace-nowrap text-sm font-black text-gray-900 tracking-tight">
-                        Rs {Number(invoice.amount || 0).toFixed(2)}
-                      </td>
-                      <td className="px-8 py-5 whitespace-nowrap">
+                      <td className="px-8 py-5 whitespace-nowrap text-right">
+                        <div className="text-sm font-black text-gray-900 tracking-tight mb-2">
+                          MUR {Number(invoice.amount || 0).toFixed(2)}
+                        </div>
                         <span className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border ${statusBadge(invoice.status)}`}>
                           {invoice.status || 'Pending'}
                         </span>

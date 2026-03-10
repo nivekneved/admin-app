@@ -453,18 +453,16 @@ const Reports = () => {
                 <table className="min-w-full">
                   <thead>
                     <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                      <th className="text-left pb-4">Rank</th>
-                      <th className="text-left pb-4">Service Asset</th>
-                      <th className="text-right pb-4">Volume</th>
-                      <th className="text-right pb-4">Revenue</th>
+                      <th className="text-left pb-4">Asset Identity & Rank</th>
+                      <th className="text-right pb-4">Performance Metrics</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">
                     {topActivities.map((row, i) => (
                       <tr key={i} className="hover:bg-gray-50/30 transition-colors">
-                        <td className="py-4 text-xs font-black text-gray-300 pr-3">{(i + 1).toString().padStart(2, '0')}</td>
                         <td className="py-4">
                           <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-black text-gray-300 pr-2 border-r border-gray-100">{(i + 1).toString().padStart(2, '0')}</span>
                             <ActivityIcon type={row.type} />
                             <div className="flex-1 min-w-0">
                               <p className="text-xs font-black text-gray-900 truncate leading-tight mb-1">{row.name}</p>
@@ -472,8 +470,10 @@ const Reports = () => {
                             </div>
                           </div>
                         </td>
-                        <td className="py-4 text-right text-sm font-black text-gray-900">{row.count}</td>
-                        <td className="py-4 text-right text-xs font-bold text-gray-400 uppercase tracking-tighter">{fmtRs(row.revenue)}</td>
+                        <td className="py-4 text-right">
+                          <div className="text-sm font-black text-gray-900 leading-tight mb-1">{row.count} Units</div>
+                          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{fmtRs(row.revenue)}</div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -503,10 +503,8 @@ const Reports = () => {
                 <table className="min-w-full divide-y divide-gray-50">
                   <thead>
                     <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                      <th className="text-left pb-4">Client Identity</th>
-                      <th className="text-left pb-4">Service</th>
-                      <th className="text-right pb-4">Valuation</th>
-                      <th className="text-right pb-4">Status</th>
+                      <th className="text-left pb-4">Client & Asset</th>
+                      <th className="text-right pb-4">Value & Lifecycle</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">
@@ -514,27 +512,25 @@ const Reports = () => {
                       <tr key={b.id} className="hover:bg-gray-50/30 transition-colors">
                         <td className="py-4">
                           <div className="flex items-center gap-3">
-                            <div className="h-7 w-7 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-[10px] font-black text-gray-400 shrink-0">
+                            <div className="h-7 w-7 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-[10px] font-black text-gray-400 shrink-0 capitalize">
                               {b.customers?.first_name?.charAt(0) || 'G'}
                             </div>
-                            <span className="text-xs font-black text-gray-900 truncate max-w-[80px] tracking-tight">
-                              {b.customers
-                                ? `${b.customers.first_name} ${b.customers.last_name}`
-                                : 'Guest Account'}
-                            </span>
+                            <div className="min-w-0">
+                              <p className="text-xs font-black text-gray-900 truncate tracking-tight leading-tight mb-1">
+                                {b.customers ? `${b.customers.first_name} ${b.customers.last_name}` : 'Guest Account'}
+                              </p>
+                              <div className="flex items-center gap-1.5 text-[9px] font-bold text-gray-400 uppercase">
+                                <ActivityIcon type={b.activity_type} />
+                                <span className="truncate max-w-[120px]">{b.activity_name || '—'}</span>
+                              </div>
+                            </div>
                           </div>
-                        </td>
-                        <td className="py-4">
-                          <div className="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-tight truncate max-w-[100px]">
-                            <ActivityIcon type={b.activity_type} />
-                            {b.activity_name || '—'}
-                          </div>
-                        </td>
-                        <td className="py-4 text-right text-xs font-black text-gray-900 tracking-tighter">
-                          Rs {Number(b.total_amount || b.amount || 0).toFixed(2)}
                         </td>
                         <td className="py-4 text-right">
-                          <span className={`px-2 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border ${statusColor(b.status)}`}>
+                          <div className="text-xs font-black text-gray-900 tracking-tighter mb-1.5">
+                            Rs {Number(b.total_amount || b.amount || 0).toFixed(2)}
+                          </div>
+                          <span className={`px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-lg border ${statusColor(b.status)}`}>
                             {b.status || 'Pending'}
                           </span>
                         </td>

@@ -291,11 +291,9 @@ const Customers = () => {
                             <table className="min-w-full divide-y divide-gray-50">
                                 <thead className="bg-gray-50/30">
                                     <tr>
-                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Client Identity</th>
+                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Client Identity/ID</th>
                                         <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Communications</th>
-                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Coordinates</th>
-                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Marketing Opt-in</th>
-                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Lifecycle</th>
+                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Profile & Status</th>
                                         <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
                                     </tr>
                                 </thead>
@@ -314,7 +312,7 @@ const Customers = () => {
                                                 </div>
                                             </td>
                                             <td className="px-8 py-5 whitespace-nowrap">
-                                                <div className="flex items-center text-xs font-black text-gray-900 mb-1 leading-tight tracking-tight">
+                                                <div className="flex items-center text-xs font-black text-gray-900 mb-1.5 leading-tight tracking-tight">
                                                     <Mail size={12} className="mr-2 text-gray-300 shrink-0" />
                                                     {customer.email}
                                                 </div>
@@ -324,29 +322,27 @@ const Customers = () => {
                                                 </div>
                                             </td>
                                             <td className="px-8 py-5 whitespace-nowrap">
-                                                <div className="flex items-center text-xs font-black text-gray-400 uppercase tracking-widest">
-                                                    <MapPin size={12} className="mr-2 text-gray-300 shrink-0" />
-                                                    {customer.country || 'GLOBAL'}
+                                                <div className="flex flex-col gap-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <MapPin size={12} className="text-gray-300 shrink-0" />
+                                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{customer.country || 'GLOBAL'}</span>
+                                                        {customer.is_subscriber ? (
+                                                            <span className="px-2 py-0.5 text-[8px] font-black uppercase tracking-widest bg-green-50 text-green-600 rounded-lg border border-green-100">
+                                                                Sub
+                                                            </span>
+                                                        ) : (
+                                                            <span className="px-2 py-0.5 text-[8px] font-black uppercase tracking-widest bg-gray-50 text-gray-400 rounded-lg border border-gray-100">
+                                                                Unlinked
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <span className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border w-fit ${customer.status === 'Active' ? 'bg-red-50 text-brand-red border-red-100' :
+                                                        customer.status === 'Lead' ? 'bg-orange-50 text-orange-600 border-orange-100' :
+                                                            'bg-gray-100 text-gray-400 border-gray-100'
+                                                        }`}>
+                                                        {customer.status}
+                                                    </span>
                                                 </div>
-                                            </td>
-                                            <td className="px-8 py-5 whitespace-nowrap">
-                                                {customer.is_subscriber ? (
-                                                    <span className="px-2.5 py-1 text-[9px] font-black uppercase tracking-widest bg-green-50 text-green-600 rounded-lg border border-green-100">
-                                                        Subscribed
-                                                    </span>
-                                                ) : (
-                                                    <span className="px-2.5 py-1 text-[9px] font-black uppercase tracking-widest bg-gray-50 text-gray-400 rounded-lg border border-gray-100">
-                                                        Unlinked
-                                                    </span>
-                                                )}
-                                            </td>
-                                            <td className="px-8 py-5 whitespace-nowrap text-left">
-                                                <span className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border ${customer.status === 'Active' ? 'bg-red-50 text-brand-red border-red-100' :
-                                                    customer.status === 'Lead' ? 'bg-orange-50 text-orange-600 border-orange-100' :
-                                                        'bg-gray-100 text-gray-400 border-gray-100'
-                                                    }`}>
-                                                    {customer.status}
-                                                </span>
                                             </td>
                                             <td className="px-8 py-5 whitespace-nowrap text-right">
                                                 <div className="flex justify-end items-center gap-1">

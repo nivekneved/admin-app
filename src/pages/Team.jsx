@@ -151,10 +151,8 @@ const Team = () => {
                             <table className="min-w-full divide-y divide-gray-100">
                                 <thead className="bg-gray-50/50">
                                     <tr>
-                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Identity</th>
-                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Authority</th>
-                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Work Contact</th>
-                                        <th className="px-8 py-5 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
+                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Personal Identity & Authority</th>
+                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Contact & Lifecycle</th>
                                         <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Management</th>
                                     </tr>
                                 </thead>
@@ -177,26 +175,29 @@ const Team = () => {
                                                             {member.name || member.username}
                                                             {member.show_on_front_page && <Globe size={12} className="text-brand-red ml-2" title="Visible on Front Page" />}
                                                         </p>
-                                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">@{member.username}</p>
+                                                        <div className="flex items-center gap-2">
+                                                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter mr-2">@{member.username}</p>
+                                                            <span className={`px-2 py-0.5 inline-flex text-[8px] font-black uppercase tracking-widest rounded-lg border ${member.role === 'admin' ? 'bg-red-50 text-brand-red border-red-100' :
+                                                                member.role === 'manager' ? 'bg-orange-50 text-orange-700 border-orange-100' :
+                                                                    'bg-gray-50 text-gray-500 border-gray-100'
+                                                                }`}>
+                                                                {member.role}
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="px-8 py-5">
-                                                <span className={`px-2.5 py-1 inline-flex text-[9px] font-black uppercase tracking-widest rounded-lg border ${member.role === 'admin' ? 'bg-red-50 text-brand-red border-red-100' :
-                                                    member.role === 'manager' ? 'bg-orange-50 text-orange-700 border-orange-100' :
-                                                        'bg-gray-50 text-gray-500 border-gray-100'
-                                                    }`}>
-                                                    {member.role}
-                                                </span>
-                                            </td>
-                                            <td className="px-8 py-5 text-sm text-gray-500 font-bold">
-                                                {member.email}
-                                            </td>
-                                            <td className="px-8 py-5 text-center">
-                                                <span className={`inline-flex px-2 py-0.5 text-[9px] font-black uppercase tracking-widest rounded-lg border ${member.is_active ? 'bg-green-50 text-green-600 border-green-100' : 'bg-gray-50 text-gray-400 border-gray-100'
-                                                    }`}>
-                                                    {member.is_active ? 'ACTIVE' : 'REVOKED'}
-                                                </span>
+                                                <div className="flex flex-col gap-2">
+                                                    <div className="text-sm text-gray-500 font-bold flex items-center gap-2">
+                                                        <Mail size={12} className="text-gray-300" />
+                                                        {member.email}
+                                                    </div>
+                                                    <span className={`inline-flex px-2 py-0.5 text-[9px] font-black uppercase tracking-widest rounded-lg border w-fit ${member.is_active ? 'bg-green-50 text-green-600 border-green-100' : 'bg-gray-50 text-gray-400 border-gray-100'
+                                                        }`}>
+                                                        {member.is_active ? 'ACTIVE' : 'REVOKED'}
+                                                    </span>
+                                                </div>
                                             </td>
                                             <td className="px-8 py-5 text-right">
                                                 <div className="flex justify-end items-center gap-1">
