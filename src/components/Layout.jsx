@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Menu } from 'lucide-react';
 import Sidebar from './Sidebar';
+import logo from '../assets/logo.png';
 
 const Layout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -23,7 +24,7 @@ const Layout = ({ children }) => {
             <span className="hidden md:block text-[10px] font-black uppercase tracking-widest text-white/80">Security Cleared Admin</span>
           </div>
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-[10px] font-black text-white/90">TL</div>
+            <img src={logo} alt="Travel Lounge" className="h-8 object-contain" />
           </div>
         </header>
 
