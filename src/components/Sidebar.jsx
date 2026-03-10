@@ -32,52 +32,52 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     {
       title: 'Dashboard',
       path: '/',
-      icon: <Home size={20} />
+      icon: <Home size={18} />
     },
     {
       title: 'Team & Access',
       path: '/team',
-      icon: <Users size={20} />
+      icon: <Users size={18} />
     },
     {
       title: 'Customers',
       path: '/customers',
-      icon: <UserCheck size={20} />
+      icon: <UserCheck size={18} />
     },
     {
       title: 'Products',
       path: '/products',
-      icon: <Package size={20} />
+      icon: <Package size={18} />
     },
     {
       title: 'Categories',
       path: '/categories',
-      icon: <Layers size={20} />
+      icon: <Layers size={18} />
     },
     {
       title: 'Orders',
       path: '/orders',
-      icon: <ShoppingCart size={20} />
+      icon: <ShoppingCart size={18} />
     },
     {
       title: 'Bookings',
       path: '/bookings',
-      icon: <Calendar size={20} />
+      icon: <Calendar size={18} />
     },
     {
       title: 'Reports',
       path: '/reports',
-      icon: <BarChart2 size={20} />
+      icon: <BarChart2 size={18} />
     },
     {
       title: 'Invoices',
       path: '/invoices',
-      icon: <FileText size={20} />
+      icon: <FileText size={18} />
     },
     {
       title: 'Settings',
       path: '/settings',
-      icon: <Settings size={20} />
+      icon: <Settings size={18} />
     },
   ];
 
@@ -102,36 +102,36 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           <X size={20} />
         </button>
 
-        <div className="flex flex-col items-center justify-center py-8 px-4 border-b border-white/5 bg-white/5">
-          <img src={logo} alt="Travel Lounge" className="h-10 mb-4 brightness-0 invert" />
-          <h1 className="text-sm font-bold tracking-widest uppercase text-gray-400">Admin Panel</h1>
+        <div className="flex flex-col items-center justify-center py-5 px-4 border-b border-white/5 bg-white/5">
+          <img src={logo} alt="Travel Lounge" className="h-8 mb-3 brightness-0 invert" />
+          <h1 className="text-[10px] font-black tracking-[0.2em] uppercase text-gray-500">Security Terminal</h1>
         </div>
-        <nav className="mt-8 px-4">
+        <nav className="mt-4 px-3">
           <ul>
             {menuItems.map((item, index) => (
               <li key={index}>
                 <Link
                   to={item.path}
-                  className={`flex items-center px-4 py-3 rounded-xl mb-2 transition-all duration-200 ${location.pathname === item.path
+                  className={`flex items-center px-3.5 py-2.5 rounded-xl mb-1 transition-all duration-200 ${location.pathname === item.path
                     ? 'bg-brand-red text-white shadow-lg shadow-red-900/20'
                     : 'text-gray-400 hover:text-white hover:bg-white/5'
                     }`}
                 >
-                  <span className="mr-3">{item.icon}</span>
-                  <span className="font-medium text-sm">{item.title}</span>
+                  <span className="mr-3 shrink-0">{item.icon}</span>
+                  <span className="font-bold text-xs uppercase tracking-tight">{item.title}</span>
                 </Link>
               </li>
             ))}
           </ul>
         </nav>
 
-        <div className="absolute bottom-0 w-full p-6 border-t border-white/5">
+        <div className="absolute bottom-0 w-full p-4 border-t border-white/5">
           <button
             onClick={handleLogout}
-            className="flex items-center text-gray-400 hover:text-brand-red w-full px-4 py-3 rounded-xl hover:bg-red-500/5 transition-all duration-200 group"
+            className="flex items-center text-gray-400 hover:text-brand-red w-full px-3.5 py-2.5 rounded-xl hover:bg-red-500/5 transition-all duration-200 group"
           >
-            <LogOut size={20} className="mr-3 group-hover:scale-110 transition-transform" />
-            <span className="font-medium text-sm">Logout</span>
+            <LogOut size={18} className="mr-3 group-hover:scale-110 transition-transform" />
+            <span className="font-bold text-xs uppercase tracking-tight">Logout</span>
           </button>
         </div>
       </div>
