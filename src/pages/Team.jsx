@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Users, UserPlus, Search, Edit2, Trash2, Mail, Globe,
-    Linkedin, Loader2, LayoutGrid, List, ChevronLeft, ChevronRight
+    Linkedin, Loader2, LayoutGrid, List, ChevronLeft, ChevronRight,
+    ArrowUpDown, ChevronDown
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Card, CardContent, CardHeader } from '../components/Card';
@@ -15,6 +16,12 @@ const Team = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [viewMode, setViewMode] = useState('list');
+
+    // — Filtering & Sorting State —
+    const [filterRole, setFilterRole] = useState('All');
+    const [sortBy, setSortBy] = useState('name:asc');
+
+    const selectCls = "bg-gray-50 border border-gray-300 text-gray-900 text-[11px] font-black uppercase tracking-widest rounded-2xl focus:ring-brand-red focus:border-brand-red block w-full p-2.5 appearance-none pr-8 transition-all cursor-pointer hover:bg-white";
 
     // Pagination
     const [currentPage, setCurrentPage] = useState(1);
@@ -71,6 +78,8 @@ const Team = () => {
     // Filter & Search
     const processed = useMemo(() => {
         let list = [...members];
+
+        // 1. Search filter
         if (searchTerm) {
             const q = searchTerm.toLowerCase();
             list = list.filter(m =>
@@ -80,8 +89,43 @@ const Team = () => {
                 (m.email || '').toLowerCase().includes(q)
             );
         }
+
+        // 2. Role filter
+        if (filterRole !== 'All') {
+            list = list.filter(m => m.role === filterRole);
+        }
+
+        // 3. Sorting
+        const [field, dir] = sortBy.split(':');
+        list.sort((a, b) => {
+            let vA = (a[field] || '').toString().toLowerCase();
+            let vB = (b[field] || '').toString().toLowerCase();
+
+            if (field === 'display_order') {
+                vA = Number(a[field] || 0);
+                vB = Number(b[field] || 0);
+            }
+
+            if (vA < vB) return dir === 'asc' ? -1 : 1;
+            if (vA > vB) return dir === 'asc' ? 1 : -1;
+            return 0;
+        });
+
         return list;
-    }, [members, searchTerm]);
+    }, [members, searchTerm, filterRole, sortBy]);
+
+    const hasActiveFilters = searchTerm !== '' || filterRole !== 'All';
+
+    const clearFilters = () => {
+        setSearchTerm('');
+        setFilterRole('All');
+        setSortBy('name:asc');
+        setCurrentPage(1);
+    };
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, filterRole]);
 
     // Pagination logic
     const totalPages = Math.ceil(processed.length / perPage);
@@ -107,26 +151,64 @@ const Team = () => {
                             <Search className="absolute left-3 top-2.5 text-gray-400" size={16} />
                             <input
                                 type="text"
-                                placeholder="Search by name, username, role or email..."
+                                placeholder="Search by name, role or email..."
                                 className="pl-10 pr-4 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
 
-                        <div className="flex bg-gray-50 p-1.5 rounded-2xl border border-gray-300 gap-1 mt-0">
-                            <button
-                                onClick={() => setViewMode('list')}
-                                className={`p-2 rounded-xl transition-all ${viewMode === 'list' ? 'bg-white shadow-sm text-brand-red' : 'text-gray-400'}`}
-                            >
-                                <List size={18} />
-                            </button>
-                            <button
-                                onClick={() => setViewMode('grid')}
-                                className={`p-2 rounded-xl transition-all ${viewMode === 'grid' ? 'bg-white shadow-sm text-brand-red' : 'text-gray-400'}`}
-                            >
-                                <LayoutGrid size={18} />
-                            </button>
+                        <div className="flex flex-wrap items-center gap-2">
+                            <div className="relative min-w-[140px]">
+                                <select
+                                    className={selectCls}
+                                    value={filterRole}
+                                    onChange={(e) => setFilterRole(e.target.value)}
+                                >
+                                    <option value="All">All Roles</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="Staff">Staff</option>
+                                    <option value="Partner">Partner</option>
+                                </select>
+                                <ChevronDown size={12} className="absolute right-2.5 top-3.5 text-gray-400 pointer-events-none" />
+                            </div>
+
+                            <div className="relative min-w-[140px]">
+                                <select
+                                    className={selectCls}
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value)}
+                                >
+                                    <option value="name:asc">Name A-Z</option>
+                                    <option value="display_order:asc">Display Order</option>
+                                </select>
+                                <ArrowUpDown size={12} className="absolute right-2.5 top-3.5 text-gray-400 pointer-events-none" />
+                            </div>
+
+                            {hasActiveFilters && (
+                                <button
+                                    type="button"
+                                    onClick={clearFilters}
+                                    className="text-brand-red text-[10px] font-black uppercase tracking-widest px-4 py-2 hover:bg-red-50 rounded-xl transition-colors"
+                                >
+                                    Clear Engine
+                                </button>
+                            )}
+
+                            <div className="flex bg-gray-50 p-1.5 rounded-2xl border border-gray-300 gap-1">
+                                <button
+                                    onClick={() => setViewMode('list')}
+                                    className={`p-2 rounded-xl transition-all ${viewMode === 'list' ? 'bg-white shadow-sm text-brand-red' : 'text-gray-400'}`}
+                                >
+                                    <List size={18} />
+                                </button>
+                                <button
+                                    onClick={() => setViewMode('grid')}
+                                    className={`p-2 rounded-xl transition-all ${viewMode === 'grid' ? 'bg-white shadow-sm text-brand-red' : 'text-gray-400'}`}
+                                >
+                                    <LayoutGrid size={18} />
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </CardHeader>

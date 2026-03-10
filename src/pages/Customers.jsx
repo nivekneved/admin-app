@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
-import { Search, Plus, Edit, Trash2, Mail, Phone, MapPin, Loader2, RefreshCw, UserCheck, UserPlus, Filter, Eye } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Mail, Phone, MapPin, Loader2, RefreshCw, UserCheck, UserPlus, Eye, ChevronDown, ArrowUpDown } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import Modal from '../components/Modal';
 import { showAlert, showConfirm } from '../utils/swal';
+
+const selectCls = "bg-gray-50 border border-gray-300 text-gray-900 text-[11px] font-black uppercase tracking-widest rounded-2xl focus:ring-brand-red focus:border-brand-red block w-full p-2.5 appearance-none pr-8 transition-all cursor-pointer hover:bg-white";
 
 const Customers = () => {
     const [customers, setCustomers] = useState([]);
@@ -17,8 +19,10 @@ const Customers = () => {
     const [editingCustomer, setEditingCustomer] = useState(null);
     const [formLoading, setFormLoading] = useState(false);
 
-    // Filter states
+    // Filter & Sort states
     const [filterSubscriber, setFilterSubscriber] = useState('all');
+    const [filterStatus, setFilterStatus] = useState('All');
+    const [sortBy, setSortBy] = useState('created_at:desc');
 
     const [formData, setFormData] = useState({
         first_name: '',
@@ -134,24 +138,69 @@ const Customers = () => {
         }
     };
 
-    const filteredCustomers = customers.filter(customer => {
-        const matchesSearch =
-            `${customer.first_name} ${customer.last_name}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (customer.email?.toLowerCase().includes(searchTerm.toLowerCase()) || '') ||
-            (customer.phone?.includes(searchTerm) || '');
+    const processedCustomers = useMemo(() => {
+        let list = [...customers];
 
-        const matchesSubscriber =
-            filterSubscriber === 'all' ||
-            (filterSubscriber === 'yes' && customer.is_subscriber) ||
-            (filterSubscriber === 'no' && !customer.is_subscriber);
+        // 1. Search filter
+        if (searchTerm) {
+            const q = searchTerm.toLowerCase();
+            list = list.filter(c =>
+                `${c.first_name} ${c.last_name}`.toLowerCase().includes(q) ||
+                (c.email?.toLowerCase() || '').includes(q) ||
+                (c.phone?.includes(searchTerm) || '')
+            );
+        }
 
-        return matchesSearch && matchesSubscriber;
-    });
+        // 2. Subscriber filter
+        if (filterSubscriber !== 'all') {
+            const isSub = filterSubscriber === 'yes';
+            list = list.filter(c => c.is_subscriber === isSub);
+        }
+
+        // 3. Status filter
+        if (filterStatus !== 'All') {
+            list = list.filter(c => c.status === filterStatus);
+        }
+
+        // 4. Sorting
+        const [field, dir] = sortBy.split(':');
+        list.sort((a, b) => {
+            let vA = a[field] || '', vB = b[field] || '';
+
+            if (field === 'created_at') {
+                vA = new Date(vA);
+                vB = new Date(vB);
+            } else if (typeof vA === 'string') {
+                vA = vA.toLowerCase();
+                vB = vB.toLowerCase();
+            }
+
+            if (vA < vB) return dir === 'asc' ? -1 : 1;
+            if (vA > vB) return dir === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+        return list;
+    }, [customers, searchTerm, filterSubscriber, filterStatus, sortBy]);
+
+    const hasActiveFilters = searchTerm !== '' || filterSubscriber !== 'all' || filterStatus !== 'All';
+
+    const clearFilters = () => {
+        setSearchTerm('');
+        setFilterSubscriber('all');
+        setFilterStatus('All');
+        setSortBy('created_at:desc');
+        setCurrentPage(1);
+    };
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, filterSubscriber, filterStatus]);
 
     const indexOfLastCustomer = currentPage * customersPerPage;
     const indexOfFirstCustomer = indexOfLastCustomer - customersPerPage;
-    const currentCustomers = filteredCustomers.slice(indexOfFirstCustomer, indexOfLastCustomer);
-    const totalPages = Math.ceil(filteredCustomers.length / customersPerPage);
+    const currentCustomers = processedCustomers.slice(indexOfFirstCustomer, indexOfLastCustomer);
+    const totalPages = Math.ceil(processedCustomers.length / customersPerPage);
 
     const openEditModal = (customer) => {
         setEditingCustomer(customer);
@@ -249,34 +298,74 @@ const Customers = () => {
             </div>
 
             <Card className="border border-gray-200 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
-                <CardHeader className="border-b border-gray-50 pb-4 bg-white px-8 pt-8">
+                <CardHeader className="border-b border-gray-200 pb-4 bg-white px-8 pt-8">
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                            <div className="flex flex-wrap items-center gap-3 flex-1 min-w-0">
-                                <div className="relative flex-1 min-w-0 max-w-md">
-                                    <Search className="absolute left-3 top-3 text-gray-300" size={16} />
-                                    <input
-                                        type="text"
-                                        placeholder="Identify luxury clients…"
-                                        className="pl-9 pr-9 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                    />
-                                </div>
-                                <div className="flex items-center bg-gray-50 border border-gray-300 rounded-2xl px-4 py-2.5 transition-all">
-                                    <Filter size={14} className="text-gray-400 mr-2" />
+                            <div className="relative flex-1 min-w-0 max-w-md">
+                                <Search className="absolute left-3 top-2.5 text-gray-300" size={16} />
+                                <input
+                                    type="text"
+                                    placeholder="Search registers..."
+                                    className="pl-9 pr-9 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
+                            <div className="flex flex-wrap items-center gap-2">
+                                <div className="relative min-w-[140px]">
                                     <select
-                                        className="bg-transparent text-sm font-black uppercase tracking-widest text-gray-500 focus:outline-none cursor-pointer"
+                                        className={selectCls}
+                                        value={filterStatus}
+                                        onChange={(e) => setFilterStatus(e.target.value)}
+                                    >
+                                        <option value="All">All Statuses</option>
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                        <option value="Lead">Lead</option>
+                                    </select>
+                                    <ChevronDown size={12} className="absolute right-2.5 top-3.5 text-gray-400 pointer-events-none" />
+                                </div>
+
+                                <div className="relative min-w-[140px]">
+                                    <select
+                                        className={selectCls}
                                         value={filterSubscriber}
                                         onChange={(e) => setFilterSubscriber(e.target.value)}
                                     >
                                         <option value="all">Every State</option>
                                         <option value="yes">Subscriber</option>
-                                        <option value="no">Unlinked</option>
+                                        <option value="no">Unlinked Or Prospect</option>
                                     </select>
+                                    <ChevronDown size={12} className="absolute right-2.5 top-3.5 text-gray-400 pointer-events-none" />
                                 </div>
+
+                                <div className="relative min-w-[140px]">
+                                    <select
+                                        className={selectCls}
+                                        value={sortBy}
+                                        onChange={(e) => setSortBy(e.target.value)}
+                                    >
+                                        <option value="created_at:desc">Newest First</option>
+                                        <option value="created_at:asc">Oldest First</option>
+                                        <option value="first_name:asc">Name A-Z</option>
+                                    </select>
+                                    <ArrowUpDown size={12} className="absolute right-2.5 top-3.5 text-gray-400 pointer-events-none" />
+                                </div>
+
+                                {hasActiveFilters && (
+                                    <button
+                                        type="button"
+                                        onClick={clearFilters}
+                                        className="text-brand-red text-[10px] font-black uppercase tracking-widest px-4 py-2 hover:bg-red-50 rounded-xl transition-colors"
+                                    >
+                                        Clear Engine
+                                    </button>
+                                )}
+
+                                <span className="ml-auto text-[10px] text-gray-400 font-black uppercase tracking-widest shrink-0">
+                                    {processedCustomers.length} Global Accounts
+                                </span>
                             </div>
-                            <span className="text-[10px] text-gray-400 font-black uppercase tracking-widest shrink-0">{filteredCustomers.length} Global Accounts</span>
                         </div>
                     </div>
                 </CardHeader>
@@ -394,7 +483,7 @@ const Customers = () => {
                     </div>
 
                     {/* Pagination */}
-                    {filteredCustomers.length > customersPerPage && (
+                    {processedCustomers.length > customersPerPage && (
                         <div className="flex items-center justify-between px-8 py-6 bg-gray-50/50 border-t border-gray-200">
                             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                                 Page {currentPage} of {totalPages}

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
-import { Package, Info, Loader2, RefreshCw, Plus, Search, Trash2 } from 'lucide-react';
+import { Package, Info, Loader2, RefreshCw, Plus, Search, Trash2, ChevronDown, ArrowUpDown } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { showAlert, showConfirm } from '../utils/swal';
 
@@ -13,6 +13,12 @@ const Orders = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [ordersPerPage] = useState(10);
   const [expandedOrderId, setExpandedOrderId] = useState(null);
+
+  // — Filtering & Sorting State —
+  const [filterMethod, setFilterMethod] = useState('all');
+  const [sortBy, setSortBy] = useState('created_at:desc');
+
+  const selectCls = "bg-gray-50 border border-gray-300 text-gray-900 text-[11px] font-black uppercase tracking-widest rounded-2xl focus:ring-brand-red focus:border-brand-red block w-full p-2.5 appearance-none pr-8 transition-all cursor-pointer hover:bg-white";
 
   useEffect(() => {
     fetchOrders();
@@ -91,18 +97,66 @@ const Orders = () => {
     setCurrentPage(1);
   };
 
-  // Filter orders based on search term
-  const filteredOrders = orders.filter(order =>
-    (order.customer_name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    order.id?.toString().includes(searchTerm) ||
-    (order.payment_method?.toLowerCase() || '').includes(searchTerm.toLowerCase())
-  );
+  // Filter and sort orders
+  const processedOrders = useMemo(() => {
+    let list = [...orders];
+
+    // 1. Search filter
+    if (searchTerm) {
+      const q = searchTerm.toLowerCase();
+      list = list.filter(order =>
+        (order.customer_name?.toLowerCase() || '').includes(q) ||
+        order.id?.toString().includes(q) ||
+        (order.payment_method?.toLowerCase() || '').includes(q)
+      );
+    }
+
+    // 2. Method filter
+    if (filterMethod !== 'all') {
+      list = list.filter(order => (order.payment_method || '').toLowerCase() === filterMethod.toLowerCase());
+    }
+
+    // 3. Sorting
+    const [field, dir] = sortBy.split(':');
+    list.sort((a, b) => {
+      let vA, vB;
+      if (field === 'total_amount') {
+        vA = Number(a.total_amount || 0);
+        vB = Number(b.total_amount || 0);
+      } else if (field === 'created_at') {
+        vA = new Date(a.created_at || 0);
+        vB = new Date(b.created_at || 0);
+      } else {
+        vA = (a[field] || '').toString().toLowerCase();
+        vB = (b[field] || '').toString().toLowerCase();
+      }
+
+      if (vA < vB) return dir === 'asc' ? -1 : 1;
+      if (vA > vB) return dir === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return list;
+  }, [orders, searchTerm, filterMethod, sortBy]);
+
+  const hasActiveFilters = searchTerm !== '' || filterMethod !== 'all';
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setFilterMethod('all');
+    setSortBy('created_at:desc');
+    setCurrentPage(1);
+  };
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterMethod]);
 
   // Pagination
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
-  const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
-  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+  const currentOrders = processedOrders.slice(indexOfFirstOrder, indexOfLastOrder);
+  const totalPages = Math.ceil(processedOrders.length / ordersPerPage);
 
   return (
     <div>
@@ -135,7 +189,7 @@ const Orders = () => {
           <div className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="relative flex-1 min-w-0 max-w-md">
-                <Search className="absolute left-3 top-3 text-gray-300" size={16} />
+                <Search className="absolute left-3 top-2.5 text-gray-300" size={16} />
                 <input
                   type="text"
                   placeholder="Intercept order streams…"
@@ -144,7 +198,49 @@ const Orders = () => {
                   onChange={handleSearchChange}
                 />
               </div>
-              <span className="text-[10px] text-gray-400 font-black uppercase tracking-widest">{filteredOrders.length} Global Orders</span>
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="relative min-w-[140px]">
+                  <select
+                    className={selectCls}
+                    value={filterMethod}
+                    onChange={(e) => setFilterMethod(e.target.value)}
+                  >
+                    <option value="all">Every Method</option>
+                    <option value="Cash">Cash</option>
+                    <option value="Card">Card</option>
+                    <option value="Transfer">Transfer</option>
+                  </select>
+                  <ChevronDown size={12} className="absolute right-2.5 top-3.5 text-gray-400 pointer-events-none" />
+                </div>
+
+                <div className="relative min-w-[140px]">
+                  <select
+                    className={selectCls}
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                  >
+                    <option value="created_at:desc">Newest First</option>
+                    <option value="created_at:asc">Oldest First</option>
+                    <option value="total_amount:desc">Highest Value</option>
+                    <option value="total_amount:asc">Lowest Value</option>
+                  </select>
+                  <ArrowUpDown size={12} className="absolute right-2.5 top-3.5 text-gray-400 pointer-events-none" />
+                </div>
+
+                {hasActiveFilters && (
+                  <button
+                    type="button"
+                    onClick={clearFilters}
+                    className="text-brand-red text-[10px] font-black uppercase tracking-widest px-4 py-2 hover:bg-red-50 rounded-xl transition-colors"
+                  >
+                    Clear Engine
+                  </button>
+                )}
+
+                <span className="ml-auto text-[10px] text-gray-400 font-black uppercase tracking-widest shrink-0">
+                  {processedOrders.length} Global Orders
+                </span>
+              </div>
             </div>
           </div>
         </CardHeader>
@@ -294,7 +390,7 @@ const Orders = () => {
           </div>
 
           {/* Pagination */}
-          {filteredOrders.length > ordersPerPage && (
+          {processedOrders.length > ordersPerPage && (
             <div className="flex items-center justify-between px-8 py-6 bg-gray-50/50 border-t border-gray-200">
               <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                 Page {currentPage} of {totalPages}

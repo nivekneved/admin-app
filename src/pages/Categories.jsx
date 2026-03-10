@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
 import {
     Loader2, RefreshCw, Plus, Search, Edit2, Trash2, Eye,
-    ToggleLeft, ToggleRight, ArrowUp, ArrowDown, X, ChevronDown,
+    ToggleLeft, ToggleRight, ArrowUp, ArrowDown, ChevronDown, ArrowUpDown,
     Layers, Link as LinkIcon, Hash, FileText, Home, Hotel,
     Activity, Users, Sun, Ship, Map
 } from 'lucide-react';
@@ -51,6 +51,8 @@ const Categories = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filterActive, setFilterActive] = useState('All');
     const [sortBy, setSortBy] = useState('display_order:asc');
+
+    const selectCls = "bg-gray-50 border border-gray-300 text-gray-900 text-[11px] font-black uppercase tracking-widest rounded-2xl focus:ring-brand-red focus:border-brand-red block w-full p-2.5 appearance-none pr-8 transition-all cursor-pointer hover:bg-white";
 
     // — Modals —
     const [showFormModal, setShowFormModal] = useState(false);
@@ -108,6 +110,14 @@ const Categories = () => {
 
         return list;
     }, [categories, searchTerm, filterActive, sortBy]);
+
+    const hasActiveFilters = searchTerm !== '' || filterActive !== 'All' || sortBy !== 'display_order:asc';
+
+    const clearFilters = () => {
+        setSearchTerm('');
+        setFilterActive('All');
+        setSortBy('display_order:asc');
+    };
 
     // ─── CRUD ─────────────────────────────────────────────────────────────────
     const openCreateModal = () => {
@@ -237,10 +247,7 @@ const Categories = () => {
         }
     };
 
-    const hasActiveFilters = searchTerm || filterActive !== 'All';
-    const clearFilters = () => { setSearchTerm(''); setFilterActive('All'); setSortBy('display_order:asc'); };
 
-    const selectCls = 'px-3 py-2 text-sm font-semibold bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red appearance-none cursor-pointer text-gray-700 hover:border-gray-300 transition-colors';
 
     // ═══════════════════════════════════════════════════════════════════════════
     return (
@@ -275,57 +282,58 @@ const Categories = () => {
                 {/* Toolbar */}
                 <CardHeader className="border-b border-gray-200 pb-4 bg-white px-8 pt-8">
                     <div className="flex flex-col gap-4">
-                        {/* Search */}
-                        <div className="relative">
-                            <Search className="absolute left-3 top-3 text-gray-300" size={16} />
-                            <input
-                                type="text"
-                                placeholder="Search categories…"
-                                className="pl-9 pr-9 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                            {searchTerm && (
-                                <button type="button" onClick={() => setSearchTerm('')}
-                                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600">
-                                    <X size={14} />
-                                </button>
-                            )}
-                        </div>
-
-                        {/* Filters + Sort */}
-                        <div className="flex flex-wrap items-center gap-2">
-                            <div className="relative">
-                                <select className={`${selectCls} bg-gray-50 border-gray-300 rounded-2xl py-2.5`} value={filterActive} onChange={(e) => setFilterActive(e.target.value)}>
-                                    <option value="All">All Statuses</option>
-                                    <option value="Active">Active only</option>
-                                    <option value="Inactive">Inactive only</option>
-                                </select>
-                                <ChevronDown size={12} className="absolute right-2.5 top-4 text-gray-400 pointer-events-none" />
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                            <div className="relative flex-1 min-w-0 max-w-md">
+                                <Search className="absolute left-3 top-2.5 text-gray-300" size={16} />
+                                <input
+                                    type="text"
+                                    placeholder="Locate node identifiers..."
+                                    className="pl-9 pr-9 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
                             </div>
+                            <div className="flex flex-wrap items-center gap-2">
+                                <div className="relative min-w-[140px]">
+                                    <select
+                                        className={selectCls}
+                                        value={filterActive}
+                                        onChange={(e) => setFilterActive(e.target.value)}
+                                    >
+                                        <option value="All">All Statuses</option>
+                                        <option value="Active">Active Only</option>
+                                        <option value="Inactive">Inactive Only</option>
+                                    </select>
+                                    <ChevronDown size={12} className="absolute right-2.5 top-3.5 text-gray-400 pointer-events-none" />
+                                </div>
 
-                            <div className="relative">
-                                <select className={`${selectCls} bg-gray-50 border-gray-300 rounded-2xl py-2.5`} value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-                                    <option value="display_order:asc">Order ↑</option>
-                                    <option value="display_order:desc">Order ↓</option>
-                                    <option value="name:asc">Name A → Z</option>
-                                    <option value="name:desc">Name Z → A</option>
-                                    <option value="created_at:desc">Newest first</option>
-                                    <option value="created_at:asc">Oldest first</option>
-                                </select>
-                                <ChevronDown size={12} className="absolute right-2.5 top-4 text-gray-400 pointer-events-none" />
+                                <div className="relative min-w-[140px]">
+                                    <select
+                                        className={selectCls}
+                                        value={sortBy}
+                                        onChange={(e) => setSortBy(e.target.value)}
+                                    >
+                                        <option value="display_order:asc">Display Order</option>
+                                        <option value="name:asc">Name A-Z</option>
+                                        <option value="name:desc">Name Z-A</option>
+                                    </select>
+                                    <ArrowUpDown size={12} className="absolute right-2.5 top-3.5 text-gray-400 pointer-events-none" />
+                                </div>
+
+                                {hasActiveFilters && (
+                                    <button
+                                        type="button"
+                                        onClick={clearFilters}
+                                        className="text-brand-red text-[10px] font-black uppercase tracking-widest px-4 py-2 hover:bg-red-50 rounded-xl transition-colors"
+                                    >
+                                        Clear Engine
+                                    </button>
+                                )}
+
+                                <span className="ml-auto text-[10px] text-gray-400 font-black uppercase tracking-widest shrink-0">
+                                    {processed.length} Node Identifiers
+                                </span>
                             </div>
-
-                            {hasActiveFilters && (
-                                <button type="button" onClick={clearFilters}
-                                    className="text-brand-red text-[10px] font-black uppercase tracking-widest px-4 py-2 hover:bg-red-50 rounded-xl transition-colors">
-                                    Clear Registry
-                                </button>
-                            )}
-
-                            <span className="ml-auto text-[10px] text-gray-400 font-black uppercase tracking-widest">
-                                {processed.length} Entries
-                            </span>
                         </div>
                     </div>
                 </CardHeader>

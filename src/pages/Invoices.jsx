@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
 import {
   Download, Eye, Send, Calendar, Loader2, RefreshCw, Search, Plus,
-  Edit2, Trash2, CheckCircle, Hash, FileText, CreditCard, User, Clock
+  Edit2, Trash2, CheckCircle, Hash, FileText, CreditCard, User, Clock, ArrowUpDown, ChevronDown
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import Modal from '../components/Modal';
@@ -29,6 +29,8 @@ const genDefaultForm = () => ({
   items: [{ id: crypto.randomUUID(), description: '', quantity: 1, unit_price: 0 }]
 });
 
+const selectCls = "bg-gray-50 border border-gray-300 text-gray-900 text-[11px] font-black uppercase tracking-widest rounded-2xl focus:ring-brand-red focus:border-brand-red block w-full p-2.5 appearance-none pr-8 transition-all cursor-pointer hover:bg-white";
+
 const Invoices = () => {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -37,6 +39,10 @@ const Invoices = () => {
   const [invoicesPerPage] = useState(8);
   const [customers, setCustomers] = useState([]);
   const [togglingId, setTogglingId] = useState(null);
+
+  // — Filtering & Sorting State —
+  const [filterStatus, setFilterStatus] = useState('All');
+  const [sortBy, setSortBy] = useState('created_at:desc');
 
   // — Create modal —
   const [showModal, setShowModal] = useState(false);
@@ -97,16 +103,65 @@ const Invoices = () => {
   };
 
   // ─── Filter + Pagination ────────────────────────────────────────────────
-  const filteredInvoices = invoices.filter(inv =>
-    (inv.customer_name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (inv.reference?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (inv.service?.toLowerCase() || '').includes(searchTerm.toLowerCase())
-  );
+  const processedInvoices = useMemo(() => {
+    let list = [...invoices];
+
+    // 1. Search filter
+    if (searchTerm) {
+      const q = searchTerm.toLowerCase();
+      list = list.filter(inv =>
+        (inv.customer_name?.toLowerCase() || '').includes(q) ||
+        (inv.reference?.toLowerCase() || '').includes(q) ||
+        (inv.service?.toLowerCase() || '').includes(q)
+      );
+    }
+
+    // 2. Status filter
+    if (filterStatus !== 'All') {
+      list = list.filter(inv => inv.status === filterStatus);
+    }
+
+    // 4. Sorting
+    const [field, dir] = sortBy.split(':');
+    list.sort((a, b) => {
+      let vA, vB;
+
+      if (field === 'amount') {
+        vA = Number(a.total_amount || 0);
+        vB = Number(b.total_amount || 0);
+      } else if (field === 'due_date' || field === 'created_at') {
+        vA = new Date(a[field] || 0);
+        vB = new Date(b[field] || 0);
+      } else {
+        vA = (a[field] || '').toString().toLowerCase();
+        vB = (b[field] || '').toString().toLowerCase();
+      }
+
+      if (vA < vB) return dir === 'asc' ? -1 : 1;
+      if (vA > vB) return dir === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return list;
+  }, [invoices, searchTerm, filterStatus, sortBy]);
+
+  const hasActiveFilters = searchTerm !== '' || filterStatus !== 'All';
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setFilterStatus('All');
+    setSortBy('created_at:desc');
+    setCurrentPage(1);
+  };
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterStatus]);
 
   const indexOfLastInvoice = currentPage * invoicesPerPage;
   const indexOfFirstInvoice = indexOfLastInvoice - invoicesPerPage;
-  const currentInvoices = filteredInvoices.slice(indexOfFirstInvoice, indexOfLastInvoice);
-  const totalPages = Math.ceil(filteredInvoices.length / invoicesPerPage);
+  const currentInvoices = processedInvoices.slice(indexOfFirstInvoice, indexOfLastInvoice);
+  const totalPages = Math.ceil(processedInvoices.length / invoicesPerPage);
 
   const formatDate = (d) => {
     if (!d) return 'N/A';
@@ -364,19 +419,65 @@ Due Date  : ${formatDate(invoice.due_date)}
       </div>
 
       <Card className="border border-gray-200 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
-        <CardHeader className="border-b border-gray-50 pb-4 bg-white px-8 pt-8">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="relative flex-1 min-w-0 max-w-md">
-              <Search className="absolute left-3 top-3 text-gray-300" size={16} />
-              <input
-                type="text"
-                placeholder="Locate financial records…"
-                className="pl-9 pr-4 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+        <CardHeader className="border-b border-gray-200 pb-4 bg-white px-8 pt-8">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="relative flex-1 min-w-0 max-w-md">
+                <Search className="absolute left-3 top-2.5 text-gray-300" size={16} />
+                <input
+                  type="text"
+                  placeholder="Locate financial records…"
+                  className="pl-9 pr-9 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="relative min-w-[140px]">
+                  <select
+                    className={selectCls}
+                    value={filterStatus}
+                    onChange={(e) => setFilterStatus(e.target.value)}
+                  >
+                    <option value="All">All Statuses</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Overdue">Overdue</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </select>
+                  <ChevronDown size={12} className="absolute right-2.5 top-3.5 text-gray-400 pointer-events-none" />
+                </div>
+
+                <div className="relative min-w-[140px]">
+                  <select
+                    className={selectCls}
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                  >
+                    <option value="created_at:desc">Newest First</option>
+                    <option value="created_at:asc">Oldest First</option>
+                    <option value="due_date:asc">Due Soonest</option>
+                    <option value="amount:desc">Highest Amount</option>
+                    <option value="amount:asc">Lowest Amount</option>
+                  </select>
+                  <ArrowUpDown size={12} className="absolute right-2.5 top-3.5 text-gray-400 pointer-events-none" />
+                </div>
+
+                {hasActiveFilters && (
+                  <button
+                    type="button"
+                    onClick={clearFilters}
+                    className="text-brand-red text-[10px] font-black uppercase tracking-widest px-4 py-2 hover:bg-red-50 rounded-xl transition-colors"
+                  >
+                    Clear Engine
+                  </button>
+                )}
+
+                <span className="ml-auto text-[10px] text-gray-400 font-black uppercase tracking-widest shrink-0">
+                  {processedInvoices.length} Registered Invoices
+                </span>
+              </div>
             </div>
-            <span className="text-[10px] text-gray-400 font-black uppercase tracking-widest shrink-0">{filteredInvoices.length} Registered Invoices</span>
           </div>
         </CardHeader>
 
@@ -517,7 +618,7 @@ Due Date  : ${formatDate(invoice.due_date)}
           </div>
 
           {/* Pagination */}
-          {filteredInvoices.length > invoicesPerPage && (
+          {processedInvoices.length > invoicesPerPage && (
             <div className="flex items-center justify-between px-8 py-6 bg-gray-50/50 border-t border-gray-200">
               <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                 Page {currentPage} of {totalPages}
