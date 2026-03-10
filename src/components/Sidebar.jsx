@@ -108,7 +108,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           >
             <X size={18} />
           </button>
-          <img src={logo} alt="Travel Lounge" className="h-8 mb-3 brightness-0 invert" />
+          <img src={logo} alt="Travel Lounge" className="h-10 mb-3 object-contain" />
           <h1 className="text-[10px] font-black tracking-[0.2em] uppercase text-gray-500">Security Terminal</h1>
         </div>
         <nav className="mt-4 px-3">
