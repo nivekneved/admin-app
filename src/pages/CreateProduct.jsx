@@ -34,7 +34,8 @@ const CreateProduct = () => {
         status: 'In Stock',
         description: '',
         image_url: '',
-        room_types: []
+        room_types: [],
+        itinerary: []
     });
 
     const isEdit = !!id;
@@ -84,7 +85,8 @@ const CreateProduct = () => {
                     status: data.status || 'In Stock',
                     description: data.description || '',
                     image_url: data.image_url || '',
-                    room_types: data.room_types || []
+                    room_types: data.room_types || [],
+                    itinerary: data.itinerary || []
                 });
             }
         } catch (e) {
@@ -181,6 +183,29 @@ const CreateProduct = () => {
         });
     };
 
+    // — Itinerary Handlers —
+    const addItineraryDay = () => {
+        setFormData(prev => ({
+            ...prev,
+            itinerary: [...prev.itinerary, { day: `Day ${prev.itinerary.length + 1}`, title: '', description: '' }]
+        }));
+    };
+
+    const removeItineraryDay = (idx) => {
+        setFormData(prev => ({
+            ...prev,
+            itinerary: prev.itinerary.filter((_, i) => i !== idx)
+        }));
+    };
+
+    const updateItineraryDay = (idx, field, value) => {
+        setFormData(prev => {
+            const updated = [...prev.itinerary];
+            updated[idx] = { ...updated[idx], [field]: value };
+            return { ...prev, itinerary: updated };
+        });
+    };
+
     const handleCategoryToggle = (catId) => {
         setFormData(prev => {
             const current = prev.category_ids;
@@ -205,6 +230,7 @@ const CreateProduct = () => {
                 description: formData.description,
                 image_url: formData.image_url,
                 room_types: formData.room_types,
+                itinerary: formData.itinerary,
                 updated_at: new Date().toISOString()
             };
 
@@ -565,6 +591,84 @@ const CreateProduct = () => {
                                 </div>
                             </section>
                         )}
+
+                        {/* Section: Activity/Cruise Itinerary (Conditional) */}
+                        {formData.category_ids.some(id => {
+                            const cat = categories.find(c => c.id === id);
+                            return cat && (cat.name === 'Activities' || cat.name === 'Cruises' || cat.name === 'Group Tours');
+                        }) && (
+                                <section className="bg-white p-8 rounded-3xl shadow-sm border border-gray-50 space-y-6">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
+                                            <Calendar size={16} className="text-brand-red" /> Itinerary & Schedule
+                                        </h3>
+                                        <button
+                                            type="button"
+                                            onClick={addItineraryDay}
+                                            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-brand-red hover:text-red-700 transition-colors"
+                                        >
+                                            <Plus size={14} /> Add Day/Stop
+                                        </button>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        {formData.itinerary.length === 0 ? (
+                                            <div className="py-12 flex flex-col items-center justify-center border-2 border-dashed border-gray-100 rounded-3xl text-gray-300">
+                                                <Calendar size={48} className="mb-2 opacity-20" />
+                                                <p className="text-[10px] font-black uppercase tracking-widest">No itinerary defined</p>
+                                            </div>
+                                        ) : (
+                                            <div className="space-y-4">
+                                                {formData.itinerary.map((it, idx) => (
+                                                    <div key={idx} className="p-6 bg-gray-50/50 rounded-2xl border border-gray-100 flex gap-6 relative group/it">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => removeItineraryDay(idx)}
+                                                            className="absolute top-4 right-4 text-gray-300 hover:text-brand-red transition-colors opacity-0 group-hover/it:opacity-100"
+                                                        >
+                                                            <X size={16} />
+                                                        </button>
+
+                                                        <div className="w-24 shrink-0">
+                                                            <label className="block text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Label</label>
+                                                            <input
+                                                                type="text"
+                                                                placeholder="Day 1"
+                                                                className="w-full px-3 py-2 bg-white border border-gray-100 rounded-lg text-[10px] font-black uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-brand-red"
+                                                                value={it.day}
+                                                                onChange={e => updateItineraryDay(idx, 'day', e.target.value)}
+                                                            />
+                                                        </div>
+
+                                                        <div className="flex-1 space-y-4">
+                                                            <div>
+                                                                <label className="block text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Stop Title / Highlight</label>
+                                                                <input
+                                                                    type="text"
+                                                                    placeholder="e.g. Arrival at Blue Bay Marine Park"
+                                                                    className="w-full px-4 py-2 bg-white border border-gray-100 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-brand-red"
+                                                                    value={it.title}
+                                                                    onChange={e => updateItineraryDay(idx, 'title', e.target.value)}
+                                                                />
+                                                            </div>
+                                                            <div>
+                                                                <label className="block text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Stop Description</label>
+                                                                <textarea
+                                                                    rows={2}
+                                                                    placeholder="Details about the stop, highlights, or inclusions..."
+                                                                    className="w-full px-4 py-3 bg-white border border-gray-100 rounded-xl text-[11px] font-medium leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-brand-red"
+                                                                    value={it.description}
+                                                                    onChange={e => updateItineraryDay(idx, 'description', e.target.value)}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                </section>
+                            )}
                     </div>
 
                     {/* Right Column: Numbers & Status */}
