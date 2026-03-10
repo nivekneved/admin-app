@@ -12,33 +12,8 @@ import { showAlert, showConfirm } from '../utils/swal';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const STATUSES = ['In Stock', 'Low Stock', 'Out of Stock'];
-// const SORT_OPTIONS = [
-//   { value: 'created_at:desc', label: 'Newest first' },
-//   { value: 'created_at:asc', label: 'Oldest first' },
-//   { value: 'name:asc', label: 'Name A → Z' },
-//   { value: 'name:desc', label: 'Name Z → A' },
-//   { value: 'price:asc', label: 'Price ↑ Low to High' },
-//   { value: 'price:desc', label: 'Price ↓ High to Low' },
-// ];
-// const PER_PAGE_OPTIONS = [8, 16, 32, 64];
 
-// ─── Colour palette for category badges ───────────────────────────────────────
-// const PALETTE = [
-//   'bg-blue-50 text-blue-600 border-blue-100',
-//   'bg-purple-50 text-purple-600 border-purple-100',
-//   'bg-teal-50 text-teal-600 border-teal-100',
-//   'bg-orange-50 text-orange-600 border-orange-100',
-//   'bg-sky-50 text-sky-600 border-sky-100',
-//   'bg-pink-50 text-pink-600 border-pink-100',
-//   'bg-indigo-50 text-indigo-600 border-indigo-100',
-//   'bg-amber-50 text-amber-600 border-amber-100',
-// ];
 const _cc = {}; let _ci = 0;
-// const categoryColor = (n) => {
-//   if (!n) return 'bg-gray-50 text-gray-500 border-gray-100';
-//   if (!_cc[n]) _cc[n] = PALETTE[_ci++ % PALETTE.length];
-//   return _cc[n];
-// };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const statusBadge = (s) => {
@@ -47,15 +22,6 @@ const statusBadge = (s) => {
   if (s === 'Out of Stock') return 'bg-red-50 text-red-700 border-red-100';
   return 'bg-gray-50 text-gray-500 border-gray-100';
 };
-
-// ─── Sort icon ────────────────────────────────────────────────────────────────
-// const SortIcon = ({ field, currentSort }) => {
-//   const [f, d] = currentSort.split(':');
-//   if (f !== field) return <ArrowUpDown size={12} className="text-gray-300 ml-1" />;
-//   return d === 'asc'
-//     ? <ArrowUp size={12} className="text-brand-red ml-1" />
-//     : <ArrowDown size={12} className="text-brand-red ml-1" />;
-// };
 
 // ─── Product thumbnail ────────────────────────────────────────────────────────
 const Thumb = ({ src, size = 'sm' }) => {
@@ -261,15 +227,18 @@ const Products = () => {
         </CardHeader>
 
         <CardContent className="p-0 bg-white">
-          {loading ? (
-            <div className="py-32 flex flex-col items-center"><Loader2 className="animate-spin text-brand-red mb-4" size={48} /><p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Syncing with Registry...</p></div>
-          ) : currentItems.length === 0 ? (
-            <div className="py-32 text-center text-gray-300 font-black uppercase tracking-widest text-xs flex flex-col items-center gap-4">
-              <Package size={56} className="opacity-20" />
-              No matching specifications found
-            </div>
-          ) : viewMode === 'list' ? (
-            <div className="overflow-x-auto">
+          <div className="overflow-x-auto min-h-[400px] -mx-4 sm:mx-0 px-4 sm:px-0">
+            {loading ? (
+              <div className="py-32 flex flex-col items-center">
+                <Loader2 className="animate-spin text-brand-red mb-4" size={48} />
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Querying Transaction Ledger...</p>
+              </div>
+            ) : currentItems.length === 0 ? (
+              <div className="py-32 text-center text-gray-300 font-black uppercase tracking-widest text-xs flex flex-col items-center gap-4">
+                <Package size={56} className="opacity-20" />
+                No matching specifications found
+              </div>
+            ) : viewMode === 'list' ? (
               <table className="min-w-full divide-y divide-gray-50">
                 <thead className="bg-gray-50/30">
                   <tr>
@@ -320,45 +289,45 @@ const Products = () => {
                   ))}
                 </tbody>
               </table>
-            </div>
-          ) : (
-            <div className="p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {currentItems.map(p => (
-                <div key={p.id} className="bg-white border border-gray-100 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500">
-                  <div className="h-48 bg-gray-50 relative overflow-hidden">
-                    <ProductCardImage src={p.image_url} />
-                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all">
-                      <button onClick={() => deleteProduct(p.id)} className="p-3 bg-white/90 backdrop-blur rounded-2xl text-brand-red shadow-xl hover:scale-110 active:scale-95 transition-all"><Trash2 size={16} /></button>
+            ) : (
+              <div className="p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                {currentItems.map(p => (
+                  <div key={p.id} className="bg-white border border-gray-100 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500">
+                    <div className="h-48 bg-gray-50 relative overflow-hidden">
+                      <ProductCardImage src={p.image_url} />
+                      <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all">
+                        <button onClick={() => deleteProduct(p.id)} className="p-3 bg-white/90 backdrop-blur rounded-2xl text-brand-red shadow-xl hover:scale-110 active:scale-95 transition-all"><Trash2 size={16} /></button>
+                      </div>
+                    </div>
+                    <div className="p-6">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex flex-wrap gap-1">
+                          {(p.categories_list && p.categories_list.length > 0) ? (
+                            p.categories_list.slice(0, 2).map(cat => (
+                              <span key={cat.id} className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-red-50 text-brand-red border border-red-100">
+                                {cat.name}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-[9px] font-bold text-gray-400">Unassigned</span>
+                          )}
+                        </div>
+                        <div className={`w-2 h-2 rounded-full ${p.status === 'In Stock' ? 'bg-green-500' : p.status === 'Low Stock' ? 'bg-amber-500' : 'bg-red-500'}`}></div>
+                      </div>
+                      <h3 className="text-sm font-black text-gray-900 leading-snug mb-4 line-clamp-2 h-10">{p.name}</h3>
+                      <div className="flex items-center justify-between pt-4 border-t border-gray-50">
+                        <div>
+                          <p className="text-[9px] font-black text-gray-400 uppercase tracking-tighter mb-0.5">Base Rate</p>
+                          <p className="text-sm font-black text-gray-900">MUR {Number(p.price).toLocaleString()}</p>
+                        </div>
+                        <button onClick={() => openEdit(p)} className="p-3 text-gray-400 border border-gray-100 rounded-2xl hover:text-brand-red hover:bg-red-50 hover:border-red-100 transition-all"><Edit2 size={16} /></button>
+                      </div>
                     </div>
                   </div>
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex flex-wrap gap-1">
-                        {(p.categories_list && p.categories_list.length > 0) ? (
-                          p.categories_list.slice(0, 2).map(cat => (
-                            <span key={cat.id} className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-red-50 text-brand-red border border-red-100">
-                              {cat.name}
-                            </span>
-                          ))
-                        ) : (
-                          <span className="text-[9px] font-bold text-gray-400">Unassigned</span>
-                        )}
-                      </div>
-                      <div className={`w-2 h-2 rounded-full ${p.status === 'In Stock' ? 'bg-green-500' : p.status === 'Low Stock' ? 'bg-amber-500' : 'bg-red-500'}`}></div>
-                    </div>
-                    <h3 className="text-sm font-black text-gray-900 leading-snug mb-4 line-clamp-2 h-10">{p.name}</h3>
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-50">
-                      <div>
-                        <p className="text-[9px] font-black text-gray-400 uppercase tracking-tighter mb-0.5">Base Rate</p>
-                        <p className="text-sm font-black text-gray-900">MUR {Number(p.price).toLocaleString()}</p>
-                      </div>
-                      <button onClick={() => openEdit(p)} className="p-3 text-gray-400 border border-gray-100 rounded-2xl hover:text-brand-red hover:bg-red-50 hover:border-red-100 transition-all"><Edit2 size={16} /></button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
         </CardContent>
 
         {processed.length > perPage && (

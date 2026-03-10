@@ -339,7 +339,7 @@ const Bookings = () => {
           </div>
         </CardHeader>
         <CardContent className="p-0 bg-white">
-          <div className="overflow-x-auto min-h-[400px]">
+          <div className="overflow-x-auto min-h-[400px] -mx-4 sm:mx-0 px-4 sm:px-0">
             {loading ? (
               <div className="py-32 flex flex-col items-center">
                 <Loader2 className="animate-spin text-brand-red mb-4" size={48} />
