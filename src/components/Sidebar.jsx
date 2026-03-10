@@ -92,7 +92,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       )}
 
       <div className={`fixed inset-y-0 left-0 w-64 bg-brand-charcoal text-white z-30 border-r border-white/5 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0 shadow-2xl lg:shadow-none`}>
+        } shadow-2xl lg:shadow-none`}>
 
         {/* Mobile Close Button */}
         <button
