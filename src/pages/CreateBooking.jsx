@@ -10,6 +10,8 @@ const CreateBooking = () => {
     const navigate = useNavigate();
     const [formLoading, setFormLoading] = useState(false);
     const [customers, setCustomers] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [isManualEntry, setIsManualEntry] = useState(false);
     const [formData, setFormData] = useState({
         customer_id: '',
         activity_type: 'Lounge',
@@ -21,7 +23,20 @@ const CreateBooking = () => {
 
     useEffect(() => {
         fetchCustomers();
+        fetchProducts();
     }, []);
+
+    const fetchProducts = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('products')
+                .select('id, name, category, price')
+                .order('name');
+            if (!error) setProducts(data || []);
+        } catch (e) {
+            console.error('Error loading products for bookings');
+        }
+    };
 
     const fetchCustomers = async () => {
         try {
@@ -38,6 +53,22 @@ const CreateBooking = () => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+
+        // Auto-fill price when activity/destination is selected
+        if (name === 'activity_name' && value !== 'Other') {
+            const selectedProduct = products.find(p => p.name === value);
+            if (selectedProduct) {
+                setFormData(prev => ({ ...prev, amount: selectedProduct.price }));
+            }
+        }
+
+        if (name === 'activity_name' && value === 'Other') {
+            setIsManualEntry(true);
+            setFormData(prev => ({ ...prev, activity_name: '' }));
+        } else if (name === 'activity_type') {
+            setIsManualEntry(false);
+            setFormData(prev => ({ ...prev, activity_name: '', amount: '' }));
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -177,15 +208,50 @@ const CreateBooking = () => {
                                         <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 transition-colors group-focus-within:text-brand-red">
                                             <MapPin size={18} />
                                         </span>
-                                        <input
-                                            type="text"
-                                            name="activity_name"
-                                            required
-                                            className="w-full pl-14 pr-6 py-4 bg-gray-50/50 border-2 border-transparent focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 placeholder:text-gray-300"
-                                            value={formData.activity_name}
-                                            onChange={handleInputChange}
-                                            placeholder="e.g. Royal Palm Beachcomber Luxury"
-                                        />
+                                        {isManualEntry ? (
+                                            <div className="flex gap-2">
+                                                <input
+                                                    type="text"
+                                                    name="activity_name"
+                                                    required
+                                                    className="w-full pl-14 pr-6 py-4 bg-gray-50/50 border-2 border-transparent focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 placeholder:text-gray-300"
+                                                    value={formData.activity_name}
+                                                    onChange={handleInputChange}
+                                                    placeholder="Specify custom destination..."
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setIsManualEntry(false)}
+                                                    className="px-6 py-2 bg-gray-100 hover:bg-gray-200 text-gray-500 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all"
+                                                >
+                                                    List
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <select
+                                                name="activity_name"
+                                                required
+                                                className="w-full pl-14 pr-10 py-4 bg-gray-50/50 border-2 border-transparent focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 appearance-none"
+                                                value={formData.activity_name}
+                                                onChange={handleInputChange}
+                                            >
+                                                <option value="">Select destination for {formData.activity_type}...</option>
+                                                {products
+                                                    .filter(p => {
+                                                        if (formData.activity_type === 'Hotel') return p.category === 'Hotels';
+                                                        if (formData.activity_type === 'Activity') return p.category === 'Activities';
+                                                        if (formData.activity_type === 'Tour') return p.category === 'Group Tours';
+                                                        if (formData.activity_type === 'Cruise') return p.category === 'Cruises';
+                                                        if (formData.activity_type === 'Lounge') return p.name.toLowerCase().includes('lounge');
+                                                        return true;
+                                                    })
+                                                    .map(p => (
+                                                        <option key={p.id} value={p.name}>{p.name} (MUR {Number(p.price).toLocaleString()})</option>
+                                                    ))
+                                                }
+                                                <option value="Other">+ Other / Manual Entry</option>
+                                            </select>
+                                        )}
                                     </div>
                                 </div>
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Tag, Loader2, RefreshCw, Plus, Search, Edit2, Trash2,
-  LayoutGrid, List, ArrowUpDown, ArrowUp, ArrowDown, Package,
+  LayoutGrid, List, ArrowUpDown, Package,
   ChevronDown
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -12,33 +12,33 @@ import { showAlert, showConfirm } from '../utils/swal';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const STATUSES = ['In Stock', 'Low Stock', 'Out of Stock'];
-const SORT_OPTIONS = [
-  { value: 'created_at:desc', label: 'Newest first' },
-  { value: 'created_at:asc', label: 'Oldest first' },
-  { value: 'name:asc', label: 'Name A → Z' },
-  { value: 'name:desc', label: 'Name Z → A' },
-  { value: 'price:asc', label: 'Price ↑ Low to High' },
-  { value: 'price:desc', label: 'Price ↓ High to Low' },
-];
-const PER_PAGE_OPTIONS = [8, 16, 32, 64];
+// const SORT_OPTIONS = [
+//   { value: 'created_at:desc', label: 'Newest first' },
+//   { value: 'created_at:asc', label: 'Oldest first' },
+//   { value: 'name:asc', label: 'Name A → Z' },
+//   { value: 'name:desc', label: 'Name Z → A' },
+//   { value: 'price:asc', label: 'Price ↑ Low to High' },
+//   { value: 'price:desc', label: 'Price ↓ High to Low' },
+// ];
+// const PER_PAGE_OPTIONS = [8, 16, 32, 64];
 
 // ─── Colour palette for category badges ───────────────────────────────────────
-const PALETTE = [
-  'bg-blue-50 text-blue-600 border-blue-100',
-  'bg-purple-50 text-purple-600 border-purple-100',
-  'bg-teal-50 text-teal-600 border-teal-100',
-  'bg-orange-50 text-orange-600 border-orange-100',
-  'bg-sky-50 text-sky-600 border-sky-100',
-  'bg-pink-50 text-pink-600 border-pink-100',
-  'bg-indigo-50 text-indigo-600 border-indigo-100',
-  'bg-amber-50 text-amber-600 border-amber-100',
-];
+// const PALETTE = [
+//   'bg-blue-50 text-blue-600 border-blue-100',
+//   'bg-purple-50 text-purple-600 border-purple-100',
+//   'bg-teal-50 text-teal-600 border-teal-100',
+//   'bg-orange-50 text-orange-600 border-orange-100',
+//   'bg-sky-50 text-sky-600 border-sky-100',
+//   'bg-pink-50 text-pink-600 border-pink-100',
+//   'bg-indigo-50 text-indigo-600 border-indigo-100',
+//   'bg-amber-50 text-amber-600 border-amber-100',
+// ];
 const _cc = {}; let _ci = 0;
-const categoryColor = (n) => {
-  if (!n) return 'bg-gray-50 text-gray-500 border-gray-100';
-  if (!_cc[n]) _cc[n] = PALETTE[_ci++ % PALETTE.length];
-  return _cc[n];
-};
+// const categoryColor = (n) => {
+//   if (!n) return 'bg-gray-50 text-gray-500 border-gray-100';
+//   if (!_cc[n]) _cc[n] = PALETTE[_ci++ % PALETTE.length];
+//   return _cc[n];
+// };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const statusBadge = (s) => {
@@ -49,23 +49,52 @@ const statusBadge = (s) => {
 };
 
 // ─── Sort icon ────────────────────────────────────────────────────────────────
-const SortIcon = ({ field, currentSort }) => {
-  const [f, d] = currentSort.split(':');
-  if (f !== field) return <ArrowUpDown size={12} className="text-gray-300 ml-1" />;
-  return d === 'asc'
-    ? <ArrowUp size={12} className="text-brand-red ml-1" />
-    : <ArrowDown size={12} className="text-brand-red ml-1" />;
-};
+// const SortIcon = ({ field, currentSort }) => {
+//   const [f, d] = currentSort.split(':');
+//   if (f !== field) return <ArrowUpDown size={12} className="text-gray-300 ml-1" />;
+//   return d === 'asc'
+//     ? <ArrowUp size={12} className="text-brand-red ml-1" />
+//     : <ArrowDown size={12} className="text-brand-red ml-1" />;
+// };
 
 // ─── Product thumbnail ────────────────────────────────────────────────────────
 const Thumb = ({ src, size = 'sm' }) => {
+  const [error, setError] = React.useState(false);
   const dim = size === 'sm' ? 'h-9 w-9' : 'h-10 w-10';
-  if (src) return (
-    <img src={src} alt="" className={`${dim} rounded-xl object-cover border border-gray-100 shrink-0`} />
+
+  if (src && !error) return (
+    <img
+      src={src}
+      alt=""
+      className={`${dim} rounded-xl object-cover border border-gray-100 shrink-0`}
+      onError={() => setError(true)}
+    />
   );
+
   return (
     <div className={`${dim} rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0`}>
       <Tag size={size === 'sm' ? 14 : 16} className="text-gray-300" />
+    </div>
+  );
+};
+
+// ─── Product Card Image with Fallback ─────────────────────────────────────────
+const ProductCardImage = ({ src }) => {
+  const [error, setError] = React.useState(false);
+
+  if (src && !error) return (
+    <img
+      src={src}
+      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+      alt=""
+      onError={() => setError(true)}
+    />
+  );
+
+  return (
+    <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50 text-gray-200 gap-2">
+      <Package size={40} className="opacity-50" />
+      <span className="text-[10px] font-black uppercase tracking-widest text-gray-300">No Image</span>
     </div>
   );
 };
@@ -83,7 +112,7 @@ const Products = () => {
   const [filterStatus, setFilterStatus] = useState('All');
   const [sortBy, setSortBy] = useState('created_at:desc');
   const [viewMode, setViewMode] = useState('list');
-  const [perPage, setPerPage] = useState(8);
+  const [perPage /*, setPerPage */] = useState(8);
   const [currentPage, setCurrentPage] = useState(1);
 
   // Fetch categories from site categories table
@@ -264,7 +293,10 @@ const Products = () => {
                         <p className="text-sm font-black text-brand-red">MUR {Number(p.price).toLocaleString()}</p>
                       </td>
                       <td className="px-8 py-5">
-                        <span className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border ${statusBadge(p.status)}`}>{p.status}</span>
+                        <div className="flex flex-col gap-1">
+                          <span className={`w-fit px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border ${statusBadge(p.status)}`}>{p.status}</span>
+                          <p className="text-[10px] font-bold text-gray-400 pl-1">{p.stock} units available</p>
+                        </div>
                       </td>
                       <td className="px-8 py-5 text-right">
                         <div className="flex justify-end items-center gap-1">
@@ -282,11 +314,7 @@ const Products = () => {
               {currentItems.map(p => (
                 <div key={p.id} className="bg-white border border-gray-100 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500">
                   <div className="h-48 bg-gray-50 relative overflow-hidden">
-                    {p.image_url ? (
-                      <img src={p.image_url} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-200"><Tag size={40} /></div>
-                    )}
+                    <ProductCardImage src={p.image_url} />
                     <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all">
                       <button onClick={() => deleteProduct(p.id)} className="p-3 bg-white/90 backdrop-blur rounded-2xl text-brand-red shadow-xl hover:scale-110 active:scale-95 transition-all"><Trash2 size={16} /></button>
                     </div>
