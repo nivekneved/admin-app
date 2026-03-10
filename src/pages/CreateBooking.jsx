@@ -31,8 +31,8 @@ const CreateBooking = () => {
     const fetchProducts = async () => {
         try {
             const { data, error } = await supabase
-                .from('products')
-                .select('id, name, category, price')
+                .from('services')
+                .select('id, name, category, base_price')
                 .order('name');
             if (!error) setProducts(data || []);
         } catch {
@@ -86,7 +86,7 @@ const CreateBooking = () => {
                 } else {
                     const product = products.find(p => p.name === value);
                     if (product) {
-                        updated.amount = product.price;
+                        updated.amount = product.base_price;
                     }
                 }
             }

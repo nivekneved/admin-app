@@ -104,9 +104,9 @@ const Products = () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from('product_with_categories').select('*').order('created_at', { ascending: false });
+        .from('services').select('*').order('created_at', { ascending: false });
       if (error) {
-        if (error.message.includes('relation "public.products" does not exist')) setProducts([]);
+        if (error.message.includes('relation "public.services" does not exist')) setProducts([]);
         else throw error;
       } else setProducts(data || []);
     } catch (e) {
@@ -123,7 +123,7 @@ const Products = () => {
     const result = await showConfirm('Delete Product?', 'This will remove the product from your catalog.');
     if (!result.isConfirmed) return;
     try {
-      const { error } = await supabase.from('products').delete().eq('id', id);
+      const { error } = await supabase.from('services').delete().eq('id', id);
       if (error) throw error;
       showAlert('Deleted', 'Product removed');
       setProducts(prev => prev.filter(p => p.id !== id));
@@ -256,7 +256,7 @@ const Products = () => {
                           <div>
                             <p className="text-sm font-black text-gray-900 leading-tight mb-1">{p.name}</p>
                             <div className="flex flex-wrap items-center gap-2">
-                              <p className="text-xs font-black text-brand-red leading-none">MUR {Number(p.price).toLocaleString()}</p>
+                              <p className="text-xs font-black text-brand-red leading-none">MUR {Number(p.base_price).toLocaleString()}</p>
                               <div className="flex flex-wrap gap-1">
                                 {(p.categories_list && p.categories_list.length > 0) ? (
                                   p.categories_list.map(cat => (
@@ -317,7 +317,7 @@ const Products = () => {
                       <div className="flex items-center justify-between pt-4 border-t border-gray-50">
                         <div>
                           <p className="text-[9px] font-black text-gray-400 uppercase tracking-tighter mb-0.5">Base Rate</p>
-                          <p className="text-sm font-black text-gray-900">MUR {Number(p.price).toLocaleString()}</p>
+                          <p className="text-sm font-black text-gray-900">MUR {Number(p.base_price).toLocaleString()}</p>
                         </div>
                         <button onClick={() => openEdit(p)} className="p-3 text-gray-400 border border-gray-100 rounded-2xl hover:text-brand-red hover:bg-red-50 hover:border-red-100 transition-all"><Edit2 size={16} /></button>
                       </div>

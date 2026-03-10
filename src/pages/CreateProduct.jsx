@@ -70,7 +70,7 @@ const CreateProduct = () => {
     const fetchProduct = async () => {
         try {
             const { data, error } = await supabase
-                .from('products')
+                .from('services')
                 .select('*, product_categories(category_id)')
                 .eq('id', id)
                 .single();
@@ -80,7 +80,7 @@ const CreateProduct = () => {
                 setFormData({
                     name: data.name || '',
                     category_ids: data.product_categories?.map(pc => pc.category_id) || [],
-                    price: data.price || '',
+                    price: data.base_price || '',
                     stock: data.stock || '',
                     status: data.status || 'In Stock',
                     description: data.description || '',
@@ -224,7 +224,7 @@ const CreateProduct = () => {
         try {
             const productData = {
                 name: formData.name,
-                price: parseFloat(formData.price) || 0,
+                base_price: parseFloat(formData.price) || 0,
                 stock: parseInt(formData.stock) || 0,
                 status: formData.status,
                 description: formData.description,
@@ -244,13 +244,13 @@ const CreateProduct = () => {
 
             if (isEdit) {
                 const { error } = await supabase
-                    .from('products')
+                    .from('services')
                     .update(productData)
                     .eq('id', id);
                 if (error) throw error;
             } else {
                 const { data, error } = await supabase
-                    .from('products')
+                    .from('services')
                     .insert([{ ...productData, created_at: new Date().toISOString() }])
                     .select()
                     .single();

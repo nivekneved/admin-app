@@ -29,8 +29,8 @@ const CreateOrder = () => {
     const fetchProducts = async () => {
         try {
             const { data, error } = await supabase
-                .from('products')
-                .select('id, name, price, category')
+                .from('services')
+                .select('id, name, base_price, category')
                 .order('name');
             if (!error) setProducts(data || []);
         } catch (error) {
@@ -88,7 +88,7 @@ const CreateOrder = () => {
             const prod = products.find(p => p.id === value);
             item.product_id = value;
             item.product_name = prod ? prod.name : '';
-            item.unit_price = prod ? prod.price : 0;
+            item.unit_price = prod ? prod.base_price : 0;
         } else {
             item[field] = value;
         }
@@ -244,7 +244,7 @@ const CreateOrder = () => {
                                                     >
                                                         <option value="">Select Product...</option>
                                                         {products.map(p => (
-                                                            <option key={p.id} value={p.id}>{p.name} (MUR {p.price})</option>
+                                                            <option key={p.id} value={p.id}>{p.name} (MUR {p.base_price})</option>
                                                         ))}
                                                     </select>
                                                 </div>
