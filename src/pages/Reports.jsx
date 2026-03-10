@@ -40,7 +40,7 @@ const StatCard = ({ icon: Icon, label, value, sub, color = 'red', loading }) => 
     amber: 'bg-amber-50 text-amber-600 border-amber-100',
   };
   return (
-    <Card className="border-0 shadow-lg shadow-gray-100 rounded-3xl overflow-hidden bg-white">
+    <Card className="border border-gray-200 shadow-lg shadow-gray-100 rounded-3xl overflow-hidden bg-white">
       <CardContent className="p-6">
         <div className="flex items-start justify-between mb-4">
           <div className={`p-3 rounded-2xl border ${colors[color]}`}>
@@ -306,8 +306,8 @@ const Reports = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
 
         {/* Monthly Trend (2/3 width) */}
-        <Card className="lg:col-span-2 border-0 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
-          <CardHeader className="border-b border-gray-50 pb-5 px-8 pt-8">
+        <Card className="lg:col-span-2 border border-gray-200 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
+          <CardHeader className="border-b border-gray-200 pb-5 px-8 pt-8">
             <div className="flex items-center gap-2">
               <BarChart2 size={18} className="text-brand-red" />
               <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">Revenue Velocity — 6 Months</h3>
@@ -346,7 +346,7 @@ const Reports = () => {
                 </div>
 
                 {/* Table below chart */}
-                <div className="border-t border-gray-50 pt-6 overflow-x-auto">
+                <div className="border-t border-gray-200 pt-6 overflow-x-auto">
                   <table className="min-w-full">
                     <thead>
                       <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
@@ -356,9 +356,9 @@ const Reports = () => {
                         <th className="text-right pb-4">Unit Valuation</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-50">
+                    <tbody className="divide-y divide-gray-200">
                       {monthlyBookings.map((row, i) => (
-                        <tr key={i} className="hover:bg-gray-50/30 transition-colors">
+                        <tr key={i} className="even:bg-gray-50/80 hover:bg-gray-100/50 transition-colors">
                           <td className="py-4 text-xs font-black text-gray-900 uppercase tracking-tight">{row.month} {row.year}</td>
                           <td className="py-4 text-right text-sm font-black text-gray-900">{row.count}</td>
                           <td className="py-4 text-right text-sm font-black text-brand-red">{fmtRs(row.revenue)}</td>
@@ -376,8 +376,8 @@ const Reports = () => {
         </Card>
 
         {/* Status Breakdown (1/3 width) */}
-        <Card className="border-0 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
-          <CardHeader className="border-b border-gray-50 pb-5 px-8 pt-8">
+        <Card className="border border-gray-200 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
+          <CardHeader className="border-b border-gray-200 pb-5 px-8 pt-8">
             <div className="flex items-center gap-2">
               <Activity size={18} className="text-brand-red" />
               <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">Service Distribution</h3>
@@ -406,7 +406,7 @@ const Reports = () => {
 
                 {/* Totals summary */}
                 {stats.totalBookings > 0 && (
-                  <div className="border-t border-gray-50 pt-6 mt-2 space-y-4">
+                  <div className="border-t border-gray-200 pt-6 mt-2 space-y-4">
                     <div className="flex justify-between items-center">
                       <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Gross Revenue</span>
                       <span className="text-sm font-black text-gray-900">{fmtRs(stats.totalRevenue)}</span>
@@ -434,8 +434,8 @@ const Reports = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         {/* Top Activities */}
-        <Card className="border-0 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
-          <CardHeader className="border-b border-gray-50 pb-5 px-8 pt-8">
+        <Card className="border border-gray-200 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
+          <CardHeader className="border-b border-gray-200 pb-5 px-8 pt-8">
             <div className="flex items-center gap-2">
               <TrendingUp size={18} className="text-brand-red" />
               <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">Product Performance</h3>
@@ -457,12 +457,12 @@ const Reports = () => {
                       <th className="text-right pb-4">Performance Metrics</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-50">
+                  <tbody className="divide-y divide-gray-200">
                     {topActivities.map((row, i) => (
-                      <tr key={i} className="hover:bg-gray-50/30 transition-colors">
+                      <tr key={i} className="even:bg-gray-50/80 hover:bg-gray-100/50 transition-colors">
                         <td className="py-4">
                           <div className="flex items-center gap-3">
-                            <span className="text-[10px] font-black text-gray-300 pr-2 border-r border-gray-100">{(i + 1).toString().padStart(2, '0')}</span>
+                            <span className="text-[10px] font-black text-gray-300 pr-2 border-r border-gray-200">{(i + 1).toString().padStart(2, '0')}</span>
                             <ActivityIcon type={row.type} />
                             <div className="flex-1 min-w-0">
                               <p className="text-xs font-black text-gray-900 truncate leading-tight mb-1">{row.name}</p>
@@ -484,8 +484,8 @@ const Reports = () => {
         </Card>
 
         {/* Recent Bookings */}
-        <Card className="border-0 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
-          <CardHeader className="border-b border-gray-50 pb-5 px-8 pt-8">
+        <Card className="border border-gray-200 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
+          <CardHeader className="border-b border-gray-200 pb-5 px-8 pt-8">
             <div className="flex items-center gap-2">
               <Calendar size={18} className="text-brand-red" />
               <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">Recent Transmissions</h3>
@@ -500,19 +500,19 @@ const Reports = () => {
               <div className="flex items-center justify-center h-32 text-gray-400 text-sm">No bookings yet</div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-50">
+                <table className="min-w-full divide-y divide-gray-200">
                   <thead>
                     <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                       <th className="text-left pb-4">Client & Asset</th>
                       <th className="text-right pb-4">Value & Lifecycle</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-50">
+                  <tbody className="divide-y divide-gray-200">
                     {recentBookings.map((b) => (
-                      <tr key={b.id} className="hover:bg-gray-50/30 transition-colors">
+                      <tr key={b.id} className="even:bg-gray-50/80 hover:bg-gray-100/50 transition-colors">
                         <td className="py-4">
                           <div className="flex items-center gap-3">
-                            <div className="h-7 w-7 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-[10px] font-black text-gray-400 shrink-0 capitalize">
+                            <div className="h-7 w-7 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center text-[10px] font-black text-gray-400 shrink-0 capitalize">
                               {b.customers?.first_name?.charAt(0) || 'G'}
                             </div>
                             <div className="min-w-0">

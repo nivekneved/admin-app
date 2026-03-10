@@ -213,7 +213,7 @@ const Customers = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <Card className="border-0 shadow-lg shadow-gray-100 rounded-3xl overflow-hidden bg-white">
+                <Card className="border border-gray-200 shadow-lg shadow-gray-100 rounded-3xl overflow-hidden bg-white">
                     <CardContent className="flex items-center p-6">
                         <div className="p-4 bg-red-50 text-brand-red rounded-2xl mr-4">
                             <UserCheck size={28} />
@@ -224,7 +224,7 @@ const Customers = () => {
                         </div>
                     </CardContent>
                 </Card>
-                <Card className="border-0 shadow-lg shadow-gray-100 rounded-3xl overflow-hidden bg-white">
+                <Card className="border border-gray-200 shadow-lg shadow-gray-100 rounded-3xl overflow-hidden bg-white">
                     <CardContent className="flex items-center p-6">
                         <div className="p-4 bg-gray-50 text-gray-400 rounded-2xl mr-4">
                             <UserPlus size={28} />
@@ -235,7 +235,7 @@ const Customers = () => {
                         </div>
                     </CardContent>
                 </Card>
-                <Card className="border-0 shadow-lg shadow-gray-100 rounded-3xl overflow-hidden bg-white">
+                <Card className="border border-gray-200 shadow-lg shadow-gray-100 rounded-3xl overflow-hidden bg-white">
                     <CardContent className="flex items-center p-6">
                         <div className="p-4 bg-red-50 text-brand-red rounded-2xl mr-4">
                             <Mail size={28} />
@@ -248,7 +248,7 @@ const Customers = () => {
                 </Card>
             </div>
 
-            <Card className="border-0 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
+            <Card className="border border-gray-200 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
                 <CardHeader className="border-b border-gray-50 pb-4 bg-white px-8 pt-8">
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -258,12 +258,12 @@ const Customers = () => {
                                     <input
                                         type="text"
                                         placeholder="Identify luxury clients…"
-                                        className="pl-9 pr-9 py-2.5 w-full border border-gray-100 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+                                        className="pl-9 pr-9 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                     />
                                 </div>
-                                <div className="flex items-center bg-gray-50 border border-gray-100 rounded-2xl px-4 py-2.5 transition-all">
+                                <div className="flex items-center bg-gray-50 border border-gray-300 rounded-2xl px-4 py-2.5 transition-all">
                                     <Filter size={14} className="text-gray-400 mr-2" />
                                     <select
                                         className="bg-transparent text-sm font-black uppercase tracking-widest text-gray-500 focus:outline-none cursor-pointer"
@@ -297,12 +297,12 @@ const Customers = () => {
                                         <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-50">
+                                <tbody className="divide-y divide-gray-200">
                                     {currentCustomers.map((customer) => (
-                                        <tr key={customer.id} className="hover:bg-gray-50/30 transition-colors">
+                                        <tr key={customer.id} className="even:bg-gray-50/80 hover:bg-gray-100/50 transition-colors">
                                             <td className="px-8 py-5 whitespace-nowrap">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="h-10 w-10 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center text-sm font-black text-gray-400 shrink-0">
+                                                    <div className="h-10 w-10 rounded-2xl bg-gray-50 border border-gray-200 flex items-center justify-center text-sm font-black text-gray-400 shrink-0">
                                                         {customer.first_name?.charAt(0)}{customer.last_name?.charAt(0)}
                                                     </div>
                                                     <div>
@@ -395,7 +395,7 @@ const Customers = () => {
 
                     {/* Pagination */}
                     {filteredCustomers.length > customersPerPage && (
-                        <div className="flex items-center justify-between px-8 py-6 bg-gray-50/50 border-t border-gray-100">
+                        <div className="flex items-center justify-between px-8 py-6 bg-gray-50/50 border-t border-gray-200">
                             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                                 Page {currentPage} of {totalPages}
                             </span>
@@ -403,14 +403,14 @@ const Customers = () => {
                                 <button
                                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                                     disabled={currentPage === 1}
-                                    className="p-3 bg-white border border-gray-100 rounded-xl disabled:opacity-30 shadow-sm hover:border-gray-300 transition-all font-bold text-xs"
+                                    className="p-3 bg-white border border-gray-300 rounded-xl disabled:opacity-30 shadow-sm hover:border-gray-300 transition-all font-bold text-xs"
                                 >
                                     Previous
                                 </button>
                                 <button
                                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                                     disabled={currentPage === totalPages}
-                                    className="p-3 bg-white border border-gray-100 rounded-xl disabled:opacity-30 shadow-sm hover:border-gray-300 transition-all font-bold text-xs"
+                                    className="p-3 bg-white border border-gray-300 rounded-xl disabled:opacity-30 shadow-sm hover:border-gray-300 transition-all font-bold text-xs"
                                 >
                                     Next
                                 </button>
@@ -433,7 +433,7 @@ const Customers = () => {
                                 type="text"
                                 name="first_name"
                                 required
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition-all"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition-all"
                                 value={formData.first_name}
                                 onChange={handleInputChange}
                                 placeholder="Emma"
@@ -445,7 +445,7 @@ const Customers = () => {
                                 type="text"
                                 name="last_name"
                                 required
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition-all"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition-all"
                                 value={formData.last_name}
                                 onChange={handleInputChange}
                                 placeholder="Johnson"
@@ -460,7 +460,7 @@ const Customers = () => {
                             name="email"
                             required
                             disabled={editingCustomer}
-                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red disabled:opacity-50 transition-all font-medium"
+                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red disabled:opacity-50 transition-all font-medium"
                             value={formData.email}
                             onChange={handleInputChange}
                             placeholder="customer@example.com"
@@ -473,7 +473,7 @@ const Customers = () => {
                             <input
                                 type="text"
                                 name="phone"
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
                                 value={formData.phone}
                                 onChange={handleInputChange}
                                 placeholder="+230 ..."
@@ -484,7 +484,7 @@ const Customers = () => {
                             <input
                                 type="text"
                                 name="country"
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
                                 value={formData.country}
                                 onChange={handleInputChange}
                                 placeholder="Mauritius"
@@ -492,7 +492,7 @@ const Customers = () => {
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-between bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <div className="flex items-center justify-between bg-gray-50 p-4 rounded-xl border border-gray-300">
                         <div>
                             <h4 className="text-sm font-bold text-gray-900">Newsletter Subscription</h4>
                             <p className="text-[10px] text-gray-500">Send marketing and seasonal offers</p>
@@ -513,7 +513,7 @@ const Customers = () => {
                         <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Global Status</label>
                         <select
                             name="status"
-                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all appearance-none font-bold text-sm text-gray-700"
+                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all appearance-none font-bold text-sm text-gray-700"
                             value={formData.status}
                             onChange={handleInputChange}
                         >

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/Card';
 import { Button } from '../components/Button';
 import {
-    ArrowLeft, User, Mail, Phone, MapPin, Calendar, Activity,
-    CreditCard, ShoppingBag, Clock, DollarSign, Loader2
+    ArrowLeft, Mail, Phone, MapPin, Calendar, Activity,
+    CreditCard, ShoppingBag, Clock, Loader2
 } from 'lucide-react';
 import { showAlert } from '../utils/swal';
 
@@ -107,7 +107,7 @@ const ViewCustomer = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
 
                 {/* Profile Card */}
-                <div className="lg:col-span-1 border border-gray-100 shadow-sm rounded-xl overflow-hidden bg-white">
+                <div className="lg:col-span-1 border border-gray-200 shadow-sm rounded-xl overflow-hidden bg-white">
                     <div className="h-24 bg-gradient-to-r from-red-600 to-red-400"></div>
                     <div className="relative px-6 pb-6">
                         <div className="absolute -top-12 left-6 bg-white p-1 rounded-full shadow-md">
@@ -155,7 +155,7 @@ const ViewCustomer = () => {
                 <div className="lg:col-span-2 space-y-6">
 
                     <Card>
-                        <CardHeader className="bg-gray-50/50 border-b border-gray-100">
+                        <CardHeader className="bg-gray-50/50 border-b border-gray-200">
                             <div className="flex justify-between items-center">
                                 <CardTitle className="text-lg flex items-center">
                                     <Calendar className="mr-2 text-brand-red" size={20} />
@@ -166,7 +166,7 @@ const ViewCustomer = () => {
                         </CardHeader>
                         <CardContent className="p-0">
                             {bookings.length > 0 ? (
-                                <div className="divide-y divide-gray-100">
+                                <div className="divide-y divide-gray-200">
                                     {bookings.map((booking) => (
                                         <div key={booking.id} className="p-4 hover:bg-gray-50/50 transition-colors">
                                             <div className="flex justify-between items-start mb-2">
@@ -184,8 +184,8 @@ const ViewCustomer = () => {
                                                     {new Date(booking.start_date).toLocaleDateString()}
                                                 </div>
                                                 <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${booking.status === 'Confirmed' ? 'bg-green-50 text-green-600' :
-                                                        booking.status === 'Pending' ? 'bg-orange-50 text-orange-600' :
-                                                            'bg-gray-100 text-gray-500'
+                                                    booking.status === 'Pending' ? 'bg-orange-50 text-orange-600' :
+                                                        'bg-gray-100 text-gray-500'
                                                     }`}>
                                                     {booking.status}
                                                 </span>
@@ -202,7 +202,7 @@ const ViewCustomer = () => {
                     </Card>
 
                     <Card>
-                        <CardHeader className="bg-gray-50/50 border-b border-gray-100">
+                        <CardHeader className="bg-gray-50/50 border-b border-gray-200">
                             <div className="flex justify-between items-center">
                                 <CardTitle className="text-lg flex items-center">
                                     <ShoppingBag className="mr-2 text-brand-red" size={20} />
@@ -213,7 +213,7 @@ const ViewCustomer = () => {
                         </CardHeader>
                         <CardContent className="p-0">
                             {orders.length > 0 ? (
-                                <div className="divide-y divide-gray-100">
+                                <div className="divide-y divide-gray-200">
                                     {orders.map((order) => (
                                         <div key={order.id} className="p-4 hover:bg-gray-50/50 transition-colors">
                                             <div className="flex justify-between items-start mb-2">
@@ -231,8 +231,8 @@ const ViewCustomer = () => {
                                                     {order.payment_method || 'Unknown'}
                                                 </div>
                                                 <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${order.status === 'Completed' ? 'bg-green-50 text-green-600' :
-                                                        order.status === 'Pending' ? 'bg-orange-50 text-orange-600' :
-                                                            'bg-gray-100 text-gray-500'
+                                                    order.status === 'Pending' ? 'bg-orange-50 text-orange-600' :
+                                                        'bg-gray-100 text-gray-500'
                                                     }`}>
                                                     {order.status}
                                                 </span>

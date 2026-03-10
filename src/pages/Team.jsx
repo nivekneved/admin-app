@@ -100,7 +100,7 @@ const Team = () => {
                 </Button>
             </div>
 
-            <Card className="border-none shadow-sm overflow-hidden bg-white rounded-3xl">
+            <Card className="border border-gray-200 shadow-sm overflow-hidden bg-white rounded-3xl">
                 <CardHeader className="bg-white border-b border-gray-50 p-6">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="relative flex-1 max-w-md">
@@ -108,13 +108,13 @@ const Team = () => {
                             <input
                                 type="text"
                                 placeholder="Search by name, username, role or email..."
-                                className="pl-10 pr-4 py-2.5 w-full border border-gray-100 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+                                className="pl-10 pr-4 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
 
-                        <div className="flex bg-gray-50 p-1.5 rounded-2xl border border-gray-100 gap-1 mt-0">
+                        <div className="flex bg-gray-50 p-1.5 rounded-2xl border border-gray-300 gap-1 mt-0">
                             <button
                                 onClick={() => setViewMode('list')}
                                 className={`p-2 rounded-xl transition-all ${viewMode === 'list' ? 'bg-white shadow-sm text-brand-red' : 'text-gray-400'}`}
@@ -148,7 +148,7 @@ const Team = () => {
                         </div>
                     ) : viewMode === 'list' ? (
                         <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-100">
+                            <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50/50">
                                     <tr>
                                         <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Personal Identity & Authority</th>
@@ -156,12 +156,12 @@ const Team = () => {
                                         <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Management</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-50">
+                                <tbody className="divide-y divide-gray-200">
                                     {currentItems.map((member) => (
-                                        <tr key={member.id} className="hover:bg-gray-50/30 transition-colors">
+                                        <tr key={member.id} className="even:bg-gray-50/80 hover:bg-gray-100/50 transition-colors">
                                             <td className="px-8 py-5">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-10 h-10 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 shrink-0">
+                                                    <div className="w-10 h-10 rounded-xl overflow-hidden bg-gray-100 border border-gray-300 shrink-0">
                                                         {member.photo_url ? (
                                                             <img src={member.photo_url} alt={member.name} className="w-full h-full object-cover" />
                                                         ) : (
@@ -217,7 +217,7 @@ const Team = () => {
                     ) : (
                         <div className="p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                             {currentItems.map((member) => (
-                                <div key={member.id} className="bg-white border border-gray-100 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500 flex flex-col">
+                                <div key={member.id} className="bg-white border border-gray-300 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500 flex flex-col">
                                     <div className="relative h-48 overflow-hidden bg-gray-50">
                                         {member.photo_url ? (
                                             <img src={member.photo_url} alt={member.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
@@ -253,7 +253,7 @@ const Team = () => {
                                             </p>
                                         )}
 
-                                        <div className="flex items-center gap-3 pt-4 border-t border-gray-50 mt-auto">
+                                        <div className="flex items-center gap-3 pt-4 border-t border-gray-200 mt-auto">
                                             <a href={`mailto:${member.email}`} className="p-2 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title={member.email}>
                                                 <Mail size={16} />
                                             </a>
@@ -271,7 +271,7 @@ const Team = () => {
                 </CardContent>
 
                 {processed.length > perPage && (
-                    <CardContent className="bg-white border-t border-gray-50 p-6">
+                    <CardContent className="bg-white border-t border-gray-200 p-6">
                         <div className="flex items-center justify-between">
                             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Page {currentPage} of {totalPages}</span>
 
@@ -279,14 +279,14 @@ const Team = () => {
                                 <button
                                     disabled={currentPage === 1}
                                     onClick={() => handlePageChange(currentPage - 1)}
-                                    className="p-3 border border-gray-100 rounded-2xl disabled:opacity-30 hover:bg-gray-50 transition-all text-gray-400"
+                                    className="p-3 border border-gray-300 rounded-2xl disabled:opacity-30 hover:bg-gray-50 transition-all text-gray-400"
                                 >
                                     <ChevronLeft size={18} />
                                 </button>
                                 <button
                                     disabled={currentPage === totalPages}
                                     onClick={() => handlePageChange(currentPage + 1)}
-                                    className="p-3 border border-gray-100 rounded-2xl disabled:opacity-30 hover:bg-gray-50 transition-all text-gray-400"
+                                    className="p-3 border border-gray-300 rounded-2xl disabled:opacity-30 hover:bg-gray-50 transition-all text-gray-400"
                                 >
                                     <ChevronRight size={18} />
                                 </button>

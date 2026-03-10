@@ -130,7 +130,7 @@ const Orders = () => {
         </div>
       </div>
 
-      <Card className="border-0 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
+      <Card className="border border-gray-200 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
         <CardHeader className="border-b border-gray-50 pb-4 bg-white px-8 pt-8">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -139,7 +139,7 @@ const Orders = () => {
                 <input
                   type="text"
                   placeholder="Intercept order streams…"
-                  className="pl-9 pr-9 py-2.5 w-full border border-gray-100 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+                  className="pl-9 pr-9 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
                   value={searchTerm}
                   onChange={handleSearchChange}
                 />
@@ -165,10 +165,10 @@ const Orders = () => {
                     <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50">
+                <tbody className="divide-y divide-gray-200">
                   {currentOrders.map((order) => (
                     <React.Fragment key={order.id}>
-                      <tr key={order.id} className="hover:bg-gray-50/30 transition-colors">
+                      <tr key={order.id} className="even:bg-gray-50/80 hover:bg-gray-100/50 transition-colors">
                         <td className="px-8 py-5 whitespace-nowrap">
                           <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">#{order.id?.slice(0, 8)}</div>
                           <div className="text-xs font-semibold text-gray-500">{formatDate(order.created_at)}</div>
@@ -221,7 +221,7 @@ const Orders = () => {
                       {expandedOrderId === order.id && (
                         <tr>
                           <td colSpan="7" className="px-8 py-6 bg-gray-50/50">
-                            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+                            <div className="bg-white rounded-2xl p-6 border border-gray-300 shadow-sm">
                               <div className="flex items-center justify-between mb-4">
                                 <h4 className="font-black text-gray-400 uppercase text-[10px] tracking-widest flex items-center gap-2">
                                   <Package size={14} /> Itemized Manifest
@@ -295,7 +295,7 @@ const Orders = () => {
 
           {/* Pagination */}
           {filteredOrders.length > ordersPerPage && (
-            <div className="flex items-center justify-between px-8 py-6 bg-gray-50/50 border-t border-gray-100">
+            <div className="flex items-center justify-between px-8 py-6 bg-gray-50/50 border-t border-gray-200">
               <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                 Page {currentPage} of {totalPages}
               </span>
@@ -303,7 +303,7 @@ const Orders = () => {
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className="p-3 bg-white border border-gray-100 rounded-xl disabled:opacity-30 shadow-sm hover:border-gray-300 transition-all font-bold text-xs"
+                  className="p-3 bg-white border border-gray-300 rounded-xl disabled:opacity-30 shadow-sm hover:border-gray-300 transition-all font-bold text-xs"
                 >
                   Previous
                 </button>

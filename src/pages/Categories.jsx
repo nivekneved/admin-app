@@ -271,9 +271,9 @@ const Categories = () => {
                 </div>
             </div>
 
-            <Card className="border-0 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
+            <Card className="border border-gray-200 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
                 {/* Toolbar */}
-                <CardHeader className="border-b border-gray-50 pb-4 bg-white px-8 pt-8">
+                <CardHeader className="border-b border-gray-200 pb-4 bg-white px-8 pt-8">
                     <div className="flex flex-col gap-4">
                         {/* Search */}
                         <div className="relative">
@@ -281,7 +281,7 @@ const Categories = () => {
                             <input
                                 type="text"
                                 placeholder="Search categories…"
-                                className="pl-9 pr-9 py-2.5 w-full border border-gray-100 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+                                className="pl-9 pr-9 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -296,7 +296,7 @@ const Categories = () => {
                         {/* Filters + Sort */}
                         <div className="flex flex-wrap items-center gap-2">
                             <div className="relative">
-                                <select className={`${selectCls} bg-gray-50 border-gray-100 rounded-2xl py-2.5`} value={filterActive} onChange={(e) => setFilterActive(e.target.value)}>
+                                <select className={`${selectCls} bg-gray-50 border-gray-300 rounded-2xl py-2.5`} value={filterActive} onChange={(e) => setFilterActive(e.target.value)}>
                                     <option value="All">All Statuses</option>
                                     <option value="Active">Active only</option>
                                     <option value="Inactive">Inactive only</option>
@@ -305,7 +305,7 @@ const Categories = () => {
                             </div>
 
                             <div className="relative">
-                                <select className={`${selectCls} bg-gray-50 border-gray-100 rounded-2xl py-2.5`} value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                                <select className={`${selectCls} bg-gray-50 border-gray-300 rounded-2xl py-2.5`} value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                                     <option value="display_order:asc">Order ↑</option>
                                     <option value="display_order:desc">Order ↓</option>
                                     <option value="name:asc">Name A → Z</option>
@@ -343,7 +343,7 @@ const Categories = () => {
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-50">
+                            <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50/50">
                                     <tr>
                                         <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Category Asset</th>
@@ -352,9 +352,9 @@ const Categories = () => {
                                         <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-50">
+                                <tbody className="divide-y divide-gray-200">
                                     {processed.map((cat) => (
-                                        <tr key={cat.id} className="hover:bg-gray-50/30 transition-colors">
+                                        <tr key={cat.id} className="even:bg-gray-50/80 hover:bg-gray-100/50 transition-colors">
                                             {/* Category Asset (Name + Icon + Slug) */}
                                             <td className="px-8 py-5 whitespace-nowrap">
                                                 <div className="flex items-center">
@@ -449,7 +449,7 @@ const Categories = () => {
                 {viewingCat && (
                     <div className="space-y-4">
                         {/* Header */}
-                        <div className="flex items-center gap-4 bg-gray-50 rounded-xl p-4 border border-gray-100">
+                        <div className="flex items-center gap-4 bg-gray-50 rounded-xl p-4 border border-gray-200">
                             <div className="h-12 w-12 rounded-2xl bg-red-50/50 border border-red-100/50 flex items-center justify-center text-2xl shadow-sm">
                                 {getCategoryIcon(viewingCat.name)}
                             </div>
@@ -464,30 +464,30 @@ const Categories = () => {
 
                         {/* Details grid */}
                         <div className="grid grid-cols-2 gap-3">
-                            <div className="bg-gray-50 rounded-xl p-3 border border-gray-100">
+                            <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
                                 <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1"><Hash size={10} className="mr-1" /> Display Order</div>
                                 <p className="text-lg font-black text-gray-900">{viewingCat.display_order ?? '—'}</p>
                             </div>
-                            <div className="bg-gray-50 rounded-xl p-3 border border-gray-100">
+                            <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
                                 <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1"><Home size={10} className="mr-1" /> Show on Home</div>
                                 <p className="text-lg font-black text-gray-900">{viewingCat.show_on_home ? '✅ Yes' : '—'}</p>
                             </div>
 
                             {viewingCat.description && (
-                                <div className="col-span-2 bg-gray-50 rounded-xl p-3 border border-gray-100">
+                                <div className="col-span-2 bg-gray-50 rounded-xl p-3 border border-gray-200">
                                     <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1"><FileText size={10} className="mr-1" /> Description</div>
                                     <p className="text-sm text-gray-700 leading-relaxed">{viewingCat.description}</p>
                                 </div>
                             )}
 
                             {viewingCat.link && (
-                                <div className="col-span-2 bg-gray-50 rounded-xl p-3 border border-gray-100">
+                                <div className="col-span-2 bg-gray-50 rounded-xl p-3 border border-gray-200">
                                     <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1"><LinkIcon size={10} className="mr-1" /> Link</div>
                                     <p className="text-xs font-mono text-blue-600 truncate">{viewingCat.link}</p>
                                 </div>
                             )}
 
-                            <div className="col-span-2 bg-gray-50 rounded-xl p-3 border border-gray-100">
+                            <div className="col-span-2 bg-gray-50 rounded-xl p-3 border border-gray-200">
                                 <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1"><Layers size={10} className="mr-1" /> ID</div>
                                 <p className="text-xs font-mono text-gray-500">{viewingCat.id}</p>
                             </div>
@@ -519,7 +519,7 @@ const Categories = () => {
                             <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Name *</label>
                             <input type="text" name="name" required
                                 placeholder="e.g. Hotels"
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium text-sm"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium text-sm"
                                 value={formData.name} onChange={handleInputChange}
                             />
                         </div>
@@ -537,7 +537,7 @@ const Categories = () => {
                             <span className="px-3 py-2.5 bg-gray-100 border border-r-0 border-gray-100 rounded-l-xl text-sm text-gray-400 font-mono">/</span>
                             <input type="text" name="slug" required
                                 placeholder="hotels"
-                                className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-r-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-mono text-sm"
+                                className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-r-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-mono text-sm"
                                 value={formData.slug} onChange={handleInputChange}
                             />
                         </div>
@@ -548,7 +548,7 @@ const Categories = () => {
                         <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Description</label>
                         <textarea name="description" rows={2}
                             placeholder="Brief description of this category…"
-                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-sm resize-none"
+                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-sm resize-none"
                             value={formData.description} onChange={handleInputChange}
                         />
                     </div>
@@ -558,14 +558,14 @@ const Categories = () => {
                             <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Link (optional)</label>
                             <input type="text" name="link"
                                 placeholder="/categories/hotels"
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-mono text-sm"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-mono text-sm"
                                 value={formData.link} onChange={handleInputChange}
                             />
                         </div>
                         <div>
                             <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Display Order</label>
                             <input type="number" name="display_order" min="1"
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
                                 value={formData.display_order} onChange={handleInputChange}
                             />
                         </div>
@@ -575,7 +575,7 @@ const Categories = () => {
                         <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Image URL (optional)</label>
                         <input type="text" name="image_url"
                             placeholder="https://..."
-                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-sm"
+                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-sm"
                             value={formData.image_url} onChange={handleInputChange}
                         />
                     </div>

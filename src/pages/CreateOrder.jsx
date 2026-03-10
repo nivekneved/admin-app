@@ -171,7 +171,7 @@ const CreateOrder = () => {
                 <div className="flex items-center gap-6">
                     <Link
                         to="/orders"
-                        className="p-3 bg-white hover:bg-gray-50 border border-gray-100 rounded-2xl transition-all text-gray-400 hover:text-brand-red shadow-sm"
+                        className="p-3 bg-white hover:bg-gray-50 border border-gray-300 rounded-2xl transition-all text-gray-400 hover:text-brand-red shadow-sm"
                     >
                         <ArrowLeft size={20} />
                     </Link>
@@ -184,7 +184,7 @@ const CreateOrder = () => {
 
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
                 <div className="xl:col-span-8">
-                    <Card className="border-0 shadow-2xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
+                    <Card className="border border-gray-300 shadow-2xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
                         <div className="h-2 bg-gradient-to-r from-brand-red to-red-600 w-full"></div>
                         <CardHeader className="pt-10 px-10">
                             <div className="flex items-center gap-4">
@@ -205,7 +205,7 @@ const CreateOrder = () => {
                                         <select
                                             name="customer_id"
                                             required
-                                            className="w-full pl-14 pr-10 py-4 bg-gray-50/50 border-2 border-transparent focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 appearance-none"
+                                            className="w-full pl-14 pr-10 py-4 bg-gray-50/50 border-2 border-gray-300 focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 appearance-none"
                                             value={formData.customer_id}
                                             onChange={handleInputChange}
                                         >
@@ -233,11 +233,11 @@ const CreateOrder = () => {
 
                                     <div className="space-y-4">
                                         {formData.items.map((it, idx) => (
-                                            <div key={idx} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end bg-gray-50/50 p-6 rounded-[2rem] border border-gray-100/50">
+                                            <div key={idx} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end bg-gray-50/50 p-6 rounded-[2rem] border border-gray-300">
                                                 <div className="md:col-span-5 space-y-2">
                                                     <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">Product</label>
                                                     <select
-                                                        className="w-full px-4 py-3 bg-white border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red font-bold text-gray-700 text-sm appearance-none"
+                                                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red font-bold text-gray-700 text-sm appearance-none"
                                                         value={it.product_id}
                                                         onChange={(e) => updateItem(idx, 'product_id', e.target.value)}
                                                         required
@@ -253,7 +253,7 @@ const CreateOrder = () => {
                                                     <input
                                                         type="number"
                                                         min="1"
-                                                        className="w-full px-4 py-3 bg-white border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red font-bold text-center"
+                                                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red font-bold text-center"
                                                         value={it.quantity}
                                                         onChange={(e) => updateItem(idx, 'quantity', e.target.value)}
                                                         required
@@ -264,7 +264,7 @@ const CreateOrder = () => {
                                                     <div className="relative">
                                                         <input
                                                             type="number"
-                                                            className="w-full pl-4 pr-10 py-3 bg-white border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red font-bold"
+                                                            className="w-full pl-4 pr-10 py-3 bg-white border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red font-bold"
                                                             value={it.unit_price}
                                                             readOnly
                                                         />
@@ -296,7 +296,7 @@ const CreateOrder = () => {
                                         <label className="block text-[11px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">Provision Status</label>
                                         <select
                                             name="status"
-                                            className="w-full px-6 py-4 bg-gray-50/50 border-2 border-transparent focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 appearance-none"
+                                            className="w-full px-6 py-4 bg-gray-50/50 border-2 border-gray-300 focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 appearance-none"
                                             value={formData.status}
                                             onChange={handleInputChange}
                                         >
@@ -316,7 +316,7 @@ const CreateOrder = () => {
                                             </span>
                                             <select
                                                 name="payment_method"
-                                                className="w-full pl-14 pr-10 py-4 bg-gray-50/50 border-2 border-transparent focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 appearance-none"
+                                                className="w-full pl-14 pr-10 py-4 bg-gray-50/50 border-2 border-gray-300 focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 appearance-none"
                                                 value={formData.payment_method}
                                                 onChange={handleInputChange}
                                             >
@@ -335,7 +335,7 @@ const CreateOrder = () => {
                                             <Button
                                                 type="button"
                                                 variant="outline"
-                                                className="w-full px-8 py-4 border-gray-100 text-gray-400 font-bold rounded-3xl hover:bg-gray-50 transition-all uppercase tracking-widest text-[10px]"
+                                                className="w-full px-8 py-4 border-gray-300 text-gray-400 font-bold rounded-3xl hover:bg-gray-50 transition-all uppercase tracking-widest text-[10px]"
                                             >
                                                 Discard
                                             </Button>
@@ -365,7 +365,7 @@ const CreateOrder = () => {
                 </div>
 
                 <div className="xl:col-span-4 space-y-8">
-                    <Card className="border-0 shadow-xl shadow-gray-100 rounded-3xl overflow-hidden bg-brand-charcoal text-white">
+                    <Card className="border border-gray-300 shadow-xl shadow-gray-100 rounded-3xl overflow-hidden bg-brand-charcoal text-white">
                         <CardHeader className="pt-8 px-8">
                             <CardTitle className="text-sm font-black uppercase tracking-[0.2em] text-gray-400 flex items-center gap-2">
                                 <Info size={16} className="text-brand-red" /> Executive Protocol

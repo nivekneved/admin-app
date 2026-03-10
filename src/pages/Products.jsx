@@ -183,7 +183,7 @@ const Products = () => {
         </div>
       </div>
 
-      <Card className="border-0 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
+      <Card className="border border-gray-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
         <CardHeader className="border-b border-gray-50 pb-4 bg-white px-8 pt-8">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
@@ -192,7 +192,7 @@ const Products = () => {
                 <input
                   type="text"
                   placeholder="Query global inventory…"
-                  className="pl-9 pr-9 py-2.5 w-full border border-gray-100 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+                  className="pl-9 pr-9 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -247,9 +247,9 @@ const Products = () => {
                     <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50">
+                <tbody className="divide-y divide-gray-200">
                   {currentItems.map(p => (
-                    <tr key={p.id} className="hover:bg-gray-50/30 transition-colors">
+                    <tr key={p.id} className="even:bg-gray-50/80 hover:bg-gray-100/50 transition-colors">
                       <td className="px-8 py-5">
                         <div className="flex items-center gap-4">
                           <Thumb src={p.image_url} size="md" />

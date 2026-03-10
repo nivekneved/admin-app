@@ -109,7 +109,7 @@ const Dashboard = () => {
         <>
           {/* Dashboard Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card className="bg-white border-0 shadow-sm hover:shadow-md transition-all">
+            <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all">
               <CardContent className="p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div className="p-3 bg-red-50 text-brand-red rounded-2xl">
@@ -122,7 +122,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-white border-0 shadow-sm hover:shadow-md transition-all">
+            <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all">
               <CardContent className="p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div className="p-3 bg-red-50 text-red-600 rounded-2xl">
@@ -135,7 +135,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-white border-0 shadow-sm hover:shadow-md transition-all">
+            <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all">
               <CardContent className="p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div className="p-3 bg-green-50 text-green-600 rounded-2xl">
@@ -148,7 +148,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-white border-0 shadow-sm hover:shadow-md transition-all">
+            <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all">
               <CardContent className="p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div className="p-3 bg-red-50 text-red-600 rounded-2xl">
@@ -166,7 +166,7 @@ const Dashboard = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Recent Admins Card */}
-            <Card className="border-0 shadow-sm overflow-hidden">
+            <Card className="border border-gray-200 shadow-sm overflow-hidden">
               <CardHeader className="bg-gray-50/50 border-b border-gray-100 px-6 py-4">
                 <CardTitle className="text-sm font-black uppercase tracking-widest text-gray-500 flex items-center">
                   <Users size={16} className="mr-2" /> Recent Staff Activity
@@ -174,10 +174,10 @@ const Dashboard = () => {
               </CardHeader>
               <CardContent className="p-0">
                 <div className="overflow-x-auto text-left">
-                  <table className="min-w-full divide-y divide-gray-50">
-                    <tbody className="bg-white divide-y divide-gray-50">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <tbody className="bg-white divide-y divide-gray-200">
                       {recentAdmins.length > 0 ? recentAdmins.map((admin) => (
-                        <tr key={admin.id} className="hover:bg-gray-50/50 transition-colors">
+                        <tr key={admin.id} className="even:bg-gray-50/80 hover:bg-gray-100/50 transition-colors">
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center text-left">
                               <div className="h-9 w-9 rounded-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center text-xs font-bold text-gray-400 mr-3 border border-gray-100 overflow-hidden">
@@ -213,7 +213,7 @@ const Dashboard = () => {
             </Card>
 
             {/* Recent Bookings Card */}
-            <Card className="border-0 shadow-sm overflow-hidden">
+            <Card className="border border-gray-200 shadow-sm overflow-hidden">
               <CardHeader className="bg-gray-50/50 border-b border-gray-100 px-6 py-4">
                 <CardTitle className="text-sm font-black uppercase tracking-widest text-gray-500 flex items-center">
                   <Calendar size={16} className="mr-2" /> Recent Bookings
@@ -222,9 +222,9 @@ const Dashboard = () => {
               <CardContent className="p-0">
                 <div className="overflow-x-auto text-left">
                   <table className="min-w-full divide-y divide-gray-50">
-                    <tbody className="bg-white divide-y divide-gray-50 text-left">
+                    <tbody className="bg-white divide-y divide-gray-200 text-left">
                       {recentBookings.length > 0 ? recentBookings.map((booking) => (
-                        <tr key={booking.id} className="hover:bg-gray-50/50 transition-colors">
+                        <tr key={booking.id} className="even:bg-gray-50/80 hover:bg-gray-100/50 transition-colors">
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-left">
                               <div className="text-sm font-bold text-gray-900">

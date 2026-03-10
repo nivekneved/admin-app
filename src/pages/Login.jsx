@@ -16,7 +16,7 @@ const Login = () => {
         setLoading(true);
 
         try {
-            const { data, error } = await supabase.auth.signInWithPassword({
+            const { error } = await supabase.auth.signInWithPassword({
                 email,
                 password,
             });
@@ -57,7 +57,7 @@ const Login = () => {
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="block w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition-all"
+                                    className="block w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition-all"
                                     placeholder="admin@travellounge.mu"
                                 />
                             </div>
@@ -74,7 +74,7 @@ const Login = () => {
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="block w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition-all"
+                                    className="block w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition-all"
                                     placeholder="••••••••"
                                 />
                             </div>
@@ -96,7 +96,7 @@ const Login = () => {
                         </button>
                     </form>
 
-                    <div className="mt-8 text-center pt-6 border-t border-gray-100">
+                    <div className="mt-8 text-center pt-6 border-t border-gray-200">
                         <p className="text-gray-400 text-xs">
                             &copy; {new Date().getFullYear()} Travel Lounge. All rights reserved.
                         </p>

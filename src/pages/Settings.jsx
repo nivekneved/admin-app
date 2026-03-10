@@ -58,7 +58,7 @@ const Settings = () => {
         <p className="text-gray-600">Manage your admin panel settings</p>
       </div>
 
-      <div className="flex border-b mb-6">
+      <div className="flex border-b border-gray-200 mb-6">
         <button
           className={`px-4 py-2 font-medium ${activeTab === 'general' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'}`}
           onClick={() => setActiveTab('general')}
@@ -92,7 +92,7 @@ const Settings = () => {
                   <input
                     type="text"
                     name="siteTitle"
-                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     value={formData.siteTitle}
                     onChange={handleChange}
                   />
@@ -103,7 +103,7 @@ const Settings = () => {
                   <input
                     type="email"
                     name="contactEmail"
-                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     value={formData.contactEmail}
                     onChange={handleChange}
                   />
@@ -113,7 +113,7 @@ const Settings = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Timezone</label>
                   <select
                     name="timezone"
-                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     value={formData.timezone}
                     onChange={handleChange}
                   >
@@ -133,7 +133,7 @@ const Settings = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
                   <select
                     name="currency"
-                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     value={formData.currency}
                     onChange={handleChange}
                   >
@@ -150,7 +150,7 @@ const Settings = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Date Format</label>
                   <select
                     name="dateFormat"
-                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     value={formData.dateFormat}
                     onChange={handleChange}
                   >
@@ -164,7 +164,7 @@ const Settings = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Time Format</label>
                   <select
                     name="timeFormat"
-                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     value={formData.timeFormat}
                     onChange={handleChange}
                   >
@@ -217,7 +217,7 @@ const Settings = () => {
                       name="security.passwordExpiry"
                       min="1"
                       max="365"
-                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       value={formData.security.passwordExpiry}
                       onChange={handleChange}
                     />
@@ -230,7 +230,7 @@ const Settings = () => {
                       name="security.sessionTimeout"
                       min="1"
                       max="480"
-                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       value={formData.security.sessionTimeout}
                       onChange={handleChange}
                     />

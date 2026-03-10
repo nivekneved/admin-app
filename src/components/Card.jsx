@@ -10,7 +10,7 @@ const Card = ({ children, className = '' }) => {
 
 const CardHeader = ({ children, className = '' }) => {
   return (
-    <div className={`p-6 pb-4 ${className}`}>
+    <div className={`p-6 pb-4 border-b border-gray-200 ${className}`}>
       {children}
     </div>
   );

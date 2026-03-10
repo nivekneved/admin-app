@@ -305,7 +305,7 @@ const CreateProduct = () => {
                     onClick={() => navigate('/products')}
                     className="group flex items-center gap-3 text-gray-400 hover:text-brand-red transition-all font-black uppercase tracking-widest text-[10px]"
                 >
-                    <div className="p-2 border border-gray-100 rounded-xl group-hover:bg-red-50 group-hover:border-red-100 transition-all">
+                    <div className="p-2 border border-gray-300 rounded-xl group-hover:bg-red-50 group-hover:border-red-100 transition-all">
                         <ArrowLeft size={16} />
                     </div>
                     Back to Catalog
@@ -324,7 +324,7 @@ const CreateProduct = () => {
                 {/* Product Hero Card */}
                 <div className="relative group">
                     <div className="absolute -inset-1 bg-gradient-to-r from-brand-red to-red-400 rounded-3xl blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
-                    <Card className="relative bg-white border-0 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
+                    <Card className="relative bg-white border border-gray-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
                         <div className="h-40 bg-brand-charcoal relative overflow-hidden">
                             <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
                             <div className="absolute inset-0 bg-gradient-to-r from-brand-red/20 to-transparent"></div>
@@ -420,7 +420,7 @@ const CreateProduct = () => {
                     {/* Left Column: Core Details */}
                     <div className="lg:col-span-2 space-y-8">
                         {/* Section: Standard Details */}
-                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-gray-50 space-y-6">
+                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-gray-200 space-y-6">
                             <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em] mb-4">
                                 <Tag size={16} className="text-brand-red" /> Product Identity
                             </h3>
@@ -432,7 +432,7 @@ const CreateProduct = () => {
                                         type="text"
                                         name="name"
                                         required
-                                        className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-black text-lg"
+                                        className="w-full px-6 py-4 bg-gray-50 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-black text-lg"
                                         value={formData.name}
                                         onChange={handleInputChange}
                                         placeholder="e.g. Premium VIP Lounge Access"
@@ -442,13 +442,13 @@ const CreateProduct = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Service Categories (Select Multiple)</label>
-                                        <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-4 bg-gray-50 border border-gray-100 rounded-2xl custom-scrollbar">
+                                        <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-4 bg-gray-50 border border-gray-300 rounded-2xl custom-scrollbar">
                                             {categories.map(cat => (
                                                 <label key={cat.id} className="flex items-center gap-2 cursor-pointer group">
                                                     <div className="relative flex items-center">
                                                         <input
                                                             type="checkbox"
-                                                            className="peer h-5 w-5 appearance-none border-2 border-gray-200 rounded-lg checked:bg-brand-red checked:border-brand-red transition-all cursor-pointer"
+                                                            className="peer h-5 w-5 appearance-none border-2 border-gray-300 rounded-lg checked:bg-brand-red checked:border-brand-red transition-all cursor-pointer"
                                                             checked={formData.category_ids.includes(cat.id)}
                                                             onChange={() => handleCategoryToggle(cat.id)}
                                                         />
@@ -470,7 +470,7 @@ const CreateProduct = () => {
                                             <input
                                                 type="text"
                                                 name="image_url"
-                                                className="w-full pl-6 pr-12 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-sm font-medium"
+                                                className="w-full pl-6 pr-12 py-4 bg-gray-50 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-sm font-medium"
                                                 value={formData.image_url}
                                                 onChange={handleInputChange}
                                                 placeholder="https://..."
@@ -485,7 +485,7 @@ const CreateProduct = () => {
                                     <textarea
                                         name="description"
                                         rows={4}
-                                        className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-3xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-sm font-medium resize-none leading-relaxed"
+                                        className="w-full px-6 py-4 bg-gray-50 border border-gray-300 rounded-3xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-sm font-medium resize-none leading-relaxed"
                                         value={formData.description}
                                         onChange={handleInputChange}
                                         placeholder="Describe the inclusions, terms, and luxury standards of this service..."
@@ -496,7 +496,7 @@ const CreateProduct = () => {
 
                         {/* Section: Hotel/Room Type Specifications (Conditional) */}
                         {formData.category_ids.some(id => categories.find(c => c.id === id)?.name === 'Hotels') && (
-                            <section className="bg-white p-8 rounded-3xl shadow-sm border border-gray-50 space-y-6">
+                            <section className="bg-white p-8 rounded-3xl shadow-sm border border-gray-200 space-y-6">
                                 <div className="flex items-center justify-between mb-4">
                                     <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
                                         <BedDouble size={16} className="text-brand-red" /> Accommodation & Pricing
@@ -519,7 +519,7 @@ const CreateProduct = () => {
                                     ) : (
                                         <div className="space-y-6">
                                             {formData.room_types.map((rt, idx) => (
-                                                <div key={idx} className="p-6 bg-gray-50/50 rounded-3xl border border-gray-100 space-y-6 relative group/rt">
+                                                <div key={idx} className="p-6 bg-gray-50/50 rounded-3xl border border-gray-300 space-y-6 relative group/rt">
                                                     <button
                                                         type="button"
                                                         onClick={() => removeRoomType(idx)}
@@ -528,13 +528,13 @@ const CreateProduct = () => {
                                                         <X size={16} />
                                                     </button>
 
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-gray-100">
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-gray-300">
                                                         <div>
                                                             <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Room Type Name</label>
                                                             <input
                                                                 type="text"
                                                                 placeholder="e.g. Ocean View Suite"
-                                                                className="w-full px-4 py-3 bg-white border border-gray-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
                                                                 value={rt.type}
                                                                 onChange={e => updateRoomType(idx, 'type', e.target.value)}
                                                             />
@@ -564,7 +564,7 @@ const CreateProduct = () => {
                                                                 <input
                                                                     type="number"
                                                                     placeholder="Quick set"
-                                                                    className="w-20 px-2 py-1 bg-white border border-gray-100 rounded text-[10px] font-bold focus:outline-none focus:ring-1 focus:ring-brand-red"
+                                                                    className="w-20 px-2 py-1 bg-white border border-gray-300 rounded text-[10px] font-bold focus:outline-none focus:ring-1 focus:ring-brand-red"
                                                                     onChange={e => syncAllPrices(idx, e.target.value)}
                                                                 />
                                                             </div>
@@ -577,7 +577,7 @@ const CreateProduct = () => {
                                                                         type="number"
                                                                         value={rt.prices?.[day] || ''}
                                                                         onChange={e => updateRoomPrice(idx, day, e.target.value)}
-                                                                        className="w-full px-1 py-3 bg-white border border-gray-100 rounded-xl text-[11px] font-black text-gray-900 text-center focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                                                                        className="w-full px-1 py-3 bg-white border border-gray-300 rounded-xl text-[11px] font-black text-gray-900 text-center focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
                                                                         placeholder="-"
                                                                     />
                                                                 </div>
@@ -597,7 +597,7 @@ const CreateProduct = () => {
                             const cat = categories.find(c => c.id === id);
                             return cat && (cat.name === 'Activities' || cat.name === 'Cruises' || cat.name === 'Group Tours');
                         }) && (
-                                <section className="bg-white p-8 rounded-3xl shadow-sm border border-gray-50 space-y-6">
+                                <section className="bg-white p-8 rounded-3xl shadow-sm border border-gray-200 space-y-6">
                                     <div className="flex items-center justify-between mb-4">
                                         <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
                                             <Calendar size={16} className="text-brand-red" /> Itinerary & Schedule
@@ -620,7 +620,7 @@ const CreateProduct = () => {
                                         ) : (
                                             <div className="space-y-4">
                                                 {formData.itinerary.map((it, idx) => (
-                                                    <div key={idx} className="p-6 bg-gray-50/50 rounded-2xl border border-gray-100 flex gap-6 relative group/it">
+                                                    <div key={idx} className="p-6 bg-gray-50/50 rounded-2xl border border-gray-300 flex gap-6 relative group/it">
                                                         <button
                                                             type="button"
                                                             onClick={() => removeItineraryDay(idx)}
@@ -634,7 +634,7 @@ const CreateProduct = () => {
                                                             <input
                                                                 type="text"
                                                                 placeholder="Day 1"
-                                                                className="w-full px-3 py-2 bg-white border border-gray-100 rounded-lg text-[10px] font-black uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-brand-red"
+                                                                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-[10px] font-black uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-brand-red"
                                                                 value={it.day}
                                                                 onChange={e => updateItineraryDay(idx, 'day', e.target.value)}
                                                             />
@@ -646,7 +646,7 @@ const CreateProduct = () => {
                                                                 <input
                                                                     type="text"
                                                                     placeholder="e.g. Arrival at Blue Bay Marine Park"
-                                                                    className="w-full px-4 py-2 bg-white border border-gray-100 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-brand-red"
+                                                                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-brand-red"
                                                                     value={it.title}
                                                                     onChange={e => updateItineraryDay(idx, 'title', e.target.value)}
                                                                 />
@@ -656,7 +656,7 @@ const CreateProduct = () => {
                                                                 <textarea
                                                                     rows={2}
                                                                     placeholder="Details about the stop, highlights, or inclusions..."
-                                                                    className="w-full px-4 py-3 bg-white border border-gray-100 rounded-xl text-[11px] font-medium leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-brand-red"
+                                                                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-[11px] font-medium leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-brand-red"
                                                                     value={it.description}
                                                                     onChange={e => updateItineraryDay(idx, 'description', e.target.value)}
                                                                 />
@@ -751,7 +751,7 @@ const CreateProduct = () => {
                     </div>
                 </div>
 
-                <div className="flex justify-end gap-4 p-8 bg-gray-50/50 rounded-3xl border border-gray-100 border-dashed">
+                <div className="flex justify-end gap-4 p-8 bg-gray-50/50 rounded-3xl border border-gray-300 border-dashed">
                     <button
                         type="button"
                         onClick={() => navigate('/products')}
