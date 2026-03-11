@@ -52,9 +52,16 @@ END $$;
 CREATE TABLE IF NOT EXISTS public.admins (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     username TEXT UNIQUE NOT NULL,
+    name TEXT,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     role public.user_role DEFAULT 'staff',
+    bio TEXT,
+    photo_url TEXT,
+    linkedin_url TEXT,
+    is_active BOOLEAN DEFAULT TRUE,
+    show_on_front_page BOOLEAN DEFAULT FALSE,
+    display_order INTEGER DEFAULT 0,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -95,6 +102,8 @@ CREATE TABLE IF NOT EXISTS public.categories (
     slug TEXT NOT NULL UNIQUE,
     description TEXT,
     image_url TEXT,
+    link TEXT,
+    show_on_home BOOLEAN DEFAULT FALSE,
     display_order INTEGER DEFAULT 0,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMPTZ DEFAULT NOW()
@@ -118,7 +127,26 @@ CREATE TABLE IF NOT EXISTS public.services (
     duration_hours INTEGER,
     max_group_size INTEGER,
     
-    -- For legacy compatibility and JSON storage
+    -- UI & Marketing Fields
+    cta_text TEXT,
+    cta_link TEXT,
+    gallery_images TEXT[],
+    meta_title TEXT,
+    meta_description TEXT,
+    seo_keywords TEXT,
+    special_features JSONB DEFAULT '[]'::jsonb,
+    seasonality TEXT,
+    highlights JSONB DEFAULT '[]'::jsonb,
+    included JSONB DEFAULT '[]'::jsonb,
+    not_included JSONB DEFAULT '[]'::jsonb,
+    cancellation_policy TEXT,
+    terms_and_conditions TEXT,
+    thumbnail_url TEXT,
+    banner_url TEXT,
+    featured BOOLEAN DEFAULT FALSE,
+    priority INTEGER DEFAULT 0,
+    
+    -- Legacy / JSON config
     room_types JSONB DEFAULT '[]'::jsonb,
     itinerary JSONB DEFAULT '[]'::jsonb,
     
@@ -254,6 +282,9 @@ CREATE TABLE IF NOT EXISTS public.hero_slides (
     media_type TEXT DEFAULT 'image', -- 'image', 'video'
     cta_text TEXT,
     cta_link TEXT,
+    tag TEXT,
+    cta TEXT,
+    link TEXT,
     order_index INTEGER DEFAULT 0,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMPTZ DEFAULT NOW()
@@ -267,6 +298,7 @@ CREATE TABLE IF NOT EXISTS public.editorial_posts (
     excerpt TEXT,
     content TEXT,
     featured_image TEXT,
+    author_id UUID REFERENCES public.admins(id) ON DELETE SET NULL,
     tags TEXT[],
     status TEXT DEFAULT 'draft', -- 'draft', 'published', 'archived'
     published_at TIMESTAMPTZ,
@@ -295,6 +327,26 @@ CREATE TABLE IF NOT EXISTS public.faqs (
     answer TEXT NOT NULL,
     order_index INTEGER DEFAULT 0,
     is_published BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Site Settings
+CREATE TABLE IF NOT EXISTS public.site_settings (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    key TEXT UNIQUE NOT NULL,
+    value JSONB NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Popular Destinations
+CREATE TABLE IF NOT EXISTS public.popular_destinations (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    destination TEXT NOT NULL,
+    country TEXT NOT NULL,
+    return_price DECIMAL(12, 2),
+    is_featured BOOLEAN DEFAULT FALSE,
+    image_url TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

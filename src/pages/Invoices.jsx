@@ -558,7 +558,7 @@ Due Date  : ${formatDate(invoice.due_date)}
                             onClick={(e) => { e.stopPropagation(); togglePaid(invoice); }}
                             disabled={togglingId === invoice.id}
                             className="p-2 text-gray-300 hover:text-green-500 hover:bg-green-50 rounded-xl transition-all disabled:opacity-40"
-                            title={invoice.status === 'Paid' ? 'Revert to Pending' : 'Finalize Payment'}
+                            title={invoice.status === 'Paid' ? 'Revert to Pending' : 'Mark as Paid'}
                           >
                             {togglingId === invoice.id
                               ? <Loader2 size={16} className="animate-spin" />

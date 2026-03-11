@@ -978,7 +978,7 @@ const Bookings = () => {
               onClick={() => setShowModal(false)}
               className="px-6 py-2.5 text-sm font-bold text-gray-400 hover:text-gray-600 transition-all"
             >
-              Discard
+              Cancel
             </button>
             <Button
               type="submit"

@@ -361,7 +361,7 @@ const FAQs = () => {
                                     variant="outline"
                                     className="px-6 py-3 border-gray-300 text-gray-400 font-bold rounded-2xl uppercase tracking-widest text-[10px]"
                                 >
-                                    Discard
+                                    Cancel
                                 </Button>
                                 <Button
                                     type="submit"

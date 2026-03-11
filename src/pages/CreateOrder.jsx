@@ -159,7 +159,7 @@ const CreateOrder = () => {
             navigate('/orders');
         } catch (error) {
             console.error('Create Order Error:', error);
-            showAlert('Operation Failed', error.message || 'Could not finalize order registration', 'error');
+            showAlert('Operation Failed', error.message || 'Could not create order', 'error');
         } finally {
             setFormLoading(false);
         }
@@ -337,7 +337,7 @@ const CreateOrder = () => {
                                                 variant="outline"
                                                 className="w-full px-8 py-4 border-gray-300 text-gray-400 font-bold rounded-3xl hover:bg-gray-50 transition-all uppercase tracking-widest text-[10px]"
                                             >
-                                                Discard
+                                                Cancel
                                             </Button>
                                         </Link>
                                         <Button
@@ -353,7 +353,7 @@ const CreateOrder = () => {
                                             ) : (
                                                 <>
                                                     <CheckCircle2 size={20} className="mr-3" />
-                                                    Finalize Order
+                                                    Create Order
                                                 </>
                                             )}
                                         </Button>

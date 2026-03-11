@@ -232,7 +232,7 @@ const CreateInvoice = () => {
                                                 variant="outline"
                                                 className="w-full px-8 py-4 border-gray-300 text-gray-400 font-bold rounded-3xl hover:bg-gray-50 transition-all uppercase tracking-widest text-[10px]"
                                             >
-                                                Discard
+                                                Cancel
                                             </Button>
                                         </Link>
                                         <Button

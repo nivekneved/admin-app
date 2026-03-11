@@ -441,7 +441,7 @@ const ManageStaff = () => {
                         onClick={() => navigate('/team')}
                         className="px-8 py-3 text-[10px] uppercase tracking-widest text-gray-400 hover:text-gray-600 transition-all font-black"
                     >
-                        Abandon Workspace
+                        Cancel
                     </button>
                     <Button
                         type="submit"
@@ -449,7 +449,7 @@ const ManageStaff = () => {
                         className="bg-brand-red text-white px-12 py-4 rounded-2xl shadow-xl shadow-red-100 flex items-center gap-3 font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition-all outline-none border-none ring-0 focus:ring-0 active:ring-0"
                     >
                         {saving && <Loader2 size={16} className="animate-spin" />}
-                        {isEdit ? 'Finalize & Update' : 'Finalize & Provision'}
+                        {isEdit ? 'Update Staff' : 'Create Staff'}
                     </Button>
                 </div>
             </form>

@@ -158,11 +158,11 @@ const CreateBooking = () => {
 
             if (iError) throw iError;
 
-            showAlert('Success', 'Multi-itinerary booking finalized and synced.', 'success');
+            showAlert('Success', 'Multi-itinerary booking created and synced.', 'success');
             navigate('/bookings');
         } catch (error) {
             console.error('Create Booking Error:', error);
-            showAlert('Reservation Failed', error.message || 'Could not finalize multi-service booking', 'error');
+            showAlert('Reservation Failed', error.message || 'Could not create multi-service booking', 'error');
         } finally {
             setFormLoading(false);
         }

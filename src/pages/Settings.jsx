@@ -142,10 +142,10 @@ const Settings = () => {
 
       if (error) throw error;
 
-      showAlert('Settings Updated', `${category.charAt(0).toUpperCase() + category.slice(1)} settings have been successfully persisted.`, 'success');
+      showAlert('Settings Updated', `${category.charAt(0).toUpperCase() + category.slice(1)} settings have been successfully saved.`, 'success');
     } catch (err) {
       console.error('Error saving settings:', err);
-      showAlert('Save Failed', 'Could not persist settings to database.', 'error');
+      showAlert('Save Failed', 'Could not save settings.', 'error');
     } finally {
       setSaving(false);
     }
@@ -472,7 +472,7 @@ const Settings = () => {
                 className={`bg-gray-900 hover:bg-black text-white px-8 py-3 rounded-xl font-black uppercase tracking-widest text-xs shadow-lg shadow-gray-200 transition-all flex items-center ${saving ? 'opacity-70 pointer-events-none' : ''}`}
               >
                 <Save size={16} className="mr-2" />
-                {saving ? 'Persisting...' : `Persist ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`}
+                {saving ? 'Saving...' : `Save ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}` }
               </Button>
             </div>
           </form>
