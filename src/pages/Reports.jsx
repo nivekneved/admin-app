@@ -107,26 +107,32 @@ const Reports = () => {
   const fetchAll = async () => {
     setLoading(true);
     try {
-      await Promise.all([
-        fetchBookingStats(),
-        fetchCustomerStats(),
-        fetchOrderStats(),
-        fetchInvoiceStats(),
-        fetchMonthlyBookings(),
-        fetchTopActivities(),
-        fetchRecentBookings(),
-      ]);
+        await Promise.all([
+            fetchBookingStats(),
+            fetchCustomerStats(),
+            fetchOrderStats(),
+            fetchInvoiceStats(),
+            fetchMonthlyBookings(),
+            fetchTopActivities(),
+            fetchRecentBookings(),
+        ]);
+    } catch (error) {
+        console.error('Reports fetch error:', error);
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
 
   // ── Bookings KPIs ──────────────────────────────────────────────────────────
   const fetchBookingStats = async () => {
-    const { data } = await supabase
-      .from('bookings')
-      .select('status, amount, tax_amount, total_amount');
+    const { data, error } = await supabase
+        .from('bookings')
+        .select('status, amount, tax_amount, total_amount');
 
+    if (error) {
+        console.error('Error fetching booking stats:', error);
+        return;
+    }
     if (!data) return;
 
     const total = data.length;
@@ -153,10 +159,14 @@ const Reports = () => {
 
   // ── Customers KPIs ─────────────────────────────────────────────────────────
   const fetchCustomerStats = async () => {
-    const { data } = await supabase
-      .from('customers')
-      .select('is_subscriber');
+    const { data, error } = await supabase
+        .from('customers')
+        .select('is_subscriber');
 
+    if (error) {
+        console.error('Error fetching customer stats:', error);
+        return;
+    }
     if (!data) return;
     setStats(prev => ({
       ...prev,
@@ -167,10 +177,14 @@ const Reports = () => {
 
   // ── Orders KPIs ────────────────────────────────────────────────────────────
   const fetchOrderStats = async () => {
-    const { data } = await supabase
-      .from('orders')
-      .select('amount');
+    const { data, error } = await supabase
+        .from('orders')
+        .select('amount');
 
+    if (error) {
+        console.error('Error fetching order stats:', error);
+        return;
+    }
     if (!data) return;
     setStats(prev => ({
       ...prev,
@@ -181,10 +195,14 @@ const Reports = () => {
 
   // ── Invoices KPIs ──────────────────────────────────────────────────────────
   const fetchInvoiceStats = async () => {
-    const { data } = await supabase
-      .from('invoices')
-      .select('amount, status');
+    const { data, error } = await supabase
+        .from('invoices')
+        .select('amount, status');
 
+    if (error) {
+        console.error('Error fetching invoice stats:', error);
+        return;
+    }
     if (!data) return;
     setStats(prev => ({
       ...prev,
@@ -201,11 +219,15 @@ const Reports = () => {
     sixMonthsAgo.setDate(1);
     sixMonthsAgo.setHours(0, 0, 0, 0);
 
-    const { data } = await supabase
-      .from('bookings')
-      .select('created_at, total_amount, amount')
-      .gte('created_at', sixMonthsAgo.toISOString());
+    const { data, error } = await supabase
+        .from('bookings')
+        .select('created_at, total_amount, amount')
+        .gte('created_at', sixMonthsAgo.toISOString());
 
+    if (error) {
+        console.error('Error fetching monthly bookings:', error);
+        return;
+    }
     if (!data) return;
 
     // Group by month
@@ -231,10 +253,14 @@ const Reports = () => {
 
   // ── Top Activities ─────────────────────────────────────────────────────────
   const fetchTopActivities = async () => {
-    const { data } = await supabase
-      .from('bookings')
-      .select('activity_type, activity_name, total_amount, amount');
+    const { data, error } = await supabase
+        .from('bookings')
+        .select('activity_type, activity_name, total_amount, amount');
 
+    if (error) {
+        console.error('Error fetching top activities:', error);
+        return;
+    }
     if (!data) return;
 
     const map = {};
@@ -251,15 +277,19 @@ const Reports = () => {
 
   // ── Recent Bookings ────────────────────────────────────────────────────────
   const fetchRecentBookings = async () => {
-    const { data } = await supabase
-      .from('bookings')
-      .select(`
+    const { data, error } = await supabase
+        .from('bookings')
+        .select(`
         id, status, activity_name, activity_type, amount, total_amount, created_at,
         customers ( first_name, last_name )
       `)
-      .order('created_at', { ascending: false })
-      .limit(8);
+        .order('created_at', { ascending: false })
+        .limit(8);
 
+    if (error) {
+        console.error('Error fetching recent bookings:', error);
+        return;
+    }
     if (!data) return;
     setRecentBookings(data);
   };
@@ -438,7 +468,7 @@ const Reports = () => {
           <CardHeader className="border-b border-gray-200 pb-5 px-8 pt-8">
             <div className="flex items-center gap-2">
               <TrendingUp size={18} className="text-brand-red" />
-              <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">Product Performance</h3>
+              <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">Service Performance</h3>
             </div>
           </CardHeader>
           <CardContent className="px-8 py-6">

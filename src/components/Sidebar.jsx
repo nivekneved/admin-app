@@ -71,7 +71,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       title: 'Business Operations',
       icon: <Briefcase size={18} />,
       items: [
-        { title: 'Products', path: '/products', icon: <Package size={16} /> },
+        { title: 'Services', path: '/services', icon: <Package size={16} /> },
         { title: 'Categories', path: '/categories', icon: <Layers size={16} /> },
         { title: 'Orders', path: '/orders', icon: <ShoppingCart size={16} /> },
         { title: 'Bookings', path: '/bookings', icon: <Calendar size={16} /> },

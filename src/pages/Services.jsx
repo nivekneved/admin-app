@@ -13,8 +13,6 @@ import { showAlert, showConfirm } from '../utils/swal';
 // ─── Constants ────────────────────────────────────────────────────────────────
 const STATUSES = ['In Stock', 'Low Stock', 'Out of Stock'];
 
-const _cc = {}; let _ci = 0;
-
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const statusBadge = (s) => {
   if (s === 'In Stock') return 'bg-green-50 text-green-700 border-green-100';
@@ -23,7 +21,7 @@ const statusBadge = (s) => {
   return 'bg-gray-50 text-gray-500 border-gray-100';
 };
 
-// ─── Product thumbnail ────────────────────────────────────────────────────────
+// ─── Service thumbnail ────────────────────────────────────────────────────────
 const Thumb = ({ src, size = 'sm' }) => {
   const [error, setError] = React.useState(false);
   const dim = size === 'sm' ? 'h-9 w-9' : 'h-10 w-10';
@@ -44,8 +42,8 @@ const Thumb = ({ src, size = 'sm' }) => {
   );
 };
 
-// ─── Product Card Image with Fallback ─────────────────────────────────────────
-const ProductCardImage = ({ src }) => {
+// ─── Service Card Image with Fallback ─────────────────────────────────────────
+const ServiceCardImage = ({ src }) => {
   const [error, setError] = React.useState(false);
 
   if (src && !error) return (
@@ -66,9 +64,9 @@ const ProductCardImage = ({ src }) => {
 };
 
 // ═════════════════════════════════════════════════════════════════════════════
-const Products = () => {
+const Services = () => {
   const navigate = useNavigate();
-  const [products, setProducts] = useState([]);
+  const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
 
@@ -78,7 +76,7 @@ const Products = () => {
   const [filterStatus, setFilterStatus] = useState('All');
   const [sortBy, setSortBy] = useState('created_at:desc');
   const [viewMode, setViewMode] = useState('list');
-  const [perPage /*, setPerPage */] = useState(8);
+  const [perPage] = useState(8);
   const [currentPage, setCurrentPage] = useState(1);
 
   // Fetch categories from site categories table
@@ -95,19 +93,19 @@ const Products = () => {
   };
 
   useEffect(() => {
-    fetchProducts();
+    fetchServices();
     fetchCategories();
   }, []);
 
-  // ─── Fetch products ────────────────────────────────────────────────────────
-  const fetchProducts = async () => {
+  // ─── Fetch services ────────────────────────────────────────────────────────
+  const fetchServices = async () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
         .from('services')
         .select(`
           *,
-          product_categories (
+          service_categories (
             categories (
               id,
               name
@@ -117,37 +115,37 @@ const Products = () => {
         .order('created_at', { ascending: false });
 
       if (error) {
-        if (error.message.includes('relation "public.services" does not exist')) setProducts([]);
+        if (error.message.includes('relation "public.services" does not exist')) setServices([]);
         else throw error;
       } else {
         // Map the complicated nested relation into a simpler categories_list for the UI/filters
-        const mappedData = (data || []).map(p => ({
-          ...p,
-          categories_list: p.product_categories
-            ? p.product_categories.map(pc => pc.categories).filter(Boolean)
+        const mappedData = (data || []).map(s => ({
+          ...s,
+          categories_list: s.service_categories
+            ? s.service_categories.map(pc => pc.categories).filter(Boolean)
             : []
         }));
-        setProducts(mappedData);
+        setServices(mappedData);
       }
     } catch (e) {
       console.error(e);
-      showAlert('Error', 'Failed to load products', 'error');
+      showAlert('Error', 'Failed to load services', 'error');
     } finally { setLoading(false); }
   };
 
   // ─── Handlers ─────────────────────────────────────────────────────────────
-  const openCreate = () => navigate('/products/create');
-  const openEdit = (p) => navigate(`/products/edit/${p.id}`);
+  const openCreate = () => navigate('/services/create');
+  const openEdit = (s) => navigate(`/services/edit/${s.id}`);
 
-  const deleteProduct = async (id) => {
-    const result = await showConfirm('Delete Product?', 'This will remove the product from your catalog.');
+  const deleteService = async (id) => {
+    const result = await showConfirm('Delete Service?', 'This will remove the service from your catalog.');
     if (!result.isConfirmed) return;
     try {
       const { error } = await supabase.from('services').delete().eq('id', id);
       if (error) throw error;
-      showAlert('Deleted', 'Product removed');
-      setProducts(prev => prev.filter(p => p.id !== id));
-    } catch (e) { void e; showAlert('Error', 'Failed to delete product', 'error'); }
+      showAlert('Deleted', 'Service removed');
+      setServices(prev => prev.filter(s => s.id !== id));
+    } catch (e) { void e; showAlert('Error', 'Failed to delete service', 'error'); }
   };
 
   const clearFilters = () => { setSearchTerm(''); setFilterCategory('All'); setFilterStatus('All'); setSortBy('created_at:desc'); };
@@ -156,19 +154,19 @@ const Products = () => {
 
   // ─── Filter & Search ──────────────────────────────────────────────────────
   const processed = useMemo(() => {
-    let list = [...products];
+    let list = [...services];
     if (searchTerm) {
       const q = searchTerm.toLowerCase();
-      list = list.filter(p =>
-        (p.name || '').toLowerCase().includes(q) ||
-        (p.categories_list || []).some(cat => (cat.name || '').toLowerCase().includes(q)) ||
-        (p.description || '').toLowerCase().includes(q)
+      list = list.filter(s =>
+        (s.name || '').toLowerCase().includes(q) ||
+        (s.categories_list || []).some(cat => (cat.name || '').toLowerCase().includes(q)) ||
+        (s.description || '').toLowerCase().includes(q)
       );
     }
     if (filterCategory !== 'All') {
-      list = list.filter(p => (p.categories_list || []).some(cat => cat.name === filterCategory));
+      list = list.filter(s => (s.categories_list || []).some(cat => cat.name === filterCategory));
     }
-    if (filterStatus !== 'All') list = list.filter(p => p.status === filterStatus);
+    if (filterStatus !== 'All') list = list.filter(s => s.status === filterStatus);
 
     const [field, dir] = sortBy.split(':');
     list.sort((a, b) => {
@@ -179,7 +177,7 @@ const Products = () => {
       return 0;
     });
     return list;
-  }, [products, searchTerm, filterCategory, filterStatus, sortBy]);
+  }, [services, searchTerm, filterCategory, filterStatus, sortBy]);
 
   const totalPages = Math.ceil(processed.length / perPage);
   const handlePageChange = (p) => setCurrentPage(Math.max(1, Math.min(p, totalPages)));
@@ -190,15 +188,15 @@ const Products = () => {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-gray-900 tracking-tight">Product Catalog</h1>
+          <h1 className="text-2xl font-black text-gray-900 tracking-tight">Service Catalog</h1>
           <p className="text-gray-400 text-sm font-medium">Manage your agency services and rental inventory</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button onClick={fetchProducts} variant="outline" className="text-gray-500 border-gray-200 flex items-center gap-2">
+          <Button onClick={fetchServices} variant="outline" className="text-gray-500 border-gray-200 flex items-center gap-2">
             <RefreshCw size={15} className={loading ? 'animate-spin' : ''} /> Sync
           </Button>
           <Button onClick={openCreate} className="bg-brand-red hover:opacity-90 text-white flex items-center gap-2 shadow-lg shadow-red-100">
-            <Plus size={16} /> Add Product
+            <Plus size={16} /> Add Service
           </Button>
         </div>
       </div>
@@ -268,18 +266,18 @@ const Products = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {currentItems.map(p => (
-                    <tr key={p.id} className="even:bg-gray-50/80 hover:bg-gray-100/50 transition-colors">
+                  {currentItems.map(s => (
+                    <tr key={s.id} className="even:bg-gray-50/80 hover:bg-gray-100/50 transition-colors">
                       <td className="px-8 py-5">
                         <div className="flex items-center gap-4">
-                          <Thumb src={p.image_url} size="md" />
+                          <Thumb src={s.image_url} size="md" />
                           <div>
-                            <p className="text-sm font-black text-gray-900 leading-tight mb-1">{p.name}</p>
+                            <p className="text-sm font-black text-gray-900 leading-tight mb-1">{s.name}</p>
                             <div className="flex flex-wrap items-center gap-2">
-                              <p className="text-xs font-black text-brand-red leading-none">MUR {Number(p.base_price).toLocaleString()}</p>
+                              <p className="text-xs font-black text-brand-red leading-none">MUR {Number(s.base_price).toLocaleString()}</p>
                               <div className="flex flex-wrap gap-1">
-                                {(p.categories_list && p.categories_list.length > 0) ? (
-                                  p.categories_list.map(cat => (
+                                {(s.categories_list && s.categories_list.length > 0) ? (
+                                  s.categories_list.map(cat => (
                                     <span key={cat.id} className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-red-50 text-brand-red border border-red-100">
                                       {cat.name}
                                     </span>
@@ -294,14 +292,14 @@ const Products = () => {
                       </td>
                       <td className="px-8 py-5">
                         <div className="flex flex-col gap-1">
-                          <span className={`w-fit px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border ${statusBadge(p.status)}`}>{p.status}</span>
-                          <p className="text-[10px] font-bold text-gray-400 pl-1">{p.stock} units available</p>
+                          <span className={`w-fit px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border ${statusBadge(s.status)}`}>{s.status}</span>
+                          <p className="text-[10px] font-bold text-gray-400 pl-1">{s.stock} units available</p>
                         </div>
                       </td>
                       <td className="px-8 py-5 text-right">
                         <div className="flex justify-end items-center gap-1">
-                          <button onClick={() => openEdit(p)} className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Edit Specification"><Edit2 size={16} /></button>
-                          <button onClick={() => deleteProduct(p.id)} className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Archive Listing"><Trash2 size={16} /></button>
+                          <button onClick={() => openEdit(s)} className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Edit Specification"><Edit2 size={16} /></button>
+                          <button onClick={() => deleteService(s.id)} className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Archive Listing"><Trash2 size={16} /></button>
                         </div>
                       </td>
                     </tr>
@@ -310,19 +308,19 @@ const Products = () => {
               </table>
             ) : (
               <div className="p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                {currentItems.map(p => (
-                  <div key={p.id} className="bg-white border border-gray-100 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500">
+                {currentItems.map(s => (
+                  <div key={s.id} className="bg-white border border-gray-100 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500">
                     <div className="h-48 bg-gray-50 relative overflow-hidden">
-                      <ProductCardImage src={p.image_url} />
+                      <ServiceCardImage src={s.image_url} />
                       <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all">
-                        <button onClick={() => deleteProduct(p.id)} className="p-3 bg-white/90 backdrop-blur rounded-2xl text-brand-red shadow-xl hover:scale-110 active:scale-95 transition-all"><Trash2 size={16} /></button>
+                        <button onClick={() => deleteService(s.id)} className="p-3 bg-white/90 backdrop-blur rounded-2xl text-brand-red shadow-xl hover:scale-110 active:scale-95 transition-all"><Trash2 size={16} /></button>
                       </div>
                     </div>
                     <div className="p-6">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex flex-wrap gap-1">
-                          {(p.categories_list && p.categories_list.length > 0) ? (
-                            p.categories_list.slice(0, 2).map(cat => (
+                          {(s.categories_list && s.categories_list.length > 0) ? (
+                            s.categories_list.slice(0, 2).map(cat => (
                               <span key={cat.id} className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-red-50 text-brand-red border border-red-100">
                                 {cat.name}
                               </span>
@@ -331,15 +329,15 @@ const Products = () => {
                             <span className="text-[9px] font-bold text-gray-400">Unassigned</span>
                           )}
                         </div>
-                        <div className={`w-2 h-2 rounded-full ${p.status === 'In Stock' ? 'bg-green-500' : p.status === 'Low Stock' ? 'bg-amber-500' : 'bg-red-500'}`}></div>
+                        <div className={`w-2 h-2 rounded-full ${s.status === 'In Stock' ? 'bg-green-500' : s.status === 'Low Stock' ? 'bg-amber-500' : 'bg-red-500'}`}></div>
                       </div>
-                      <h3 className="text-sm font-black text-gray-900 leading-snug mb-4 line-clamp-2 h-10">{p.name}</h3>
+                      <h3 className="text-sm font-black text-gray-900 leading-snug mb-4 line-clamp-2 h-10">{s.name}</h3>
                       <div className="flex items-center justify-between pt-4 border-t border-gray-50">
                         <div>
                           <p className="text-[9px] font-black text-gray-400 uppercase tracking-tighter mb-0.5">Base Rate</p>
-                          <p className="text-sm font-black text-gray-900">MUR {Number(p.base_price).toLocaleString()}</p>
+                          <p className="text-sm font-black text-gray-900">MUR {Number(s.base_price).toLocaleString()}</p>
                         </div>
-                        <button onClick={() => openEdit(p)} className="p-3 text-gray-400 border border-gray-100 rounded-2xl hover:text-brand-red hover:bg-red-50 hover:border-red-100 transition-all"><Edit2 size={16} /></button>
+                        <button onClick={() => openEdit(s)} className="p-3 text-gray-400 border border-gray-100 rounded-2xl hover:text-brand-red hover:bg-red-50 hover:border-red-100 transition-all"><Edit2 size={16} /></button>
                       </div>
                     </div>
                   </div>
@@ -363,4 +361,4 @@ const Products = () => {
   );
 };
 
-export default Products;
+export default Services;

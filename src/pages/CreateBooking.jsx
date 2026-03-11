@@ -10,7 +10,7 @@ const CreateBooking = () => {
     const navigate = useNavigate();
     const [formLoading, setFormLoading] = useState(false);
     const [customers, setCustomers] = useState([]);
-    const [products, setProducts] = useState([]);
+    const [services, setServices] = useState([]);
     const [formData, setFormData] = useState({
         customer_id: '',
         start_date: '',
@@ -25,18 +25,18 @@ const CreateBooking = () => {
 
     useEffect(() => {
         fetchCustomers();
-        fetchProducts();
+        fetchServices();
     }, []);
 
-    const fetchProducts = async () => {
+    const fetchServices = async () => {
         try {
             const { data, error } = await supabase
                 .from('services')
-                .select('id, name, category, base_price')
+                .select('id, name, service_type, base_price')
                 .order('name');
-            if (!error) setProducts(data || []);
+            if (!error) setServices(data || []);
         } catch {
-            console.error('Error loading products for bookings');
+            console.error('Error loading services for bookings');
         }
     };
 
@@ -84,9 +84,9 @@ const CreateBooking = () => {
                     updated.isManual = true;
                     updated.name = '';
                 } else {
-                    const product = products.find(p => p.name === value);
-                    if (product) {
-                        updated.amount = product.base_price;
+                    const service = services.find(p => p.name === value);
+                    if (service) {
+                        updated.amount = service.base_price;
                     }
                 }
             }
@@ -147,8 +147,8 @@ const CreateBooking = () => {
             // 2. Insert Booking Items
             const itemInserts = items.map(it => ({
                 booking_id: booking.id,
-                product_name: it.name,
-                product_category: it.type,
+                service_name: it.name,
+                service_category: it.type,
                 amount: parseFloat(it.amount) || 0
             }));
 
@@ -162,7 +162,7 @@ const CreateBooking = () => {
             navigate('/bookings');
         } catch (error) {
             console.error('Create Booking Error:', error);
-            showAlert('Reservation Failed', error.message || 'Could not finalize multi-product booking', 'error');
+            showAlert('Reservation Failed', error.message || 'Could not finalize multi-service booking', 'error');
         } finally {
             setFormLoading(false);
         }
@@ -330,14 +330,14 @@ const CreateBooking = () => {
                                                                     value={item.name}
                                                                     onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
                                                                 >
-                                                                    <option value="">Select product...</option>
-                                                                    {products
+                                                                    <option value="">Select service...</option>
+                                                                    {services
                                                                         .filter(p => {
-                                                                            if (item.type === 'Hotel') return p.category === 'Hotels';
-                                                                            if (item.type === 'Activity') return p.category === 'Activities';
-                                                                            if (item.type === 'Tour') return p.category === 'Group Tours';
-                                                                            if (item.type === 'Cruise') return p.category === 'Cruises';
-                                                                            if (item.type === 'Lounge') return p.name.toLowerCase().includes('lounge');
+                                                                            if (item.type === 'Hotel') return p.service_type === 'hotel';
+                                                                            if (item.type === 'Activity') return p.service_type === 'activity';
+                                                                            if (item.type === 'Tour') return p.service_type === 'tour';
+                                                                            if (item.type === 'Cruise') return p.service_type === 'cruise';
+                                                                            if (item.type === 'Lounge') return p.service_type === 'lounge';
                                                                             return true;
                                                                         })
                                                                         .map(p => (

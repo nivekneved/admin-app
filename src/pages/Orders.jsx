@@ -33,7 +33,7 @@ const Orders = () => {
           *,
           order_items (
             id,
-            product_name,
+            service_name,
             quantity,
             unit_price,
             total_price
@@ -163,7 +163,7 @@ const Orders = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-black text-gray-900 tracking-tight">Orders Management</h1>
-          <p className="text-gray-400 text-sm font-medium">Track and fulfill premium luxury product orders</p>
+          <p className="text-gray-400 text-sm font-medium">Track and fulfill premium luxury service orders</p>
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -336,7 +336,7 @@ const Orders = () => {
                                           {idx + 1}
                                         </div>
                                         <div>
-                                          <p className="text-sm font-black text-gray-900 leading-none mb-1">{item.product_name}</p>
+                                          <p className="text-sm font-black text-gray-900 leading-none mb-1">{item.service_name}</p>
                                           <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Qty: {item.quantity} × Rs {Number(item.unit_price).toLocaleString()}</p>
                                         </div>
                                       </div>

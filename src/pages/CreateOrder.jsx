@@ -10,7 +10,7 @@ const CreateOrder = () => {
     const navigate = useNavigate();
     const [formLoading, setFormLoading] = useState(false);
     const [customers, setCustomers] = useState([]);
-    const [products, setProducts] = useState([]);
+    const [services, setServices] = useState([]);
     const [formData, setFormData] = useState({
         customer_id: '',
         customer_name: '',
@@ -23,18 +23,18 @@ const CreateOrder = () => {
 
     useEffect(() => {
         fetchCustomers();
-        fetchProducts();
+        fetchServices();
     }, []);
 
-    const fetchProducts = async () => {
+    const fetchServices = async () => {
         try {
             const { data, error } = await supabase
                 .from('services')
-                .select('id, name, base_price, category')
+                .select('id, name, base_price, service_type')
                 .order('name');
-            if (!error) setProducts(data || []);
+            if (!error) setServices(data || []);
         } catch (error) {
-            console.error('Error loading products', error);
+            console.error('Error loading services', error);
         }
     };
 
@@ -68,7 +68,7 @@ const CreateOrder = () => {
     const addItem = () => {
         setFormData(prev => ({
             ...prev,
-            items: [...prev.items, { product_id: '', product_name: '', quantity: 1, unit_price: 0 }]
+            items: [...prev.items, { service_id: '', service_name: '', quantity: 1, unit_price: 0 }]
         }));
     };
 
@@ -84,10 +84,10 @@ const CreateOrder = () => {
         const newItems = [...formData.items];
         const item = { ...newItems[index] };
 
-        if (field === 'product_id') {
-            const prod = products.find(p => p.id === value);
-            item.product_id = value;
-            item.product_name = prod ? prod.name : '';
+        if (field === 'service_id') {
+            const prod = services.find(p => p.id === value);
+            item.service_id = value;
+            item.service_name = prod ? prod.name : '';
             item.unit_price = prod ? prod.base_price : 0;
         } else {
             item[field] = value;
@@ -115,7 +115,7 @@ const CreateOrder = () => {
         }
 
         if (formData.items.length === 0) {
-            showAlert('Inventory Error', 'Please specify at least one product for this order.', 'warning');
+            showAlert('Inventory Error', 'Please specify at least one service for this order.', 'warning');
             setFormLoading(false);
             return;
         }
@@ -143,8 +143,8 @@ const CreateOrder = () => {
             // 2. Insert Order Items
             const itemInserts = formData.items.map(it => ({
                 order_id: orderData.id,
-                product_id: it.product_id || null,
-                product_name: it.product_name,
+                service_id: it.service_id || null,
+                service_name: it.service_name,
                 quantity: parseInt(it.quantity),
                 unit_price: parseFloat(it.unit_price)
             }));
@@ -227,7 +227,7 @@ const CreateOrder = () => {
                                             onClick={addItem}
                                             className="text-[10px] font-black text-brand-red uppercase tracking-widest flex items-center gap-1.5 hover:opacity-70 transition-all"
                                         >
-                                            <Plus size={14} /> Add Product
+                                            <Plus size={14} /> Add Service
                                         </button>
                                     </div>
 
@@ -235,15 +235,15 @@ const CreateOrder = () => {
                                         {formData.items.map((it, idx) => (
                                             <div key={idx} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end bg-gray-50/50 p-6 rounded-[2rem] border border-gray-300">
                                                 <div className="md:col-span-5 space-y-2">
-                                                    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">Product</label>
+                                                    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">Service</label>
                                                     <select
                                                         className="w-full px-4 py-3 bg-white border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red font-bold text-gray-700 text-sm appearance-none"
-                                                        value={it.product_id}
-                                                        onChange={(e) => updateItem(idx, 'product_id', e.target.value)}
+                                                        value={it.service_id}
+                                                        onChange={(e) => updateItem(idx, 'service_id', e.target.value)}
                                                         required
                                                     >
-                                                        <option value="">Select Product...</option>
-                                                        {products.map(p => (
+                                                        <option value="">Select Service...</option>
+                                                        {services.map(p => (
                                                             <option key={p.id} value={p.id}>{p.name} (MUR {p.base_price})</option>
                                                         ))}
                                                     </select>
@@ -285,7 +285,7 @@ const CreateOrder = () => {
                                         {formData.items.length === 0 && (
                                             <div className="py-12 border-2 border-dashed border-gray-100 rounded-[2.5rem] flex flex-col items-center justify-center text-gray-300">
                                                 <ShoppingBag size={40} className="mb-4 opacity-20" />
-                                                <p className="text-[11px] font-black uppercase tracking-widest">No products added to cart</p>
+                                                <p className="text-[11px] font-black uppercase tracking-widest">No services added to cart</p>
                                             </div>
                                         )}
                                     </div>

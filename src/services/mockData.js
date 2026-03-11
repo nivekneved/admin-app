@@ -10,7 +10,7 @@ export const mockUsers = [
   { id: 8, name: 'Lisa Anderson', email: 'lisa.a@example.com', role: 'Customer', status: 'Active', joinDate: '2023-02-28', lastLogin: '2023-06-13 15:10', avatar: 'https://ui-avatars.com/api/?name=Lisa+Anderson' },
 ];
 
-export const mockProducts = [
+export const mockServices = [
   { id: 1, name: 'Premium Executive Lounge Access', category: 'Lounge Access', price: 49.99, stock: 150, status: 'In Stock', description: 'Full day access to our premium executive lounges with complimentary refreshments.' },
   { id: 2, name: 'Business Meeting Room', category: 'Meeting Space', price: 149.99, stock: 8, status: 'Limited', description: 'Private meeting room with high-speed WiFi, projector, and catering options.' },
   { id: 3, name: 'Deluxe Spa Treatment', category: 'Wellness', price: 89.99, stock: 25, status: 'In Stock', description: 'Relaxing spa treatment including massage and aromatherapy.' },

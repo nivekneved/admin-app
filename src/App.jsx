@@ -5,7 +5,7 @@ import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
-import Products from './pages/Products';
+import Services from './pages/Services';
 import Orders from './pages/Orders';
 import Bookings from './pages/Bookings';
 import Reports from './pages/Reports';
@@ -16,7 +16,7 @@ import Team from './pages/Team';
 import ManageStaff from './pages/ManageStaff';
 import CreateCustomer from './pages/CreateCustomer';
 import ViewCustomer from './pages/ViewCustomer';
-import CreateProduct from './pages/CreateProduct';
+import CreateService from './pages/CreateService';
 import CreateOrder from './pages/CreateOrder';
 import CreateBooking from './pages/CreateBooking';
 import CreateInvoice from './pages/CreateInvoice';
@@ -51,9 +51,9 @@ function App() {
                     <Route path="/team/create" element={<ManageStaff />} />
                     <Route path="/team/edit/:id" element={<ManageStaff />} />
                     <Route path="/users" element={<Navigate to="/team" replace />} />
-                    <Route path="/products" element={<Products />} />
-                    <Route path="/products/create" element={<CreateProduct />} />
-                    <Route path="/products/edit/:id" element={<CreateProduct />} />
+                    <Route path="/services" element={<Services />} />
+                    <Route path="/services/create" element={<CreateService />} />
+                    <Route path="/services/edit/:id" element={<CreateService />} />
                     <Route path="/categories" element={<Categories />} />
                     <Route path="/hero-slider" element={<HeroSlider />} />
                     <Route path="/bookings" element={<Bookings />} />

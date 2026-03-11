@@ -14,9 +14,9 @@ import { supabase } from '../lib/supabase';
 import { showAlert } from '../utils/swal';
 
 const BUCKET = 'bucket';
-const FOLDER = 'products';
+const FOLDER = 'services';
 
-const CreateProduct = () => {
+const CreateService = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const fileInputRef = useRef(null);
@@ -45,7 +45,7 @@ const CreateProduct = () => {
             setPageLoading(true);
             await fetchCategories();
             if (isEdit) {
-                await fetchProduct();
+                await fetchService();
             }
             setPageLoading(false);
         };
@@ -67,11 +67,11 @@ const CreateProduct = () => {
         }
     };
 
-    const fetchProduct = async () => {
+    const fetchService = async () => {
         try {
             const { data, error } = await supabase
                 .from('services')
-                .select('*, product_categories(category_id)')
+                .select('*, service_categories(category_id)')
                 .eq('id', id)
                 .single();
 
@@ -79,7 +79,7 @@ const CreateProduct = () => {
             if (data) {
                 setFormData({
                     name: data.name || '',
-                    category_ids: data.product_categories?.map(pc => pc.category_id) || [],
+                    category_ids: data.service_categories?.map(pc => pc.category_id) || [],
                     price: data.base_price || '',
                     stock: data.stock || '',
                     status: data.status || 'In Stock',
@@ -90,9 +90,9 @@ const CreateProduct = () => {
                 });
             }
         } catch (e) {
-            console.error('Error fetching product:', e);
-            showAlert('Error', 'Failed to load product details', 'error');
-            navigate('/products');
+            console.error('Error fetching service:', e);
+            showAlert('Error', 'Failed to load service details', 'error');
+            navigate('/services');
         }
     };
 
@@ -104,6 +104,22 @@ const CreateProduct = () => {
     const handleFileUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
+
+        // Validation: File Type
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+        if (!allowedTypes.includes(file.type)) {
+            showAlert('Invalid Type', 'Please upload a valid image (JPEG, PNG, or WEBP).', 'error');
+            if (fileInputRef.current) fileInputRef.current.value = '';
+            return;
+        }
+
+        // Validation: File Size (2MB)
+        const maxSize = 2 * 1024 * 1024;
+        if (file.size > maxSize) {
+            showAlert('File Too Large', 'Maximum image size is 2MB.', 'error');
+            if (fileInputRef.current) fileInputRef.current.value = '';
+            return;
+        }
 
         setUploading(true);
         try {
@@ -222,7 +238,7 @@ const CreateProduct = () => {
         setFormLoading(true);
 
         try {
-            const productData = {
+            const serviceData = {
                 name: formData.name,
                 base_price: parseFloat(formData.price) || 0,
                 stock: parseInt(formData.stock) || 0,
@@ -234,55 +250,49 @@ const CreateProduct = () => {
                 updated_at: new Date().toISOString()
             };
 
-            // Maintain legacy 'category' string field with the first selected category name
-            if (formData.category_ids.length > 0) {
-                const firstCat = categories.find(c => c.id === formData.category_ids[0]);
-                if (firstCat) productData.category = firstCat.name;
-            }
-
-            let productId = id;
+            let serviceId = id;
 
             if (isEdit) {
                 const { error } = await supabase
                     .from('services')
-                    .update(productData)
+                    .update(serviceData)
                     .eq('id', id);
                 if (error) throw error;
             } else {
                 const { data, error } = await supabase
                     .from('services')
-                    .insert([{ ...productData, created_at: new Date().toISOString() }])
+                    .insert([{ ...serviceData, created_at: new Date().toISOString() }])
                     .select()
                     .single();
                 if (error) throw error;
-                productId = data.id;
+                serviceId = data.id;
             }
 
             // Sync Many-to-Many Categories
             // First clear existing
             const { error: deleteError } = await supabase
-                .from('product_categories')
+                .from('service_categories')
                 .delete()
-                .eq('product_id', productId);
+                .eq('service_id', serviceId);
             if (deleteError) throw deleteError;
 
             // Then insert new associations
             if (formData.category_ids.length > 0) {
                 const associations = formData.category_ids.map(catId => ({
-                    product_id: productId,
+                    service_id: serviceId,
                     category_id: catId
                 }));
                 const { error: insertError } = await supabase
-                    .from('product_categories')
+                    .from('service_categories')
                     .insert(associations);
                 if (insertError) throw insertError;
             }
 
-            showAlert('Success', isEdit ? 'Product updated successfully.' : 'Product listed successfully.', 'success');
-            navigate('/products');
+            showAlert('Success', isEdit ? 'Service updated successfully.' : 'Service listed successfully.', 'success');
+            navigate('/services');
         } catch (error) {
             console.error('Save Error:', error);
-            showAlert('Action Failed', error.message || 'Could not save product', 'error');
+            showAlert('Action Failed', error.message || 'Could not save service', 'error');
         } finally {
             setFormLoading(false);
         }
@@ -302,7 +312,7 @@ const CreateProduct = () => {
             {/* Header & Navigation */}
             <div className="flex items-center justify-between">
                 <button
-                    onClick={() => navigate('/products')}
+                    onClick={() => navigate('/services')}
                     className="group flex items-center gap-3 text-gray-400 hover:text-brand-red transition-all font-black uppercase tracking-widest text-[10px]"
                 >
                     <div className="p-2 border border-gray-300 rounded-xl group-hover:bg-red-50 group-hover:border-red-100 transition-all">
@@ -312,16 +322,16 @@ const CreateProduct = () => {
                 </button>
                 <div className="text-right">
                     <h1 className="text-2xl font-black text-gray-900 tracking-tight">
-                        {isEdit ? 'Refine Specification' : 'List New Product'}
+                        {isEdit ? 'Refine Specification' : 'List New Service'}
                     </h1>
                     <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest">
-                        {isEdit ? `Product UID: ${id.slice(0, 8)}` : 'Global Product Registry'}
+                        {isEdit ? `Service UID: ${id.slice(0, 8)}` : 'Global Service Registry'}
                     </p>
                 </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8">
-                {/* Product Hero Card */}
+                {/* Service Hero Card */}
                 <div className="relative group">
                     <div className="absolute -inset-1 bg-gradient-to-r from-brand-red to-red-400 rounded-3xl blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
                     <Card className="relative bg-white border border-gray-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
@@ -408,7 +418,7 @@ const CreateProduct = () => {
                                         className="bg-brand-red text-white px-10 py-4 rounded-2xl shadow-xl shadow-red-100 flex items-center gap-3 font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition-all"
                                     >
                                         {formLoading ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-                                        {isEdit ? 'Update Specification' : 'Publish Product'}
+                                        {isEdit ? 'Update Specification' : 'Publish Service'}
                                     </Button>
                                 </div>
                             </div>
@@ -422,7 +432,7 @@ const CreateProduct = () => {
                         {/* Section: Standard Details */}
                         <section className="bg-white p-8 rounded-3xl shadow-sm border border-gray-200 space-y-6">
                             <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em] mb-4">
-                                <Tag size={16} className="text-brand-red" /> Product Identity
+                                <Tag size={16} className="text-brand-red" /> Service Identity
                             </h3>
 
                             <div className="space-y-6">
@@ -744,7 +754,7 @@ const CreateProduct = () => {
                             <div className="font-black">
                                 <h4 className="text-[10px] text-red-900 uppercase tracking-widest mb-1">Catalog Integrity</h4>
                                 <p className="text-[10px] text-red-700 leading-relaxed">
-                                    Published products are synced immediately with the global booking engine. Ensure pricing includes all applicable taxes.
+                                    Published services are synced immediately with the global booking engine. Ensure pricing includes all applicable taxes.
                                 </p>
                             </div>
                         </section>
@@ -754,7 +764,7 @@ const CreateProduct = () => {
                 <div className="flex justify-end gap-4 p-8 bg-gray-50/50 rounded-3xl border border-gray-300 border-dashed">
                     <button
                         type="button"
-                        onClick={() => navigate('/products')}
+                        onClick={() => navigate('/services')}
                         className="px-8 py-3 text-[10px] uppercase tracking-widest text-gray-400 hover:text-gray-600 transition-all font-black"
                     >
                         Abandon Workspace
@@ -773,4 +783,4 @@ const CreateProduct = () => {
     );
 };
 
-export default CreateProduct;
+export default CreateService;

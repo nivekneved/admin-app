@@ -1,17 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/Card';
 import { Button } from '../components/Button';
 import { showAlert } from '../utils/swal';
+import { supabase } from '../lib/supabase';
+import { Loader2, Save } from 'lucide-react';
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState('general');
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
-    siteTitle: 'Travel Lounge Admin',
-    contactEmail: 'admin@travellounge.com',
-    timezone: 'GMT-05:00',
-    currency: 'MUR',
-    dateFormat: 'MM/DD/YYYY',
-    timeFormat: '12 hour',
+    siteTitle: '',
+    contactEmail: '',
+    contactPhone: '',
+    whatsappNumber1: '',
+    whatsappNumber2: '',
+    office1Title: '',
+    office1Address: '',
+    office2Title: '',
+    office2Address: '',
+    workingHours: '',
+    facebookUrl: '',
+    instagramUrl: '',
+    linkedinUrl: '',
+    timezone: '',
+    currency: '',
+    dateFormat: '',
+    timeFormat: '',
     notifications: {
       email: true,
       sms: false,
@@ -24,10 +39,44 @@ const Settings = () => {
     }
   });
 
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('*');
+
+      if (error) throw error;
+
+      if (data) {
+        const newFormData = { ...formData };
+        data.forEach(item => {
+          if (item.key === 'general_config') {
+            Object.assign(newFormData, item.value);
+          } else if (item.key === 'security_config') {
+            newFormData.security = item.value;
+          } else if (item.key === 'notifications_config') {
+            newFormData.notifications = item.value;
+          }
+        });
+        setFormData(newFormData);
+      }
+    } catch (err) {
+      console.error('Error fetching settings:', err);
+      showAlert('Error', 'Failed to synchronize settings from database.', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    if (type === 'checkbox') {
+    if (name.includes('.')) {
       const [section, field] = name.split('.');
       setFormData(prev => ({
         ...prev,
@@ -39,163 +88,312 @@ const Settings = () => {
     } else {
       setFormData(prev => ({
         ...prev,
-        [name]: value
+        [name]: type === 'checkbox' ? checked : value
       }));
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulate saving settings
+    setSaving(true);
 
-    showAlert('Settings Saved', 'Global administrative settings have been updated.', 'success');
+    try {
+      let key, value, category;
+
+      if (activeTab === 'general') {
+        key = 'general_config';
+        category = 'general';
+        value = {
+          siteTitle: formData.siteTitle,
+          contactPhone: formData.contactPhone,
+          whatsappNumber1: formData.whatsappNumber1,
+          whatsappNumber2: formData.whatsappNumber2,
+          office1Title: formData.office1Title,
+          office1Address: formData.office1Address,
+          office2Title: formData.office2Title,
+          office2Address: formData.office2Address,
+          workingHours: formData.workingHours,
+          facebookUrl: formData.facebookUrl,
+          instagramUrl: formData.instagramUrl,
+          linkedinUrl: formData.linkedinUrl,
+          timezone: formData.timezone,
+          currency: formData.currency,
+          dateFormat: formData.dateFormat,
+          timeFormat: formData.timeFormat
+        };
+      } else if (activeTab === 'security') {
+        key = 'security_config';
+        category = 'security';
+        value = formData.security;
+      } else if (activeTab === 'notifications') {
+        key = 'notifications_config';
+        category = 'notifications';
+        value = formData.notifications;
+      }
+
+      const { error } = await supabase
+        .from('site_settings')
+        .upsert({
+          key,
+          value,
+          category,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) throw error;
+
+      showAlert('Settings Updated', `${category.charAt(0).toUpperCase() + category.slice(1)} settings have been successfully persisted.`, 'success');
+    } catch (err) {
+      console.error('Error saving settings:', err);
+      showAlert('Save Failed', 'Could not persist settings to database.', 'error');
+    } finally {
+      setSaving(false);
+    }
   };
 
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-96">
+        <Loader2 className="animate-spin text-brand-red mb-4" size={40} />
+        <p className="text-gray-500 font-bold">Loading System Configurations...</p>
+      </div>
+    );
+  }
+
   return (
-    <div>
+    <div className="animate-in fade-in duration-500">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">Settings</h1>
-        <p className="text-gray-600">Manage your admin panel settings</p>
+        <h1 className="text-2xl font-black text-gray-900">Platform Settings</h1>
+        <p className="text-sm text-gray-400 font-medium">Global configurations for Travel Lounge infrastructure</p>
       </div>
 
-      <div className="flex border-b border-gray-200 mb-6">
-        <button
-          className={`px-4 py-2 font-medium ${activeTab === 'general' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'}`}
-          onClick={() => setActiveTab('general')}
-        >
-          General
-        </button>
-        <button
-          className={`px-4 py-2 font-medium ${activeTab === 'security' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'}`}
-          onClick={() => setActiveTab('security')}
-        >
-          Security
-        </button>
-        <button
-          className={`px-4 py-2 font-medium ${activeTab === 'notifications' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'}`}
-          onClick={() => setActiveTab('notifications')}
-        >
-          Notifications
-        </button>
+      <div className="flex space-x-2 border-b border-gray-100 mb-8 overflow-x-auto pb-px">
+        {['general', 'security', 'notifications'].map((tab) => (
+          <button
+            key={tab}
+            className={`px-6 py-3 text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === tab
+              ? 'border-b-2 border-brand-red text-brand-red'
+              : 'text-gray-400 hover:text-gray-600'
+              }`}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab}
+          </button>
+        ))}
       </div>
 
-      {activeTab === 'general' && (
-        <Card>
-          <CardHeader>
-            <CardTitle>General Settings</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Site Title</label>
-                  <input
-                    type="text"
-                    name="siteTitle"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    value={formData.siteTitle}
-                    onChange={handleChange}
-                  />
+      <Card className="border border-gray-100 shadow-sm overflow-hidden">
+        <CardHeader className="bg-gray-50/50 border-b border-gray-100 px-8 py-6">
+          <CardTitle className="text-sm font-black uppercase tracking-widest text-gray-500 flex items-center justify-between">
+            <div className="flex items-center">
+              <span className="w-2 h-2 bg-brand-red rounded-full mr-3"></span>
+              {activeTab} Parameters
+            </div>
+            {saving && <Loader2 className="animate-spin text-brand-red" size={16} />}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-8">
+          <form onSubmit={handleSubmit} className="space-y-8">
+            {activeTab === 'general' && (
+              <div className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Site Title</label>
+                    <input
+                      type="text"
+                      name="siteTitle"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      value={formData.siteTitle}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Contact Email</label>
+                    <input
+                      type="email"
+                      name="contactEmail"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      value={formData.contactEmail}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Contact Phone</label>
+                    <input
+                      type="text"
+                      name="contactPhone"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      value={formData.contactPhone}
+                      onChange={handleChange}
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">WhatsApp 1</label>
+                    <input
+                      type="text"
+                      name="whatsappNumber1"
+                      placeholder="+230 5940 7711"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      value={formData.whatsappNumber1}
+                      onChange={handleChange}
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">WhatsApp 2</label>
+                    <input
+                      type="text"
+                      name="whatsappNumber2"
+                      placeholder="+230 5940 7701"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      value={formData.whatsappNumber2}
+                      onChange={handleChange}
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Working Hours</label>
+                    <input
+                      type="text"
+                      name="workingHours"
+                      placeholder="Mon - Fri: 08:30 - 17:00"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      value={formData.workingHours}
+                      onChange={handleChange}
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Contact Email</label>
-                  <input
-                    type="email"
-                    name="contactEmail"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    value={formData.contactEmail}
-                    onChange={handleChange}
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Office 1 Title</label>
+                    <input
+                      type="text"
+                      name="office1Title"
+                      placeholder="Port Louis Office"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      value={formData.office1Title}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Office 2 Title</label>
+                    <input
+                      type="text"
+                      name="office2Title"
+                      placeholder="Ebene Office"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      value={formData.office2Title}
+                      onChange={handleChange}
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Timezone</label>
-                  <select
-                    name="timezone"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    value={formData.timezone}
-                    onChange={handleChange}
-                  >
-                    <option value="GMT-12:00">(GMT-12:00) International Date Line West</option>
-                    <option value="GMT-11:00">(GMT-11:00) Midway Island, Samoa</option>
-                    <option value="GMT-10:00">(GMT-10:00) Hawaii</option>
-                    <option value="GMT-09:00">(GMT-09:00) Alaska</option>
-                    <option value="GMT-08:00">(GMT-08:00) Pacific Time (US & Canada)</option>
-                    <option value="GMT-07:00">(GMT-07:00) Arizona</option>
-                    <option value="GMT-06:00">(GMT-06:00) Central America</option>
-                    <option value="GMT-05:00" selected>(GMT-05:00) Eastern Time (US & Canada)</option>
-                    <option value="GMT-04:00">(GMT-04:00) Atlantic Time (Canada)</option>
-                  </select>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Office 1 Address</label>
+                    <textarea
+                      name="office1Address"
+                      rows={2}
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900 resize-none"
+                      value={formData.office1Address}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Office 2 Address</label>
+                    <textarea
+                      name="office2Address"
+                      rows={2}
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900 resize-none"
+                      value={formData.office2Address}
+                      onChange={handleChange}
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
-                  <select
-                    name="currency"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    value={formData.currency}
-                    onChange={handleChange}
-                  >
-                    <option value="MUR">Mauritius Rupee (MUR)</option>
-                    <option value="USD">US Dollar (USD)</option>
-                    <option value="EUR">Euro (EUR)</option>
-                    <option value="GBP">British Pound (GBP)</option>
-                    <option value="JPY">Japanese Yen (JPY)</option>
-                    <option value="CAD">Canadian Dollar (CAD)</option>
-                  </select>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-4 border-t border-gray-50">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Facebook URL</label>
+                    <input
+                      type="text"
+                      name="facebookUrl"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      value={formData.facebookUrl}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Instagram URL</label>
+                    <input
+                      type="text"
+                      name="instagramUrl"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      value={formData.instagramUrl}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">LinkedIn URL</label>
+                    <input
+                      type="text"
+                      name="linkedinUrl"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      value={formData.linkedinUrl}
+                      onChange={handleChange}
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Date Format</label>
-                  <select
-                    name="dateFormat"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    value={formData.dateFormat}
-                    onChange={handleChange}
-                  >
-                    <option value="MM/DD/YYYY">MM/DD/YYYY</option>
-                    <option value="DD/MM/YYYY">DD/MM/YYYY</option>
-                    <option value="YYYY-MM-DD">YYYY-MM-DD</option>
-                  </select>
-                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 border-t border-gray-50">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Timezone</label>
+                    <select
+                      name="timezone"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900 appearance-none"
+                      value={formData.timezone}
+                      onChange={handleChange}
+                    >
+                      <option value="GMT-12:00">(GMT-12:00) International Date Line West</option>
+                      <option value="GMT-11:00">(GMT-11:00) Midway Island, Samoa</option>
+                      <option value="GMT-10:00">(GMT-10:00) Hawaii</option>
+                      <option value="GMT-09:00">(GMT-09:00) Alaska</option>
+                      <option value="GMT-08:00">(GMT-08:00) Pacific Time (US & Canada)</option>
+                      <option value="GMT-07:00">(GMT-07:00) Arizona</option>
+                      <option value="GMT-06:00">(GMT-06:00) Central America</option>
+                      <option value="GMT-05:00">(GMT-05:00) Eastern Time (US & Canada)</option>
+                      <option value="GMT+04:00">(GMT+04:00) Indian/Mauritius</option>
+                    </select>
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Time Format</label>
-                  <select
-                    name="timeFormat"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    value={formData.timeFormat}
-                    onChange={handleChange}
-                  >
-                    <option value="12 hour">12 hour</option>
-                    <option value="24 hour">24 hour</option>
-                  </select>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Local Currency</label>
+                    <select
+                      name="currency"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900 appearance-none"
+                      value={formData.currency}
+                      onChange={handleChange}
+                    >
+                      <option value="MUR">Mauritius Rupee (MUR)</option>
+                      <option value="USD">US Dollar (USD)</option>
+                      <option value="EUR">Euro (EUR)</option>
+                    </select>
+                  </div>
                 </div>
               </div>
+            )}
 
-              <div className="pt-4">
-                <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white">
-                  Save General Settings
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      )}
-
-      {activeTab === 'security' && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Security Settings</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
+            {activeTab === 'security' && (
+              <div className="space-y-8">
+                <div className="flex items-center justify-between p-6 bg-gray-50/50 rounded-2xl border border-gray-100">
                   <div>
-                    <h4 className="font-medium">Two-Factor Authentication</h4>
-                    <p className="text-sm text-gray-500">Add an extra layer of security to your account</p>
+                    <h4 className="font-bold text-gray-900">Two-Factor Authentication</h4>
+                    <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mt-1">Add an extra layer of security to your account</p>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
@@ -205,118 +403,81 @@ const Settings = () => {
                       checked={formData.security.twoFactorAuth}
                       onChange={handleChange}
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-red"></div>
                   </label>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Password Expiry (days)</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Password Expiry (days)</label>
                     <input
                       type="number"
                       name="security.passwordExpiry"
                       min="1"
                       max="365"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
                       value={formData.security.passwordExpiry}
                       onChange={handleChange}
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Session Timeout (minutes)</label>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Session Timeout (min)</label>
                     <input
                       type="number"
                       name="security.sessionTimeout"
                       min="1"
                       max="480"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
                       value={formData.security.sessionTimeout}
                       onChange={handleChange}
                     />
                   </div>
                 </div>
               </div>
+            )}
 
-              <div className="pt-4">
-                <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white">
-                  Save Security Settings
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      )}
-
-      {activeTab === 'notifications' && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Notification Settings</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            {activeTab === 'notifications' && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-medium">Email Notifications</h4>
-                    <p className="text-sm text-gray-500">Receive notifications via email</p>
+                {[
+                  { key: 'email', label: 'Email Notifications', desc: 'Receive system alerts via email' },
+                  { key: 'sms', label: 'SMS Notifications', desc: 'Receive security alerts via SMS' },
+                  { key: 'push', label: 'Push Notifications', desc: 'Receive browser notifications' }
+                ].map((item) => (
+                  <div key={item.key} className="flex items-center justify-between p-6 bg-gray-50/50 rounded-2xl border border-gray-100">
+                    <div>
+                      <h4 className="font-bold text-gray-900">{item.label}</h4>
+                      <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mt-1">{item.desc}</p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        name={`notifications.${item.key}`}
+                        className="sr-only peer"
+                        checked={formData.notifications[item.key]}
+                        onChange={handleChange}
+                      />
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-red"></div>
+                    </label>
                   </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      name="notifications.email"
-                      className="sr-only peer"
-                      checked={formData.notifications.email}
-                      onChange={handleChange}
-                    />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                  </label>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-medium">SMS Notifications</h4>
-                    <p className="text-sm text-gray-500">Receive notifications via SMS</p>
-                  </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      name="notifications.sms"
-                      className="sr-only peer"
-                      checked={formData.notifications.sms}
-                      onChange={handleChange}
-                    />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                  </label>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-medium">Push Notifications</h4>
-                    <p className="text-sm text-gray-500">Receive notifications in the app</p>
-                  </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      name="notifications.push"
-                      className="sr-only peer"
-                      checked={formData.notifications.push}
-                      onChange={handleChange}
-                    />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                  </label>
-                </div>
+                ))}
               </div>
+            )}
 
-              <div className="pt-4">
-                <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white">
-                  Save Notification Settings
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      )}
+            <div className="pt-6 flex justify-end items-center">
+              <span className="text-[10px] text-gray-400 font-black uppercase tracking-widest mr-6">Auto-syncing enabled</span>
+              <Button
+                type="submit"
+                disabled={saving}
+                className={`bg-gray-900 hover:bg-black text-white px-8 py-3 rounded-xl font-black uppercase tracking-widest text-xs shadow-lg shadow-gray-200 transition-all flex items-center ${saving ? 'opacity-70 pointer-events-none' : ''}`}
+              >
+                <Save size={16} className="mr-2" />
+                {saving ? 'Persisting...' : `Persist ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 };

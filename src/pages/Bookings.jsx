@@ -507,7 +507,7 @@ const Bookings = () => {
                           <span className="mr-1.5 shrink-0">{getActivityIcon(booking.activity_type)}</span>
                           <span className="truncate max-w-[150px]">
                             {booking.booking_items && booking.booking_items.length > 1
-                              ? `${booking.booking_items[0].product_name} (+${booking.booking_items.length - 1})`
+                              ? `${booking.booking_items[0].service_name} (+${booking.booking_items.length - 1})`
                               : (booking.activity_name || booking.lounge_name || 'Generic')}
                           </span>
                         </div>
@@ -706,8 +706,8 @@ const Bookings = () => {
                             {idx + 1}
                           </div>
                           <div>
-                            <p className="text-xs font-black text-gray-900">{it.product_name}</p>
-                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-tighter">{it.product_category}</p>
+                            <p className="text-xs font-black text-gray-900">{it.service_name}</p>
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-tighter">{it.service_category}</p>
                           </div>
                         </div>
                         <p className="text-xs font-black text-gray-900 italic">MUR {Number(it.amount).toLocaleString()}</p>
