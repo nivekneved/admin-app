@@ -16,3 +16,10 @@
 - Created the `public.popup_ads` table in Supabase to manage promotional popups.
 - Seeded the table with 8 diverse promotional entries (images, videos, and text).
 - SQL script saved to `supabase/popup_ads.sql`.
+
+## [2026-03-12 00:25] Antigravity
+
+- Implemented the `PopupAds.jsx` management dashboard in the `admin-app`.
+- Added "Popup Ads" menu link to the `Sidebar.jsx` under Content & CMS.
+- Registered the `/popup-ads` route in `App.jsx`.
+- Verified build and cross-page navigation.

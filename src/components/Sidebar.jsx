@@ -98,6 +98,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         { title: 'CMS Pages', path: '/cms', icon: <FileEdit size={16} /> },
         { title: 'News Editor', path: '/news', icon: <FileText size={16} /> },
         { title: 'Hero Slider', path: '/hero-slider', icon: <Layout size={16} /> },
+        { title: 'Popup Ads', path: '/popup-ads', icon: <Monitor size={16} /> },
         { title: 'FAQs', path: '/faqs', icon: <HelpCircle size={16} /> },
       ]
     },
