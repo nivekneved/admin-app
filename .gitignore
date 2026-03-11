@@ -16,3 +16,5 @@ __pycache__/
 *.swp
 .DS_Store
 .vercel
+dist/
+build_output.txt
