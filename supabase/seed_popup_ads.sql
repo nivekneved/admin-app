@@ -1,0 +1,17 @@
+-- Seed File: Diverse Popup Advertisements
+-- Generated: 2026-03-12
+
+TRUNCATE TABLE public.popup_ads;
+
+INSERT INTO public.popup_ads (title, content, media_url, media_type, cta_text, cta_link, is_active, display_frequency, start_at, end_at)
+VALUES 
+('Early Bird Summer 2026', 'Book your summer getaway before April 1st and enjoy a 20% discount on all all-inclusive resorts.', 'https://images.unsplash.com/photo-1506929193675-2e40e7931495?auto=format&fit=crop&q=80&w=1200', 'image', 'Book Now', '/services?category=hotel', true, 'once_per_session', NOW(), NOW() + INTERVAL '3 months'),
+('Mediterranean Luxury Cruises', 'Experience the Mediterranean like never before. Our new 2026 itineraries are now live with exclusive balcony upgrades.', 'https://images.unsplash.com/photo-1548574505-5e239809ee19?auto=format&fit=crop&q=80&w=1200', 'image', 'View Itinerary', '/services?category=cruise', true, 'once_per_day', NOW(), NOW() + INTERVAL '6 months'),
+('Join the Travel Club', 'Unlock secret deals, early access to sales, and expert travel tips delivered straight to your inbox.', 'https://images.unsplash.com/photo-1512467840114-110f09a56c07?auto=format&fit=crop&q=80&w=1200', 'image', 'Subscribe', '#newsletter', true, 'once_per_session', NOW(), NOW() + INTERVAL '1 year'),
+('Mauritius Flash Sale!', '24 HOURS ONLY: Save up to 40% on luxury catamaran tours and private island excursions.', 'https://images.unsplash.com/photo-1589553460732-58ef9411d99d?auto=format&fit=crop&q=80&w=1200', 'image', 'Grab Deal', '/services?category=tour', true, 'always', NOW(), NOW() + INTERVAL '1 day'),
+('Refer a Friend, Travel More', 'Share the love! Get a $50 travel credit for every friend who books their first trip with us.', 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=1200', 'image', 'Get Link', '/profile/referral', true, 'once_per_day', NOW(), NOW() + INTERVAL '1 year'),
+('Winter Ski Series 2026', 'The mountains are calling. Secure your spot in the French Alps or Swiss Peaks with our flexible payment plans.', 'https://images.unsplash.com/photo-1551698618-1fed5d97530d?auto=format&fit=crop&q=80&w=1200', 'image', 'Explore Deals', '/services?category=activity', true, 'once_per_session', NOW(), NOW() + INTERVAL '4 months'),
+('Exclusive App Offer', 'Download the Travel Lounge app and get an additional 5% off your first booking. Use code: APPLOUNGE', 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80&w=1200', 'image', 'Download Now', '/app-download', true, 'once_per_day', NOW(), NOW() + INTERVAL '1 year'),
+('Your Feedback Matters', 'How was your recent trip? Share your experience and enter our monthly draw to win a $200 voucher.', null, 'none', 'Start Survey', '/feedback', true, 'once_per_day', NOW(), NOW() + INTERVAL '2 months'),
+('Bali Zen Retreats', 'Find your inner peace with our curated spiritual and wellness retreats in Ubud and Seminyak.', 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&q=80&w=1200', 'image', 'Learn More', '/services?category=tour', true, 'once_per_session', NOW(), NOW() + INTERVAL '5 months'),
+('Last Minute Weekend Getaways', 'Spontaneous travel is the best travel. Check out our high-discount packages for this coming weekend.', 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&q=80&w=1200', 'image', 'See Deals', '/last-minute', true, 'always', NOW(), NOW() + INTERVAL '4 days');
