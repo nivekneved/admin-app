@@ -12,7 +12,7 @@ import {
     Globe
 } from 'lucide-react';
 import { showAlert } from '../utils/swal';
-import Button from '../components/ui/Button';
+import { Button } from '../components/Button';
 
 const CreateNews = () => {
     const navigate = useNavigate();
