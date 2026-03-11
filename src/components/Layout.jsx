@@ -11,7 +11,7 @@ const Layout = ({ children }) => {
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 bg-brand-red text-white flex items-center justify-between px-6 sticky top-0 z-10 shadow-lg shadow-red-900/10">
+        <header className="h-14 bg-brand-red text-white flex items-center justify-between px-6 sticky top-0 z-10 shadow-lg shadow-red-900/10">
           <div className="flex items-center gap-4">
             {!isSidebarOpen && (
               <button

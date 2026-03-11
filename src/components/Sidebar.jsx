@@ -149,7 +149,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         } shadow-2xl lg:shadow-none`}>
 
 
-        <div className="flex flex-col items-center justify-center py-5 px-4 border-b border-white/5 bg-white/5 relative">
+        <div className="flex flex-col items-center justify-center py-3 px-4 border-b border-white/5 bg-white/5 relative">
           <button
             onClick={() => setIsOpen(false)}
             className="absolute top-4 right-4 p-2 text-gray-500 hover:text-white hover:bg-white/5 rounded-xl transition-all duration-300"
@@ -160,13 +160,13 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           <img src={logo} alt="Travel Lounge" className="h-10 mb-3 object-contain" />
           <h1 className="text-[10px] font-black tracking-[0.2em] uppercase text-gray-500">Security Terminal</h1>
         </div>
-        <nav className="mt-4 px-3">
+        <nav className="mt-2 px-3 flex-1 overflow-y-auto custom-scrollbar">
           <ul>
             {menuItems.map((item, index) => (
               <li key={index}>
                 <Link
                   to={item.path}
-                  className={`flex items-center px-3.5 py-2.5 rounded-xl mb-1 transition-all duration-200 ${location.pathname === item.path
+                  className={`flex items-center px-3.5 py-1.5 rounded-xl mb-1 transition-all duration-200 ${location.pathname === item.path
                     ? 'bg-brand-red text-white shadow-lg shadow-red-900/20'
                     : 'text-gray-400 hover:text-white hover:bg-white/5'
                     }`}
