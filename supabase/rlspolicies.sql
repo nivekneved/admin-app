@@ -167,3 +167,8 @@ CREATE POLICY "Admins can manage subscribers" ON public.subscribers
 -- --- Email Templates ---
 CREATE POLICY "Admins can manage email templates" ON public.email_templates 
     FOR ALL USING (public.is_admin());
+
+-- --- Popup Advertisements ---
+ALTER TABLE public.popup_ads ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public can view popup ads" ON public.popup_ads FOR SELECT USING (true);
+CREATE POLICY "Anyone can manage popup ads" ON public.popup_ads FOR ALL USING (true);

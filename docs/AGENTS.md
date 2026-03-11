@@ -23,3 +23,9 @@
 - Added "Popup Ads" menu link to the `Sidebar.jsx` under Content & CMS.
 - Registered the `/popup-ads` route in `App.jsx`.
 - Verified build and cross-page navigation.
+
+## [2026-03-12 00:35] Antigravity
+
+- Fixed empty page issue by applying Row Level Security (RLS) policies to `popup_ads`.
+- Updated `supabase/popup_ads.sql` and `supabase/rlspolicies.sql` with the latest policies and 10 diverse seed entries.
+- Synchronized all changes across `admin-app` and `web-app` with a final Git push.
