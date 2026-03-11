@@ -28,6 +28,7 @@ import CMS from './pages/CMS';
 import Inquiries from './pages/Inquiries';
 import Subscribers from './pages/Subscribers';
 import News from './pages/News';
+import CreateNews from './pages/CreateNews';
 
 const queryClient = new QueryClient();
 
@@ -72,6 +73,8 @@ function App() {
                     <Route path="/inquiries" element={<Inquiries />} />
                     <Route path="/subscribers" element={<Subscribers />} />
                     <Route path="/news" element={<News />} />
+                    <Route path="/news/create" element={<CreateNews />} />
+                    <Route path="/news/edit/:id" element={<CreateNews />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="*" element={<Navigate to="/" />} />
                   </Routes>

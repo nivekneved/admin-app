@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { useNavigate } from 'react-router-dom';
 import { 
   Search, 
   Plus, 
@@ -15,6 +16,7 @@ import Swal from 'sweetalert2';
 import { showAlert } from '../utils/swal';
 
 const News = () => {
+  const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -125,7 +127,7 @@ const News = () => {
         </div>
         <button
           className="flex items-center gap-2 bg-red-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-slate-900 transition-all shadow-lg shadow-red-600/20 w-fit"
-          onClick={() => showAlert('Coming Soon', 'Article editor implementation is planned.', 'info')}
+          onClick={() => navigate('/news/create')}
         >
           <Plus size={20} />
           New Article
@@ -226,7 +228,7 @@ const News = () => {
                         )}
                         <button
                           className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                          onClick={() => showAlert('Coming Soon', 'Editing is not yet implemented.', 'info')}
+                          onClick={() => navigate(`/news/edit/${post.id}`)}
                         >
                           <Edit3 size={18} />
                         </button>

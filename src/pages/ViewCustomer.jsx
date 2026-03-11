@@ -125,7 +125,7 @@ const ViewCustomer = () => {
                             </span>
                         </div>
 
-                        <div className="mt-10">
+                        <div className="pt-14">
                             <h2 className="text-xl font-bold text-gray-900">{customer.first_name} {customer.last_name}</h2>
                             <p className="text-sm text-gray-500 mb-6 font-medium">Customer since {new Date(customer.created_at).toLocaleDateString()}</p>
 
