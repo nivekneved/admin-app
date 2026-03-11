@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import {
     Star, Search, Check, X, Trash2,
     RefreshCw, Loader2, MessageSquare,
-    User, Calendar
+    User, Calendar, List, LayoutGrid
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Card, CardContent, CardHeader } from '../components/Card';
@@ -14,6 +14,7 @@ const Reviews = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
+    const [viewMode, setViewMode] = useState('list');
     const [actionLoading, setActionLoading] = useState(null);
 
     useEffect(() => {
@@ -161,15 +162,21 @@ const Reviews = () => {
             <Card className="border border-gray-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
                 <CardHeader className="border-b border-gray-50 pb-4 px-8 pt-8">
                     <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-                        <div className="relative w-full max-w-md">
-                            <Search className="absolute left-3 top-2.5 text-gray-300" size={16} />
-                            <input
-                                type="text"
-                                placeholder="Search by customer or comment..."
-                                className="pl-9 pr-4 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
+                        <div className="flex items-center gap-4 flex-1">
+                            <div className="relative w-full max-w-md">
+                                <Search className="absolute left-3 top-2.5 text-gray-300" size={16} />
+                                <input
+                                    type="text"
+                                    placeholder="Search by customer or comment..."
+                                    className="pl-9 pr-4 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
+                            <div className="flex items-center bg-gray-50 rounded-2xl p-1 gap-1 border border-gray-100 shrink-0">
+                                <button type="button" onClick={() => setViewMode('list')} className={`p-2 rounded-xl transition-all ${viewMode === 'list' ? 'bg-white text-brand-red shadow-sm' : 'text-gray-400'}`}><List size={18} /></button>
+                                <button type="button" onClick={() => setViewMode('grid')} className={`p-2 rounded-xl transition-all ${viewMode === 'grid' ? 'bg-white text-brand-red shadow-sm' : 'text-gray-400'}`}><LayoutGrid size={18} /></button>
+                            </div>
                         </div>
                         <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
                             {['all', 'pending', 'approved', 'rejected'].map(status => (
@@ -190,7 +197,7 @@ const Reviews = () => {
                 </CardHeader>
 
                 <CardContent className="p-0">
-                    <div className="overflow-x-auto">
+                    <div className="overflow-x-auto min-h-[400px]">
                         {loading ? (
                             <div className="py-20 flex flex-col items-center">
                                 <Loader2 className="animate-spin text-brand-red mb-4" size={48} />
@@ -201,7 +208,7 @@ const Reviews = () => {
                                 <MessageSquare size={48} className="text-gray-200" />
                                 <p className="text-gray-400 font-bold">No matching reviews found</p>
                             </div>
-                        ) : (
+                        ) : viewMode === 'list' ? (
                             <table className="min-w-full divide-y divide-gray-100">
                                 <thead className="bg-gray-50/50">
                                     <tr>
@@ -305,6 +312,56 @@ const Reviews = () => {
                                     ))}
                                 </tbody>
                             </table>
+                        ) : (
+                            <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                {processedReviews.map((review) => (
+                                    <div key={review.id} className="bg-white border border-gray-200 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500 flex flex-col p-6">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="h-12 w-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 border border-gray-100">
+                                                    <User size={20} />
+                                                </div>
+                                                <div>
+                                                    <h3 className="text-sm font-black text-gray-900 leading-tight">{review.customer_name}</h3>
+                                                    <div className="flex items-center gap-0.5 mt-1">
+                                                        {[1, 2, 3, 4, 5].map(star => (
+                                                            <Star key={star} size={10} className={star <= review.rating ? 'text-amber-500 fill-amber-500' : 'text-gray-200'} />
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all scale-90 group-hover:scale-100">
+                                                <button onClick={() => deleteReview(review.id)} className="p-2 text-gray-300 hover:text-brand-red bg-gray-50 rounded-xl transition-all"><Trash2 size={14} /></button>
+                                            </div>
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="text-xs text-gray-600 leading-relaxed italic mb-4">
+                                                &quot;{review.comment}&quot;
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center justify-between pt-4 border-t border-gray-50 mt-auto">
+                                            <div className="flex flex-col">
+                                                <span className="text-[10px] font-black text-gray-900 uppercase tracking-widest">{review.service_type || 'General'}</span>
+                                                <span className="text-[9px] text-gray-400 font-bold">{new Date(review.created_at).toLocaleDateString()}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                {review.status === 'pending' && (
+                                                    <>
+                                                        <button onClick={() => updateReviewStatus(review.id, 'approved')} className="p-2 bg-green-50 text-green-600 rounded-xl hover:bg-green-100 transition-all"><Check size={14} /></button>
+                                                        <button onClick={() => updateReviewStatus(review.id, 'rejected')} className="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-all"><X size={14} /></button>
+                                                    </>
+                                                )}
+                                                {review.status === 'approved' && (
+                                                    <span className="px-2 py-0.5 bg-green-50 text-green-700 text-[8px] font-black uppercase tracking-widest rounded-lg border border-green-100">Approved</span>
+                                                )}
+                                                {review.status === 'rejected' && (
+                                                    <span className="px-2 py-0.5 bg-red-50 text-red-700 text-[8px] font-black uppercase tracking-widest rounded-lg border border-red-100">Rejected</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         )}
                     </div>
                 </CardContent>

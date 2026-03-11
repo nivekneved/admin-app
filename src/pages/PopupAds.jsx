@@ -14,6 +14,7 @@ const PopupAds = () => {
     const [ads, setAds] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [viewMode, setViewMode] = useState('list');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
     const [currentAd, setCurrentAd] = useState(null);
@@ -228,15 +229,33 @@ const PopupAds = () => {
 
             <Card className="border border-gray-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
                 <CardHeader className="border-b border-gray-50 pb-4 px-8 pt-8">
-                    <div className="relative max-w-md">
-                        <Search className="absolute left-3 top-2.5 text-gray-300" size={16} />
-                        <input
-                            type="text"
-                            placeholder="Search advertisements..."
-                            className="pl-9 pr-4 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
+                    <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+                        <div className="relative w-full max-w-md">
+                            <Search className="absolute left-3 top-2.5 text-gray-300" size={16} />
+                            <input
+                                type="text"
+                                placeholder="Search advertisements..."
+                                className="pl-9 pr-4 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </div>
+                        <div className="flex items-center bg-gray-50 rounded-2xl p-1 gap-1 border border-gray-100 shrink-0">
+                            <button 
+                                type="button" 
+                                onClick={() => setViewMode('list')} 
+                                className={`p-2 rounded-xl transition-all ${viewMode === 'list' ? 'bg-white text-brand-red shadow-sm' : 'text-gray-400'}`}
+                            >
+                                <AlignLeft size={18} />
+                            </button>
+                            <button 
+                                type="button" 
+                                onClick={() => setViewMode('grid')} 
+                                className={`p-2 rounded-xl transition-all ${viewMode === 'grid' ? 'bg-white text-brand-red shadow-sm' : 'text-gray-400'}`}
+                            >
+                                <ImageIcon size={18} />
+                            </button>
+                        </div>
                     </div>
                 </CardHeader>
 
@@ -253,7 +272,7 @@ const PopupAds = () => {
                                 <p className="text-gray-400 font-bold">No popups configured</p>
                                 <Button onClick={() => handleOpenModal()} variant="outline">Schedule Your First Ad</Button>
                             </div>
-                        ) : (
+                        ) : viewMode === 'list' ? (
                             <table className="min-w-full divide-y divide-gray-100">
                                 <thead className="bg-gray-50/50">
                                     <tr>
@@ -352,6 +371,67 @@ const PopupAds = () => {
                                     ))}
                                 </tbody>
                             </table>
+                        ) : (
+                            <div className="p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                                {processedAds.map((ad) => (
+                                    <div key={ad.id} className="bg-white border border-gray-300 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500 flex flex-col">
+                                        <div className="h-48 bg-gray-50 relative overflow-hidden">
+                                            {ad.media_type === 'video' ? (
+                                                <video src={ad.media_url} className="w-full h-full object-cover" muted loop />
+                                            ) : ad.media_type === 'image' ? (
+                                                <img src={ad.media_url} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-gray-200 border-b border-gray-100">
+                                                    <AlignLeft size={48} />
+                                                </div>
+                                            )}
+                                            <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                                                <button onClick={() => { setCurrentAd(ad); setIsPreviewOpen(true); }} className="bg-white shadow-xl p-3 rounded-2xl text-gray-400 hover:text-blue-600 transition-all hover:scale-110 active:scale-95">
+                                                    <Eye size={16} />
+                                                </button>
+                                                <button onClick={() => handleOpenModal(ad)} className="bg-white shadow-xl p-3 rounded-2xl text-gray-400 hover:text-brand-red transition-all hover:scale-110 active:scale-95">
+                                                    <Edit2 size={16} />
+                                                </button>
+                                                <button onClick={() => deleteAd(ad.id)} className="bg-white shadow-xl p-3 rounded-2xl text-gray-400 hover:text-brand-red transition-all hover:scale-110 active:scale-95">
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
+                                            <div className="absolute bottom-4 left-4">
+                                                <span className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border backdrop-blur-md ${ad.is_active
+                                                    ? 'bg-green-500/80 text-white border-transparent'
+                                                    : 'bg-red-500/80 text-white border-transparent'
+                                                    }`}>
+                                                    {ad.is_active ? 'Active' : 'Offline'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="p-6 flex flex-col flex-1">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <span className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-gray-100 text-gray-500 border border-gray-200">
+                                                    {ad.display_frequency.replace(/_/g, ' ')}
+                                                </span>
+                                                <div className="flex items-center gap-1.5 text-[9px] font-bold text-gray-400">
+                                                    <Clock size={10} />
+                                                    {ad.start_at ? new Date(ad.start_at).toLocaleDateString() : 'Immediate'}
+                                                </div>
+                                            </div>
+                                            <h3 className="text-sm font-black text-gray-900 leading-snug mb-2 line-clamp-2 h-10">{ad.title}</h3>
+                                            <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed mb-4 flex-1 font-medium">
+                                                {ad.content}
+                                            </p>
+                                            <div className="pt-4 border-t border-gray-50 flex items-center justify-between mt-auto">
+                                                <div className="flex items-center gap-1.5 text-[9px] font-black text-brand-red uppercase tracking-widest">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse" />
+                                                    Campaign Engine
+                                                </div>
+                                                <button onClick={() => toggleStatus(ad)} className="text-[9px] font-black text-gray-400 uppercase tracking-widest hover:text-brand-red transition-colors">
+                                                    Toggle Status
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         )}
                     </div>
                 </CardContent>

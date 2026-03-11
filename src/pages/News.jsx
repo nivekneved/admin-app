@@ -10,7 +10,9 @@ import {
   Image as ImageIcon,
   CheckCircle2,
   Clock,
-  Archive
+  Archive,
+  AlignLeft,
+  LayoutGrid
 } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { showAlert } from '../utils/swal';
@@ -21,6 +23,7 @@ const News = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('all');
+  const [viewMode, setViewMode] = useState('list');
 
   useEffect(() => {
     fetchPosts();
@@ -137,30 +140,48 @@ const News = () => {
       <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
         {/* Filters and Search */}
         <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row gap-4 items-center justify-between">
-          <div className="relative w-full md:w-96">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-            <input
-              type="text"
-              placeholder="Search by title..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-slate-50 border-none rounded-2xl focus:ring-4 focus:ring-red-600/10 transition-all text-slate-900"
-            />
+          <div className="flex flex-col md:flex-row gap-4 items-center w-full md:w-auto flex-1">
+            <div className="relative w-full md:w-96">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+              <input
+                type="text"
+                placeholder="Search by title..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-12 pr-4 py-3 bg-slate-50 border-none rounded-2xl focus:ring-4 focus:ring-red-600/10 transition-all text-slate-900"
+              />
+            </div>
+            <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
+              {['all', 'published', 'draft', 'archived'].map((f) => (
+                <button
+                  key={f}
+                  onClick={() => setFilter(f)}
+                  className={`px-4 py-2 rounded-xl font-bold transition-all whitespace-nowrap ${
+                    filter === f 
+                    ? 'bg-red-600 text-white' 
+                    : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+                  }`}
+                >
+                  {f.charAt(0).toUpperCase() + f.slice(1)}
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
-            {['all', 'published', 'draft', 'archived'].map((f) => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`px-4 py-2 rounded-xl font-bold transition-all whitespace-nowrap ${
-                  filter === f 
-                  ? 'bg-red-600 text-white' 
-                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
-                }`}
+          <div className="flex items-center bg-slate-50 rounded-2xl p-1 gap-1 border border-slate-100 shrink-0 self-end md:self-center">
+              <button 
+                  type="button" 
+                  onClick={() => setViewMode('list')} 
+                  className={`p-2 rounded-xl transition-all ${viewMode === 'list' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-400'}`}
               >
-                {f.charAt(0).toUpperCase() + f.slice(1)}
+                  <AlignLeft size={20} />
               </button>
-            ))}
+              <button 
+                  type="button" 
+                  onClick={() => setViewMode('grid')} 
+                  className={`p-2 rounded-xl transition-all ${viewMode === 'grid' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-400'}`}
+              >
+                  <LayoutGrid size={20} />
+              </button>
           </div>
         </div>
 
@@ -171,11 +192,7 @@ const News = () => {
               <div className="animate-spin rounded-full h-8 w-8 border-4 border-red-600 border-t-transparent mx-auto mb-4"></div>
               Loading articles...
             </div>
-          ) : filteredPosts.length === 0 ? (
-            <div className="p-12 text-center italic text-slate-400">
-              No articles found
-            </div>
-          ) : (
+          ) : viewMode === 'list' ? (
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-slate-50 text-slate-500 text-xs font-black uppercase tracking-wider">
@@ -244,6 +261,61 @@ const News = () => {
                 ))}
               </tbody>
             </table>
+          ) : (
+            <div className="p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredPosts.map((post) => (
+                    <div key={post.id} className="bg-white border border-slate-200 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500 flex flex-col">
+                        <div className="aspect-[16/10] bg-slate-50 relative overflow-hidden">
+                            {post.featured_image ? (
+                                <img src={post.featured_image} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center text-slate-200">
+                                    <ImageIcon size={48} />
+                                </div>
+                            )}
+                            <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                                <button onClick={() => navigate(`/news/edit/${post.id}`)} className="bg-white shadow-xl p-3 rounded-2xl text-slate-400 hover:text-red-600 transition-all hover:scale-110 active:scale-95">
+                                    <Edit3 size={16} />
+                                </button>
+                                <button onClick={() => handleDelete(post.id)} className="bg-white shadow-xl p-3 rounded-2xl text-slate-400 hover:text-red-600 transition-all hover:scale-110 active:scale-95">
+                                    <Trash2 size={16} />
+                                </button>
+                            </div>
+                            <div className="absolute top-4 left-4">
+                                {getStatusBadge(post.status)}
+                            </div>
+                        </div>
+                        <div className="p-6 flex flex-col flex-1">
+                            <div className="flex items-center gap-4 text-xs text-slate-400 mb-3">
+                                <span className="flex items-center gap-1.5"><Clock size={12}/> {new Date(post.created_at).toLocaleDateString()}</span>
+                            </div>
+                            <h3 className="text-lg font-black text-slate-900 leading-snug mb-3 group-hover:text-red-600 transition-colors line-clamp-2 h-14">{post.title}</h3>
+                            <div className="flex flex-wrap gap-1.5 mt-auto">
+                                {post.tags?.slice(0, 3).map((tag, idx) => (
+                                    <span key={idx} className="bg-slate-100 text-slate-500 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">{tag}</span>
+                                ))}
+                            </div>
+                            <div className="pt-4 border-t border-slate-50 flex items-center justify-between mt-4">
+                                <div className="flex items-center gap-1 text-[10px] font-black text-red-600 uppercase tracking-widest cursor-pointer hover:gap-2 transition-all" onClick={() => navigate(`/news/edit/${post.id}`)}>
+                                    Edit Article
+                                </div>
+                                <div className="flex gap-1">
+                                    {post.status === 'draft' && (
+                                        <button onClick={() => handleStatusChange(post.id, 'published')} className="text-slate-400 hover:text-green-600 transition-colors">
+                                            <CheckCircle2 size={16} />
+                                        </button>
+                                    )}
+                                    {post.status === 'published' && (
+                                        <button onClick={() => handleStatusChange(post.id, 'archived')} className="text-slate-400 hover:text-amber-600 transition-colors">
+                                            <Archive size={16} />
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
           )}
         </div>
       </div>
