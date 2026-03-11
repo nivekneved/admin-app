@@ -1,6 +1,25 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Users, UserCheck, Package, ShoppingCart, Settings, LogOut, Home, Calendar, FileText, BarChart2, Layers, X, Layout } from 'lucide-react';
+import { 
+  Users, 
+  UserCheck, 
+  Package, 
+  ShoppingCart, 
+  Settings, 
+  LogOut, 
+  Home, 
+  Calendar, 
+  BarChart2, 
+  Layers, 
+  X, 
+  Layout, 
+  MessageSquare, 
+  HelpCircle, 
+  FileEdit, 
+  Inbox, 
+  Mail,
+  FileText
+} from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { showAlert, showConfirm } from '../utils/swal';
 import logo from '../assets/logo.png';
@@ -72,12 +91,42 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     {
       title: 'Invoices',
       path: '/invoices',
-      icon: <FileText size={18} />
+      icon: <FileEdit size={18} /> // Changed from FileText to FileEdit based on common usage for documents/invoices in the provided edit context
     },
     {
       title: 'Hero Slider',
       path: '/hero-slider',
       icon: <Layout size={18} />
+    },
+    {
+      title: 'Reviews',
+      path: '/reviews',
+      icon: <MessageSquare size={18} />
+    },
+    {
+      title: 'FAQs',
+      path: '/faqs',
+      icon: <HelpCircle size={18} />
+    },
+    {
+      title: 'CMS',
+      path: '/cms',
+      icon: <FileEdit size={18} />
+    },
+    {
+      title: 'Inquiries',
+      path: '/inquiries',
+      icon: <Inbox size={18} />
+    },
+    {
+      title: 'Subscribers',
+      path: '/subscribers',
+      icon: <Mail size={18} />
+    },
+    {
+      title: 'News',
+      path: '/news',
+      icon: <FileText size={18} />
     },
     {
       title: 'Settings',

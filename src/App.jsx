@@ -22,6 +22,12 @@ import CreateBooking from './pages/CreateBooking';
 import CreateInvoice from './pages/CreateInvoice';
 import Categories from './pages/Categories';
 import HeroSlider from './pages/HeroSlider';
+import Reviews from './pages/Reviews';
+import FAQs from './pages/FAQs';
+import CMS from './pages/CMS';
+import Inquiries from './pages/Inquiries';
+import Subscribers from './pages/Subscribers';
+import News from './pages/News';
 
 const queryClient = new QueryClient();
 
@@ -60,6 +66,12 @@ function App() {
                     <Route path="/customers" element={<Customers />} />
                     <Route path="/customers/create" element={<CreateCustomer />} />
                     <Route path="/customers/:id" element={<ViewCustomer />} />
+                    <Route path="/reviews" element={<Reviews />} />
+                    <Route path="/faqs" element={<FAQs />} />
+                    <Route path="/cms" element={<CMS />} />
+                    <Route path="/inquiries" element={<Inquiries />} />
+                    <Route path="/subscribers" element={<Subscribers />} />
+                    <Route path="/news" element={<News />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="*" element={<Navigate to="/" />} />
                   </Routes>
