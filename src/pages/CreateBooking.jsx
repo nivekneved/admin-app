@@ -123,40 +123,32 @@ const CreateBooking = () => {
         }
 
         try {
-            // 1. Insert Master Booking
-            const { data: booking, error: bError } = await supabase
-                .from('bookings')
-                .insert([{
-                    customer_id: formData.customer_id,
-                    start_date: formData.start_date,
-                    status: formData.status,
-                    pax_adults: formData.pax_adults,
-                    pax_children: formData.pax_children,
-                    amount: totalAmount,
-                    // We keep these for backwards compatibility or legacy views
-                    activity_type: items[0].type,
-                    activity_name: items.length > 1 ? `${items[0].name} (+${items.length - 1} more)` : items[0].name,
-                    created_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString()
-                }])
-                .select()
-                .single();
+            const bookingData = {
+                customer_id: formData.customer_id,
+                start_date: formData.start_date,
+                status: formData.status,
+                pax_adults: parseInt(formData.pax_adults),
+                pax_children: parseInt(formData.pax_children),
+                amount: totalAmount,
+                total_amount: totalAmount,
+                activity_type: items[0].type,
+                activity_name: items.length > 1 ? `${items[0].name} (+${items.length - 1} more)` : items[0].name,
+                created_at: new Date().toISOString()
+            };
 
-            if (bError) throw bError;
-
-            // 2. Insert Booking Items
-            const itemInserts = items.map(it => ({
-                booking_id: booking.id,
+            const itemsData = items.map(it => ({
+                service_id: services.find(s => s.name === it.name)?.id || null,
                 service_name: it.name,
                 service_category: it.type,
                 amount: parseFloat(it.amount) || 0
             }));
 
-            const { error: iError } = await supabase
-                .from('booking_items')
-                .insert(itemInserts);
+            const { error } = await supabase.rpc('create_booking_v1', {
+                p_booking_data: bookingData,
+                p_items_data: itemsData
+            });
 
-            if (iError) throw iError;
+            if (error) throw error;
 
             showAlert('Success', 'Multi-itinerary booking created and synced.', 'success');
             navigate('/bookings');
@@ -464,7 +456,7 @@ const CreateBooking = () => {
                             <div className="pt-8 border-t border-white/5">
                                 <div className="p-8 bg-red-600/10 rounded-[40px] border border-white/5 relative overflow-hidden text-center">
                                     <h4 className="text-[10px] font-black text-brand-red uppercase tracking-[0.2em]">Matrix Status</h4>
-                                    <div className="text-2xl font-black text-white italic">SYCHRONIZED</div>
+                                    <div className="text-2xl font-black text-white italic">SYNCHRONIZED</div>
                                 </div>
                             </div>
                         </CardContent>
