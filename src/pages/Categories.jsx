@@ -5,7 +5,7 @@ import {
     Loader2, RefreshCw, Plus, Search, Edit2, Trash2, Eye,
     ToggleLeft, ToggleRight, ArrowUp, ArrowDown, ChevronDown, ArrowUpDown,
     Layers, Link as LinkIcon, Hash, FileText, Home, Hotel,
-    Activity, Users, Sun, Ship, Map
+    Activity, Users, Sun, Ship, Map, LayoutGrid, List
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import Modal from '../components/Modal';
@@ -51,6 +51,7 @@ const Categories = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filterActive, setFilterActive] = useState('All');
     const [sortBy, setSortBy] = useState('display_order:asc');
+    const [viewMode, setViewMode] = useState('list');
 
     const selectCls = "bg-gray-50 border border-gray-300 text-gray-900 text-[11px] font-black uppercase tracking-widest rounded-2xl focus:ring-brand-red focus:border-brand-red block w-full p-2.5 appearance-none pr-8 transition-all cursor-pointer hover:bg-white";
 
@@ -330,6 +331,23 @@ const Categories = () => {
                                     </button>
                                 )}
 
+                                <div className="flex bg-gray-50 p-1.5 rounded-2xl border border-gray-300 gap-1 ml-2">
+                                    <button
+                                        onClick={() => setViewMode('list')}
+                                        className={`p-2 rounded-xl transition-all ${viewMode === 'list' ? 'bg-white shadow-sm text-brand-red' : 'text-gray-400 hover:text-gray-600'}`}
+                                        title="List View"
+                                    >
+                                        <List size={16} />
+                                    </button>
+                                    <button
+                                        onClick={() => setViewMode('grid')}
+                                        className={`p-2 rounded-xl transition-all ${viewMode === 'grid' ? 'bg-white shadow-sm text-brand-red' : 'text-gray-400 hover:text-gray-600'}`}
+                                        title="Grid View"
+                                    >
+                                        <LayoutGrid size={16} />
+                                    </button>
+                                </div>
+
                                 <span className="ml-auto text-[10px] text-gray-400 font-black uppercase tracking-widest shrink-0">
                                     {processed.length} Node Identifiers
                                 </span>
@@ -349,7 +367,7 @@ const Categories = () => {
                             <Layers size={56} className="opacity-20" />
                             No matching specifications found
                         </div>
-                    ) : (
+                    ) : viewMode === 'list' ? (
                         <div className="overflow-x-auto">
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50/50">
@@ -445,6 +463,83 @@ const Categories = () => {
                                     ))}
                                 </tbody>
                             </table>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-8 bg-gray-50/30">
+                            {processed.map((cat) => (
+                                <div key={cat.id} className="group relative bg-white border border-gray-200 rounded-3xl p-5 shadow-sm hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 flex flex-col h-full">
+                                    {/* Icon & Status */}
+                                    <div className="flex items-start justify-between mb-4">
+                                        <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center text-brand-red shadow-inner group-hover:scale-110 transition-transform duration-500">
+                                            {getCategoryIcon(cat.name)}
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => toggleActive(cat)}
+                                            disabled={togglingId === cat.id}
+                                            className="transition-opacity disabled:opacity-40"
+                                        >
+                                            {togglingId === cat.id
+                                                ? <Loader2 size={24} className="animate-spin text-gray-400" />
+                                                : cat.is_active
+                                                    ? <ToggleRight size={32} className="text-brand-red" />
+                                                    : <ToggleLeft size={32} className="text-gray-200" />
+                                            }
+                                        </button>
+                                    </div>
+
+                                    {/* Content */}
+                                    <div className="flex-1">
+                                        <h3 className="text-lg font-black text-gray-900 tracking-tight mb-1 group-hover:text-brand-red transition-colors">{cat.name}</h3>
+                                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 font-mono">/{cat.slug}</p>
+                                        <p className="text-xs text-gray-500 font-medium leading-relaxed line-clamp-3 mb-4 h-12">
+                                            {cat.description || 'No specialized mission defined.'}
+                                        </p>
+                                    </div>
+
+                                    {/* Meta info */}
+                                    <div className="flex items-center justify-between py-3 border-t border-gray-50 mb-4 mt-auto">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-[9px] font-black text-gray-300 uppercase tracking-widest">Order:</span>
+                                            <div className="flex items-center bg-gray-50 rounded-lg px-2 py-1 gap-1">
+                                                <button onClick={() => shiftOrder(cat, -1)} className="text-gray-400 hover:text-brand-red"><ArrowUp size={10} /></button>
+                                                <span className="text-[10px] font-black text-gray-900 min-w-[12px] text-center">{cat.display_order ?? '0'}</span>
+                                                <button onClick={() => shiftOrder(cat, 1)} className="text-gray-400 hover:text-brand-red"><ArrowDown size={10} /></button>
+                                            </div>
+                                        </div>
+                                        {cat.show_on_home && (
+                                            <span className="flex items-center gap-1.5 px-2 py-1 text-[8px] font-black uppercase tracking-widest text-green-600 bg-green-50 rounded-lg">
+                                                <Home size={10} /> Home
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {/* Actions */}
+                                    <div className="grid grid-cols-3 gap-2">
+                                        <button
+                                            onClick={() => openViewModal(cat)}
+                                            className="flex items-center justify-center py-2.5 bg-gray-50 text-gray-400 hover:bg-red-50 hover:text-brand-red rounded-xl transition-all"
+                                            title="View Details"
+                                        >
+                                            <Eye size={16} />
+                                        </button>
+                                        <button
+                                            onClick={() => openEditModal(cat)}
+                                            className="flex items-center justify-center py-2.5 bg-gray-50 text-gray-400 hover:bg-red-50 hover:text-brand-red rounded-xl transition-all"
+                                            title="Edit Category"
+                                        >
+                                            <Edit2 size={16} />
+                                        </button>
+                                        <button
+                                            onClick={() => deleteCategory(cat.id)}
+                                            className="flex items-center justify-center py-2.5 bg-gray-50 text-gray-400 hover:bg-red-50 hover:text-brand-red rounded-xl transition-all"
+                                            title="Delete"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     )}
                 </CardContent>

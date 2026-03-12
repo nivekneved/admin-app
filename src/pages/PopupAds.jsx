@@ -191,7 +191,8 @@ const PopupAds = () => {
                 .eq('id', ad.id);
             if (error) throw error;
             fetchAds();
-        } catch (error) {
+        } catch (err) {
+            console.error('Error updating status:', err);
             showAlert('Error', 'Failed to update status', 'error');
         }
     };
