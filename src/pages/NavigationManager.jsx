@@ -75,15 +75,13 @@ const SortableNavItem = ({ item, level = 0, onEdit, onDelete, onToggle, onAddSub
         </div>
 
         <div className="flex items-center gap-1">
-          {level === 0 && (
-            <button
-              onClick={() => onAddSub(item.id)}
-              className="p-2 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
-              title="Add Submenu Item"
-            >
-              <Plus size={18} />
-            </button>
-          )}
+          <button
+            onClick={() => onAddSub(item.id)}
+            className="p-2 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
+            title="Add Submenu Item"
+          >
+            <Plus size={18} />
+          </button>
           <button
             onClick={() => onToggle(item)}
             className={`p-2 rounded-xl transition-all ${item.is_active ? 'text-gray-400 hover:text-brand-red hover:bg-red-50' : 'text-brand-red bg-red-50'}`}
@@ -418,10 +416,12 @@ const NavigationManager = () => {
                     onChange={(e) => setFormData({ ...formData, parent_id: e.target.value || null })}
                   >
                     <option value="">Main Navigation (Top Level)</option>
-                    {items
-                      .filter(i => !i.parent_id && i.id !== (isEditing?.id))
-                      .map(parent => (
-                        <option key={parent.id} value={parent.id}>{parent.label}</option>
+                    {displayItems
+                      .filter(i => i.id !== (isEditing?.id))
+                      .map(item => (
+                        <option key={item.id} value={item.id}>
+                          {'\u00A0'.repeat(item.level * 4)}{item.level > 0 ? '↳ ' : ''}{item.label}
+                        </option>
                       ))
                     }
                   </select>
