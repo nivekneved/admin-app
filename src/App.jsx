@@ -30,6 +30,7 @@ import Subscribers from './pages/Subscribers';
 import News from './pages/News';
 import CreateNews from './pages/CreateNews';
 import PopupAds from './pages/PopupAds';
+import NavigationManager from './pages/NavigationManager';
 
 const queryClient = new QueryClient();
 
@@ -76,8 +77,9 @@ function App() {
                     <Route path="/news" element={<News />} />
                     <Route path="/news/create" element={<CreateNews />} />
                     <Route path="/news/edit/:id" element={<CreateNews />} />
-                    <Route path="/popup-ads" element={<PopupAds />} />
-                    <Route path="/settings" element={<Settings />} />
+                     <Route path="/popup-ads" element={<PopupAds />} />
+                     <Route path="/navigation" element={<NavigationManager />} />
+                     <Route path="/settings" element={<Settings />} />
                     <Route path="*" element={<Navigate to="/" />} />
                   </Routes>
                 </Layout>

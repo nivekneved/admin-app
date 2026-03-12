@@ -72,12 +72,27 @@ const Services = () => {
 
   // — Toolbar —
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterCategory, setFilterCategory] = useState('All');
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [filterStatus, setFilterStatus] = useState('All');
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+  const [selectedAmenities, setSelectedAmenities] = useState([]);
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const [sortBy, setSortBy] = useState('created_at:desc');
   const [viewMode, setViewMode] = useState('list');
   const [perPage] = useState(8);
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Derived unique amenities from services
+  const allAmenities = useMemo(() => {
+    const set = new Set();
+    services.forEach(s => {
+      if (Array.isArray(s.amenities)) {
+        s.amenities.forEach(a => set.add(a));
+      }
+    });
+    return Array.from(set).sort();
+  }, [services]);
 
   // Fetch categories from site categories table
   const fetchCategories = async () => {
@@ -148,9 +163,30 @@ const Services = () => {
     } catch (e) { void e; showAlert('Error', 'Failed to delete service', 'error'); }
   };
 
-  const clearFilters = () => { setSearchTerm(''); setFilterCategory('All'); setFilterStatus('All'); setSortBy('created_at:desc'); };
-  const hasActiveFilters = searchTerm || filterCategory !== 'All' || filterStatus !== 'All';
+  const clearFilters = () => {
+    setSearchTerm('');
+    setSelectedCategories([]);
+    setFilterStatus('All');
+    setMinPrice('');
+    setMaxPrice('');
+    setSelectedAmenities([]);
+    setSortBy('created_at:desc');
+  };
+
+  const hasActiveFilters = searchTerm || selectedCategories.length > 0 || filterStatus !== 'All' || minPrice || maxPrice || selectedAmenities.length > 0;
   const selectCls = 'px-3 py-2 text-sm font-semibold bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red appearance-none cursor-pointer text-gray-700 hover:border-gray-300 transition-colors';
+
+  const toggleCategory = (cat) => {
+    setSelectedCategories(prev =>
+      prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
+    );
+  };
+
+  const toggleAmenity = (amenity) => {
+    setSelectedAmenities(prev =>
+      prev.includes(amenity) ? prev.filter(a => a !== amenity) : [...prev, amenity]
+    );
+  };
 
   // ─── Filter & Search ──────────────────────────────────────────────────────
   const processed = useMemo(() => {
@@ -163,10 +199,29 @@ const Services = () => {
         (s.description || '').toLowerCase().includes(q)
       );
     }
-    if (filterCategory !== 'All') {
-      list = list.filter(s => (s.categories_list || []).some(cat => cat.name === filterCategory));
+
+    if (selectedCategories.length > 0) {
+      list = list.filter(s => (s.categories_list || []).some(cat => selectedCategories.includes(cat.name)));
     }
-    if (filterStatus !== 'All') list = list.filter(s => s.status === filterStatus);
+
+    if (filterStatus !== 'All') {
+      list = list.filter(s => s.status === filterStatus);
+    }
+
+    if (minPrice) {
+      list = list.filter(s => Number(s.base_price) >= Number(minPrice));
+    }
+
+    if (maxPrice) {
+      list = list.filter(s => Number(s.base_price) <= Number(maxPrice));
+    }
+
+    if (selectedAmenities.length > 0) {
+      list = list.filter(s => {
+        if (!Array.isArray(s.amenities)) return false;
+        return selectedAmenities.every(a => s.amenities.includes(a));
+      });
+    }
 
     const [field, dir] = sortBy.split(':');
     list.sort((a, b) => {
@@ -177,7 +232,7 @@ const Services = () => {
       return 0;
     });
     return list;
-  }, [services, searchTerm, filterCategory, filterStatus, sortBy]);
+  }, [services, searchTerm, selectedCategories, filterStatus, minPrice, maxPrice, selectedAmenities, sortBy]);
 
   const totalPages = Math.ceil(processed.length / perPage);
   const handlePageChange = (p) => setCurrentPage(Math.max(1, Math.min(p, totalPages)));
@@ -201,9 +256,9 @@ const Services = () => {
         </div>
       </div>
 
-      <Card className="border border-gray-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
+      <Card className="border border-gray-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
         <CardHeader className="border-b border-gray-50 pb-4 bg-white px-8 pt-8">
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
               <div className="relative flex-1 min-w-0">
                 <Search className="absolute left-3 top-2.5 text-gray-300" size={16} />
@@ -215,31 +270,115 @@ const Services = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <div className="flex items-center bg-gray-50 rounded-2xl p-1 gap-1 border border-gray-100 shrink-0">
-                <button type="button" onClick={() => setViewMode('list')} className={`p-2 rounded-xl transition-all ${viewMode === 'list' ? 'bg-white text-brand-red shadow-sm' : 'text-gray-400'}`}><List size={18} /></button>
-                <button type="button" onClick={() => setViewMode('grid')} className={`p-2 rounded-xl transition-all ${viewMode === 'grid' ? 'bg-white text-brand-red shadow-sm' : 'text-gray-400'}`}><LayoutGrid size={18} /></button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAdvanced(!showAdvanced)}
+                  className={`px-4 py-2.5 rounded-2xl border text-xs font-black uppercase tracking-widest transition-all ${showAdvanced ? 'bg-brand-red text-white border-brand-red' : 'bg-white text-gray-400 border-gray-200 hover:border-gray-300'}`}
+                >
+                  {showAdvanced ? 'Simple View' : 'Advanced Filters'}
+                </button>
+                <div className="flex items-center bg-gray-50 rounded-2xl p-1 gap-1 border border-gray-100 shrink-0">
+                  <button type="button" onClick={() => setViewMode('list')} className={`p-2 rounded-xl transition-all ${viewMode === 'list' ? 'bg-white text-brand-red shadow-sm' : 'text-gray-400'}`}><List size={18} /></button>
+                  <button type="button" onClick={() => setViewMode('grid')} className={`p-2 rounded-xl transition-all ${viewMode === 'grid' ? 'bg-white text-brand-red shadow-sm' : 'text-gray-400'}`}><LayoutGrid size={18} /></button>
+                </div>
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 mb-4">
-              <div className="relative">
-                <select className={selectCls} value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}>
-                  <option value="All">All Categories</option>
-                  {categories.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-                <ChevronDown size={12} className="absolute right-2.5 top-3.5 text-gray-400 pointer-events-none" />
+            {showAdvanced && (
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6 bg-gray-50/50 rounded-3xl border border-gray-100 animate-in slide-in-from-top-2 duration-300">
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Price Range (MUR)</label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      placeholder="Min"
+                      className="w-full px-3 py-2 text-xs font-bold border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red"
+                      value={minPrice}
+                      onChange={(e) => setMinPrice(e.target.value)}
+                    />
+                    <span className="text-gray-300">—</span>
+                    <input
+                      type="number"
+                      placeholder="Max"
+                      className="w-full px-3 py-2 text-xs font-bold border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red"
+                      value={maxPrice}
+                      onChange={(e) => setMaxPrice(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Categories</label>
+                  <div className="flex flex-wrap gap-2 max-h-24 overflow-y-auto custom-scrollbar pr-2">
+                    {categories.map(cat => (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => toggleCategory(cat)}
+                        className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border transition-all ${selectedCategories.includes(cat) ? 'bg-brand-red text-white border-brand-red' : 'bg-white text-gray-400 border-gray-200 hover:border-gray-300'}`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Status</label>
+                  <div className="relative">
+                    <select className={`${selectCls} w-full`} value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+                      <option value="All">All Statuses</option>
+                      {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                    <ChevronDown size={12} className="absolute right-2.5 top-3.5 text-gray-400 pointer-events-none" />
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Amenities</label>
+                  <div className="flex flex-wrap gap-2 max-h-24 overflow-y-auto custom-scrollbar pr-2">
+                    {allAmenities.length > 0 ? allAmenities.map(amenity => (
+                      <button
+                        key={amenity}
+                        type="button"
+                        onClick={() => toggleAmenity(amenity)}
+                        className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border transition-all ${selectedAmenities.includes(amenity) ? 'bg-brand-red text-white border-brand-red' : 'bg-white text-gray-400 border-gray-200 hover:border-gray-300'}`}
+                      >
+                        {amenity}
+                      </button>
+                    )) : (
+                      <span className="text-[9px] font-bold text-gray-300 italic">No amenities found</span>
+                    )}
+                  </div>
+                </div>
               </div>
-              <div className="relative">
-                <select className={selectCls} value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
-                  <option value="All">All Statuses</option>
-                  {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-                <ChevronDown size={12} className="absolute right-2.5 top-3.5 text-gray-400 pointer-events-none" />
+            )}
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Sort By:</span>
+                  <div className="relative">
+                    <select
+                      className="pl-3 pr-7 py-1.5 text-[10px] font-black uppercase tracking-widest bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-red appearance-none cursor-pointer text-gray-500"
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                    >
+                      <option value="created_at:desc">Newest First</option>
+                      <option value="base_price:asc">Price: Low to High</option>
+                      <option value="base_price:desc">Price: High to Low</option>
+                      <option value="name:asc">Name: A-Z</option>
+                      <option value="stock:desc">Stock: High to Low</option>
+                    </select>
+                    <ArrowUpDown size={10} className="absolute right-2 top-2 text-gray-300 pointer-events-none" />
+                  </div>
+                </div>
+                {hasActiveFilters && (
+                  <button type="button" onClick={clearFilters} className="text-brand-red text-[10px] font-black uppercase tracking-widest px-4 py-2 hover:bg-red-50 rounded-xl transition-colors">Clear Engine</button>
+                )}
               </div>
-              {hasActiveFilters && (
-                <button type="button" onClick={clearFilters} className="text-brand-red text-[10px] font-black uppercase tracking-widest px-4 py-2 hover:bg-red-50 rounded-xl transition-colors">Clear Engine</button>
-              )}
-              <span className="ml-auto text-[10px] text-gray-400 font-black uppercase tracking-widest">{processed.length} Entries</span>
+              <span className="text-[10px] text-gray-400 font-black uppercase tracking-widest">{processed.length} Entries Identified</span>
             </div>
           </div>
         </CardHeader>
