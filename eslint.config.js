@@ -5,6 +5,7 @@ import pluginReactHooks from "eslint-plugin-react-hooks";
 import unusedImports from "eslint-plugin-unused-imports";
 
 export default [
+  { ignores: ['dist', '.vercel', 'node_modules'] },
   {files: ["src/**/*.{js,mjs,cjs,jsx}"]},
   {languageOptions: { globals: {...globals.browser, ...globals.node} }},
   pluginJs.configs.recommended,

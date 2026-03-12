@@ -19,6 +19,9 @@ ALTER TABLE public.content_blocks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.inquiries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.subscribers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.email_templates ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.booking_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.order_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.site_settings ENABLE ROW LEVEL SECURITY;
 
 -- ==============================================================================
 -- 2. HELPER FUNCTIONS FOR ROLE CHECKING
@@ -114,6 +117,18 @@ CREATE POLICY "Admins and Staff can manage all orders" ON public.orders
 CREATE POLICY "Users can view their own orders" ON public.orders 
     FOR SELECT USING (customer_id IN (SELECT id FROM public.customers WHERE user_id = auth.uid()));
 
+-- --- Booking Items ---
+CREATE POLICY "Admins and Staff can manage all booking items" ON public.booking_items 
+    FOR ALL USING (public.is_admin_or_staff());
+CREATE POLICY "Users can view their own booking items" ON public.booking_items 
+    FOR SELECT USING (booking_id IN (SELECT id FROM public.bookings WHERE customer_id IN (SELECT id FROM public.customers WHERE user_id = auth.uid())));
+
+-- --- Order Items ---
+CREATE POLICY "Admins and Staff can manage all order items" ON public.order_items 
+    FOR ALL USING (public.is_admin_or_staff());
+CREATE POLICY "Users can view their own order items" ON public.order_items 
+    FOR SELECT USING (order_id IN (SELECT id FROM public.orders WHERE customer_id IN (SELECT id FROM public.customers WHERE user_id = auth.uid())));
+
 -- --- Invoices Table ---
 CREATE POLICY "Admins and Staff can manage all invoices" ON public.invoices 
     FOR ALL USING (public.is_admin_or_staff());
@@ -168,7 +183,22 @@ CREATE POLICY "Admins can manage subscribers" ON public.subscribers
 CREATE POLICY "Admins can manage email templates" ON public.email_templates 
     FOR ALL USING (public.is_admin());
 
+-- --- Site Settings ---
+CREATE POLICY "Public can view site settings" ON public.site_settings 
+    FOR SELECT USING (true);
+CREATE POLICY "Admins can manage site settings" ON public.site_settings 
+    FOR ALL USING (public.is_admin());
+
 -- --- Popup Advertisements ---
 ALTER TABLE public.popup_ads ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public can view popup ads" ON public.popup_ads FOR SELECT USING (true);
-CREATE POLICY "Anyone can manage popup ads" ON public.popup_ads FOR ALL USING (true);
+CREATE POLICY "Public can view active popup ads" ON public.popup_ads 
+    FOR SELECT USING (is_active = true);
+CREATE POLICY "Admins can manage popup ads" ON public.popup_ads 
+    FOR ALL USING (public.is_admin());
+
+-- --- Popular Destinations ---
+ALTER TABLE public.popular_destinations ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public can view popular destinations" ON public.popular_destinations 
+    FOR SELECT USING (true);
+CREATE POLICY "Admins can manage popular destinations" ON public.popular_destinations 
+    FOR ALL USING (public.is_admin());
