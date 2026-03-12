@@ -33,11 +33,12 @@ RETURNS BOOLEAN AS $$
 BEGIN
     RETURN EXISTS (
         SELECT 1 FROM public.admins 
-        WHERE email = (SELECT auth.jwt() ->> 'email')
+        WHERE user_id = auth.uid()
         AND role IN ('admin', 'manager', 'staff', 'sales', 'editor', 'receptionist', 'secretary')
+        AND is_active = true
     );
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- Function to check if the current user is specifically an admin
 CREATE OR REPLACE FUNCTION public.is_admin()
@@ -45,33 +46,43 @@ RETURNS BOOLEAN AS $$
 BEGIN
     RETURN EXISTS (
         SELECT 1 FROM public.admins 
-        WHERE email = (SELECT auth.jwt() ->> 'email')
+        WHERE user_id = auth.uid()
         AND role = 'admin'
+        AND is_active = true
     );
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- Function to check if the current user is specifically a secretary
 CREATE OR REPLACE FUNCTION public.is_secretary()
 RETURNS BOOLEAN AS $$
+DECLARE
+    current_user_email TEXT;
 BEGIN
+    current_user_email := (SELECT auth.jwt() ->> 'email');
+    IF current_user_email IS NULL THEN RETURN FALSE; END IF;
+
     RETURN EXISTS (
         SELECT 1 FROM public.admins 
-        WHERE email = (SELECT auth.jwt() ->> 'email')
+        WHERE email = current_user_email
         AND role = 'secretary'
+        AND is_active = true
     );
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- ==============================================================================
 -- 3. POLICIES
 -- ==============================================================================
 
 -- --- Admins Table ---
+DROP POLICY IF EXISTS "Admins can manage admins" ON public.admins;
+DROP POLICY IF EXISTS "Staff can view their own record" ON public.admins;
+
 CREATE POLICY "Admins can manage admins" ON public.admins 
     FOR ALL USING (public.is_admin());
-CREATE POLICY "Staff can view their own record" ON public.admins 
-    FOR SELECT USING (email = (SELECT auth.jwt() ->> 'email'));
+CREATE POLICY "Anyone authenticated can view the staff roster" ON public.admins 
+    FOR SELECT USING (auth.role() = 'authenticated');
 
 -- --- Customers Table ---
 CREATE POLICY "Admins and Staff can manage customers" ON public.customers 

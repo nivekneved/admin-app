@@ -25,7 +25,7 @@ import { Button } from '../components/Button';
 import { showAlert, showConfirm } from '../utils/swal';
 
 // ─── Sortable Item Component ────────────────────────────────────────────────
-const SortableNavItem = ({ item, onEdit, onDelete, onToggle }) => {
+const SortableNavItem = ({ item, level = 0, onEdit, onDelete, onToggle, onAddSub }) => {
   const {
     attributes,
     listeners,
@@ -40,6 +40,7 @@ const SortableNavItem = ({ item, onEdit, onDelete, onToggle }) => {
     transition,
     zIndex: isDragging ? 50 : 0,
     opacity: isDragging ? 0.5 : 1,
+    marginLeft: `${level * 2}rem`,
   };
 
   return (
@@ -59,9 +60,12 @@ const SortableNavItem = ({ item, onEdit, onDelete, onToggle }) => {
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-sm font-black text-gray-900 truncate">{item.label}</h3>
+            <h3 className={`text-sm font-black text-gray-900 truncate ${level > 0 ? 'text-gray-600' : ''}`}>{item.label}</h3>
             {!item.is_active && (
               <span className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-gray-100 text-gray-400 border border-gray-200">Hidden</span>
+            )}
+            {level > 0 && (
+              <span className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-blue-50 text-blue-400 border border-blue-100">Submenu</span>
             )}
           </div>
           <div className="flex items-center gap-3 text-[10px] font-bold text-gray-400">
@@ -71,6 +75,15 @@ const SortableNavItem = ({ item, onEdit, onDelete, onToggle }) => {
         </div>
 
         <div className="flex items-center gap-1">
+          {level === 0 && (
+            <button
+              onClick={() => onAddSub(item.id)}
+              className="p-2 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
+              title="Add Submenu Item"
+            >
+              <Plus size={18} />
+            </button>
+          )}
           <button
             onClick={() => onToggle(item)}
             className={`p-2 rounded-xl transition-all ${item.is_active ? 'text-gray-400 hover:text-brand-red hover:bg-red-50' : 'text-brand-red bg-red-50'}`}
@@ -104,7 +117,7 @@ const NavigationManager = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(null);
-  const [formData, setFormData] = useState({ label: '', link: '', icon: '', is_active: true });
+  const [formData, setFormData] = useState({ label: '', link: '', icon: '', is_active: true, parent_id: null });
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -139,6 +152,37 @@ const NavigationManager = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const buildTree = (flatItems) => {
+    const tree = [];
+    const map = {};
+    
+    flatItems.forEach(item => {
+      map[item.id] = { ...item, children: [] };
+    });
+    
+    flatItems.forEach(item => {
+      if (item.parent_id && map[item.parent_id]) {
+        map[item.parent_id].children.push(map[item.id]);
+      } else {
+        tree.push(map[item.id]);
+      }
+    });
+
+    // Helper to flatten nested tree back for dnd-kit (since dnd-kit works better with flat lists)
+    // but with nesting indicators.
+    const flattened = [];
+    const flatten = (nodes, level = 0) => {
+      nodes.forEach(node => {
+        flattened.push({ ...node, level });
+        if (node.children && node.children.length > 0) {
+          flatten(node.children, level + 1);
+        }
+      });
+    };
+    flatten(tree);
+    return flattened;
   };
 
   const handleDragEnd = (event) => {
@@ -208,21 +252,28 @@ const NavigationManager = () => {
 
   const resetForm = () => {
     setIsEditing(null);
-    setFormData({ label: '', link: '', icon: '', is_active: true });
+    setFormData({ label: '', link: '', icon: '', is_active: true, parent_id: null });
   };
 
   const startEdit = (item) => {
     setIsEditing(item);
-    setFormData({ label: item.label, link: item.link, icon: item.icon || '', is_active: item.is_active });
+    setFormData({ label: item.label, link: item.link, icon: item.icon || '', is_active: item.is_active, parent_id: item.parent_id });
+  };
+
+  const startAddSub = (parentId) => {
+    setFormData({ label: '', link: '', icon: '', is_active: true, parent_id: parentId });
+    // Focus the first input
+    const input = document.querySelector('input[placeholder*="Travel Insurance"]');
+    if (input) input.focus();
   };
 
   const deleteItem = async (id) => {
-    const result = await showConfirm('Remove Menu Item?', 'This will permanently remove this item from the navigation.');
+    const result = await showConfirm('Remove Menu Item?', 'This will permanently remove this item and all its submenus from the navigation.');
     if (!result.isConfirmed) return;
     try {
       const { error } = await supabase.from('navigations').delete().eq('id', id);
       if (error) throw error;
-      setItems(prev => prev.filter(i => i.id !== id));
+      setItems(prev => prev.filter(i => i.id !== id && i.parent_id !== id));
       showAlert('Removed', 'Menu item removed');
     } catch (e) {
       console.error(e);
@@ -245,12 +296,15 @@ const NavigationManager = () => {
     }
   };
 
+  // Transform items into hierarchical structure for rendering
+  const displayItems = buildTree(items);
+
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-gray-900 tracking-tight">Navigation Manager</h1>
-          <p className="text-gray-400 text-sm font-medium">Control the website's main menu structure via drag & drop</p>
+          <p className="text-gray-400 text-sm font-medium">Control the website&apos;s main menu structure via drag &amp; drop</p>
         </div>
         <div className="flex items-center gap-2">
           <Button onClick={fetchNavigations} variant="outline" className="text-gray-500 border-gray-200 flex items-center gap-2">
@@ -293,13 +347,15 @@ const NavigationManager = () => {
                     items={items.map((i) => i.id)}
                     strategy={verticalListSortingStrategy}
                   >
-                    {items.map((item) => (
+                    {displayItems.map((item) => (
                       <SortableNavItem 
                         key={item.id} 
                         item={item} 
+                        level={item.level}
                         onEdit={startEdit} 
                         onDelete={deleteItem}
                         onToggle={toggleStatus}
+                        onAddSub={startAddSub}
                       />
                     ))}
                   </SortableContext>
@@ -354,6 +410,23 @@ const NavigationManager = () => {
                   />
                 </div>
 
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Parent Item (Optional)</label>
+                  <select
+                    className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all appearance-none bg-white"
+                    value={formData.parent_id || ''}
+                    onChange={(e) => setFormData({ ...formData, parent_id: e.target.value || null })}
+                  >
+                    <option value="">Main Navigation (Top Level)</option>
+                    {items
+                      .filter(i => !i.parent_id && i.id !== (isEditing?.id))
+                      .map(parent => (
+                        <option key={parent.id} value={parent.id}>{parent.label}</option>
+                      ))
+                    }
+                  </select>
+                </div>
+
                 <div className="flex items-center gap-2 p-1 bg-gray-50 rounded-2xl border border-gray-100">
                   <button
                     type="button"
@@ -392,6 +465,7 @@ const NavigationManager = () => {
               </div>
               <div>
                 <h4 className="text-[10px] font-black text-brand-red uppercase tracking-widest mb-1">D&D Control</h4>
+                <p className="text-slate-500">Drag and drop items to reorder them. Click &apos;Add Submenu&apos; to create nested navigation.</p>
                 <p className="text-xs text-red-900/60 font-medium leading-relaxed">
                   The order you define here instantly optimizes the visual priority of navigation links in the client web-app.
                 </p>

@@ -89,8 +89,8 @@ const Reviews = () => {
     const processedReviews = useMemo(() => {
         return reviews.filter(review => {
             const matchesSearch = 
-                review.customer_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                review.comment?.toLowerCase().includes(searchTerm.toLowerCase());
+                (review.customer_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (review.comment || '').toLowerCase().includes(searchTerm.toLowerCase());
             
             const matchesStatus = statusFilter === 'all' || review.status === statusFilter;
             
