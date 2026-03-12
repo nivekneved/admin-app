@@ -212,4 +212,11 @@ ALTER TABLE public.popular_destinations ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public can view popular destinations" ON public.popular_destinations 
     FOR SELECT USING (true);
 CREATE POLICY "Admins can manage popular destinations" ON public.popular_destinations 
-    FOR ALL USING (public.is_admin());
+    FOR ALL USING (public.is_admin_or_staff());
+
+-- --- Navigation Items ---
+ALTER TABLE public.navigations ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public can view navigations" ON public.navigations 
+    FOR SELECT USING (is_active = true);
+CREATE POLICY "Admins and Staff can manage navigations" ON public.navigations 
+    FOR ALL USING (public.is_admin_or_staff());
