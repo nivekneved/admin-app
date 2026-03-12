@@ -479,7 +479,7 @@ const Bookings = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {currentBookings.map((booking) => (
-                    <tr key={booking.id} className="even:bg-gray-50/80 hover:bg-gray-100/50 transition-colors">
+                    <tr key={booking.id} className="even:bg-gray-100/40 hover:bg-gray-100/60 transition-colors">
                       <td className="px-8 py-5 whitespace-nowrap">
                         <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">#{booking.id?.toString().slice(0, 8)}</div>
                         <div className="flex items-center text-[10px] font-semibold text-gray-500">
@@ -527,7 +527,7 @@ const Bookings = () => {
                         <div className="flex justify-end items-center gap-1">
                           <button
                             onClick={() => openViewModal(booking)}
-                            className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
+                            className="p-2.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
                             title="View Reservation Details"
                           >
                             <Eye size={16} />
@@ -535,7 +535,7 @@ const Bookings = () => {
 
                           <button
                             onClick={() => openEditModal(booking)}
-                            className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
+                            className="p-2.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
                             title="Edit Reservation"
                           >
                             <Edit2 size={16} />
@@ -544,7 +544,7 @@ const Bookings = () => {
                           <button
                             onClick={() => cycleStatus(booking)}
                             disabled={togglingId === booking.id}
-                            className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all disabled:opacity-40"
+                            className="p-2.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all disabled:opacity-40"
                             title={`Toggle status → ${booking.status === 'Pending' ? 'Confirmed' : booking.status === 'Confirmed' ? 'Cancelled' : 'Pending'}`}
                           >
                             {togglingId === booking.id
@@ -557,7 +557,7 @@ const Bookings = () => {
 
                           <button
                             onClick={() => deleteBooking(booking.id)}
-                            className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
+                            className="p-2.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
                             title="Archive Reservation"
                           >
                             <Trash2 size={16} />

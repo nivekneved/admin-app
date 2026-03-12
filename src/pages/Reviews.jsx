@@ -222,7 +222,7 @@ const Reviews = () => {
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-100">
                                     {processedReviews.map((review) => (
-                                        <tr key={review.id} className="hover:bg-gray-50/80 transition-colors group">
+                                        <tr key={review.id} className="even:bg-gray-100/40 hover:bg-gray-100/60 transition-colors group">
                                             <td className="px-8 py-4">
                                                 <div className="flex items-center gap-3">
                                                     <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 border border-gray-200">
@@ -282,7 +282,7 @@ const Reviews = () => {
                                                         <button
                                                             onClick={() => updateReviewStatus(review.id, 'approved')}
                                                             disabled={actionLoading === review.id}
-                                                            className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-xl transition-all"
+                                                            className="p-2 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-xl transition-all"
                                                             title="Approve Review"
                                                         >
                                                             {actionLoading === review.id ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
@@ -292,7 +292,7 @@ const Reviews = () => {
                                                         <button
                                                             onClick={() => updateReviewStatus(review.id, 'rejected')}
                                                             disabled={actionLoading === review.id}
-                                                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                                                            className="p-2 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
                                                             title="Reject Review"
                                                         >
                                                             {actionLoading === review.id ? <Loader2 size={16} className="animate-spin" /> : <X size={16} />}
@@ -301,7 +301,7 @@ const Reviews = () => {
                                                     <button
                                                         onClick={() => deleteReview(review.id)}
                                                         disabled={actionLoading === review.id}
-                                                        className="p-2 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
+                                                        className="p-2 text-gray-500 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
                                                         title="Delete Permanently"
                                                     >
                                                         {actionLoading === review.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
@@ -330,7 +330,7 @@ const Reviews = () => {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all scale-90 group-hover:scale-100">
+                                            <div className="flex gap-1 transition-all scale-90 group-hover:scale-100">
                                                 <button onClick={() => deleteReview(review.id)} className="p-2 text-gray-300 hover:text-brand-red bg-gray-50 rounded-xl transition-all"><Trash2 size={14} /></button>
                                             </div>
                                         </div>

@@ -1,13 +1,195 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+} from '@dnd-kit/core';
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    verticalListSortingStrategy,
+    rectSortingStrategy,
+    useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import {
     Video, Plus, Search, Edit2, Trash2,
     RefreshCw, Loader2, X,
-    Layout, AlignLeft, AlignCenter, AlignRight, Check, Upload, Image as ImageIcon
+    Layout, AlignLeft, AlignCenter, AlignRight, Check, Upload, Image as ImageIcon,
+    GripVertical
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
 import { showAlert, showConfirm } from '../utils/swal';
+
+// --- Sortable Item Components ---
+
+const SortableTableRow = ({ slide, handleOpenModal, deleteSlide }) => {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging
+    } = useSortable({ id: slide.id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+        zIndex: isDragging ? 50 : 'auto',
+    };
+
+    return (
+        <tr 
+            ref={setNodeRef} 
+            style={style} 
+            className={`even:bg-gray-50/50 hover:bg-gray-100/50 transition-colors group ${isDragging ? 'shadow-2xl bg-white z-[60]' : ''}`}
+        >
+            <td className="px-8 py-4">
+                <div className="flex items-center gap-4">
+                    <div 
+                        {...attributes} 
+                        {...listeners} 
+                        className="cursor-grab active:cursor-grabbing p-1 text-gray-300 hover:text-brand-red transition-colors"
+                    >
+                        <GripVertical size={16} />
+                    </div>
+                    <div className="h-16 w-28 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 relative shrink-0">
+                        {slide.media_type === 'video' ? (
+                            <div className="absolute inset-0 flex items-center justify-center bg-brand-charcoal">
+                                <Video size={16} className="text-white opacity-50" />
+                            </div>
+                        ) : (
+                            <img
+                                src={slide.image_url}
+                                alt=""
+                                className="h-full w-full object-cover"
+                                onError={(e) => e.target.src = 'https://images.unsplash.com/photo-1544084471-507c8cc38662?q=80&w=300'}
+                            />
+                        )}
+                    </div>
+                    <div className="min-w-0">
+                        <h3 className="text-sm font-black text-gray-900 leading-tight truncate">{slide.title}</h3>
+                        <p className="text-xs text-gray-400 font-medium truncate mt-0.5">{slide.subtitle}</p>
+                    </div>
+                </div>
+            </td>
+            <td className="px-8 py-4">
+                <div className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 text-xs font-black text-gray-600">
+                    {slide.order_index}
+                </div>
+            </td>
+            <td className="px-8 py-4">
+                <span className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border ${slide.is_active
+                    ? 'bg-green-50 text-green-700 border-green-100'
+                    : 'bg-red-50 text-red-700 border-red-100'
+                    }`}>
+                    {slide.is_active ? 'Active' : 'Hidden'}
+                </span>
+            </td>
+            <td className="px-8 py-4 text-right">
+                <div className="flex justify-end gap-1 transition-opacity">
+                    <button
+                        onClick={() => handleOpenModal(slide)}
+                        className="p-2 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
+                    >
+                        <Edit2 size={16} />
+                    </button>
+                    <button
+                        onClick={() => deleteSlide(slide.id)}
+                        className="p-2 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
+                    >
+                        <Trash2 size={16} />
+                    </button>
+                </div>
+            </td>
+        </tr>
+    );
+};
+
+const SortableGridItem = ({ slide, handleOpenModal, deleteSlide }) => {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging
+    } = useSortable({ id: slide.id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.3 : 1,
+    };
+
+    return (
+        <div 
+            ref={setNodeRef} 
+            style={style} 
+            className="bg-white border border-gray-300 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500 flex flex-col relative"
+        >
+            <div 
+                {...attributes} 
+                {...listeners} 
+                className="absolute top-4 left-4 z-20 cursor-grab active:cursor-grabbing bg-white/20 backdrop-blur-md p-1.5 rounded-full text-white border border-white/20 hover:bg-white/40 transition-all"
+            >
+                <GripVertical size={16} />
+            </div>
+            
+            <div className="aspect-video bg-gray-50 relative overflow-hidden">
+                {slide.media_type === 'video' ? (
+                    <video src={slide.video_url || slide.image_url} className="w-full h-full object-cover" muted loop />
+                ) : (
+                    <img src={slide.image_url} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                )}
+                <div className="absolute top-4 right-4 flex flex-col gap-2 transition-all">
+                    <button onClick={() => handleOpenModal(slide)} className="bg-white shadow-xl p-3 rounded-2xl text-gray-400 hover:text-brand-red transition-all hover:scale-110 active:scale-95">
+                        <Edit2 size={16} />
+                    </button>
+                    <button onClick={() => deleteSlide(slide.id)} className="bg-white shadow-xl p-3 rounded-2xl text-gray-400 hover:text-brand-red transition-all hover:scale-110 active:scale-95">
+                        <Trash2 size={16} />
+                    </button>
+                </div>
+                <div className="absolute bottom-4 right-4">
+                    <span className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border backdrop-blur-md ${slide.is_active
+                        ? 'bg-green-500/80 text-white border-transparent'
+                        : 'bg-red-500/80 text-white border-transparent'
+                        }`}>
+                        {slide.is_active ? 'Active' : 'Hidden'}
+                    </span>
+                </div>
+            </div>
+            <div className="p-6 flex flex-col flex-1">
+                <div className="flex items-center gap-2 mb-3">
+                    <span className="bg-gray-100 text-gray-400 text-[8px] font-black px-1.5 py-0.5 rounded uppercase border border-gray-200">
+                        {slide.alignment}
+                    </span>
+                    {slide.media_type === 'video' && (
+                        <span className="bg-blue-50 text-blue-600 text-[8px] font-black px-1.5 py-0.5 rounded uppercase border border-blue-100">Motion Asset</span>
+                    )}
+                </div>
+                <h3 className="text-sm font-black text-gray-900 leading-snug mb-2 line-clamp-1">{slide.title}</h3>
+                <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed mb-4 flex-1 font-medium">
+                    {slide.subtitle}
+                </p>
+                <div className="pt-4 border-t border-gray-50 flex items-center justify-between mt-auto">
+                    <div className="flex items-center gap-1.5 text-[9px] font-black text-brand-red uppercase tracking-widest">
+                        <Layout size={12} />
+                        Order: {slide.order_index}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 const HeroSlider = () => {
     const [slides, setSlides] = useState([]);
@@ -34,6 +216,13 @@ const HeroSlider = () => {
         alignment: 'center',
         overlay_opacity: 0.4
     });
+
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
 
     useEffect(() => {
         fetchSlides();
@@ -180,6 +369,33 @@ const HeroSlider = () => {
         }
     };
 
+    const handleDragEnd = async (event) => {
+        const { active, over } = event;
+
+        if (active.id !== over.id) {
+            const oldIndex = slides.findIndex((slide) => slide.id === active.id);
+            const newIndex = slides.findIndex((slide) => slide.id === over.id);
+
+            const newSlides = arrayMove(slides, oldIndex, newIndex).map((slide, index) => ({
+                ...slide,
+                order_index: index
+            }));
+
+            setSlides(newSlides);
+
+            // Persist to database
+            try {
+                const updates = newSlides.map(s => ({ id: s.id, order_index: s.order_index }));
+                const { error } = await supabase.rpc('reorder_hero_slides', { new_orders: updates });
+                if (error) throw error;
+            } catch (error) {
+                console.error('Error reordering slides:', error);
+                showAlert('Error', 'Failed to save new order', 'error');
+                fetchSlides(); // Revert on failure
+            }
+        }
+    };
+
     const processedSlides = useMemo(() => {
         return slides.filter(slide =>
             slide.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -250,146 +466,51 @@ const HeroSlider = () => {
                                 <Loader2 className="animate-spin text-brand-red mb-4" size={48} />
                                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Negotiating with Database...</p>
                             </div>
-                        ) : processedSlides.length === 0 ? (
-                            <div className="py-20 text-center flex flex-col items-center gap-4">
-                                <Layout size={48} className="text-gray-200" />
-                                <p className="text-gray-400 font-bold">No hero slides found</p>
-                                <Button onClick={() => handleOpenModal()} variant="outline">Create Initial Slide</Button>
-                            </div>
-                        ) : viewMode === 'list' ? (
-                            <table className="min-w-full divide-y divide-gray-100">
-                                <thead className="bg-gray-50/50">
-                                    <tr>
-                                        <th className="px-8 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Slide Preview</th>
-                                        <th className="px-8 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Order</th>
-                                        <th className="px-8 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
-                                        <th className="px-8 py-4 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-100">
-                                    {processedSlides.map((slide) => (
-                                        <tr key={slide.id} className="hover:bg-gray-50/80 transition-colors group">
-                                            <td className="px-8 py-4">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="h-16 w-28 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 relative shrink-0">
-                                                        {slide.media_type === 'video' ? (
-                                                            <div className="absolute inset-0 flex items-center justify-center bg-brand-charcoal">
-                                                                <Video size={16} className="text-white opacity-50" />
-                                                            </div>
-                                                        ) : (
-                                                            <img
-                                                                src={slide.image_url}
-                                                                alt=""
-                                                                className="h-full w-full object-cover"
-                                                                onError={(e) => e.target.src = 'https://images.unsplash.com/photo-1544084471-507c8cc38662?q=80&w=300'}
-                                                            />
-                                                        )}
-                                                    </div>
-                                                    <div className="min-w-0">
-                                                        <h3 className="text-sm font-black text-gray-900 leading-tight truncate">{slide.title}</h3>
-                                                        <p className="text-xs text-gray-400 font-medium truncate mt-0.5">{slide.subtitle}</p>
-                                                        <div className="flex gap-1 mt-2">
-                                                            {slide.media_type === 'video' && (
-                                                                <span className="bg-blue-50 text-blue-600 text-[8px] font-black px-1.5 py-0.5 rounded uppercase border border-blue-100">Video</span>
-                                                            )}
-                                                            <span className="bg-gray-100 text-gray-400 text-[8px] font-black px-1.5 py-0.5 rounded uppercase border border-gray-200">{slide.alignment}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-8 py-4">
-                                                <div className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 text-xs font-black text-gray-600">
-                                                    {slide.order_index}
-                                                </div>
-                                            </td>
-                                            <td className="px-8 py-4">
-                                                <span className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border ${slide.is_active
-                                                    ? 'bg-green-50 text-green-700 border-green-100'
-                                                    : 'bg-red-50 text-red-700 border-red-100'
-                                                    }`}>
-                                                    {slide.is_active ? 'Active' : 'Hidden'}
-                                                </span>
-                                            </td>
-                                            <td className="px-8 py-4 text-right">
-                                                <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <button
-                                                        onClick={() => handleOpenModal(slide)}
-                                                        className="p-2 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
-                                                        title="Edit Slide"
-                                                    >
-                                                        <Edit2 size={16} />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => deleteSlide(slide.id)}
-                                                        className="p-2 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
-                                                        title="Delete Slide"
-                                                    >
-                                                        <Trash2 size={16} />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
                         ) : (
-                            <div className="p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                                {processedSlides.map((slide) => (
-                                    <div key={slide.id} className="bg-white border border-gray-300 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500 flex flex-col">
-                                        <div className="aspect-video bg-gray-50 relative overflow-hidden">
-                                            {slide.media_type === 'video' ? (
-                                                <video src={slide.video_url || slide.image_url} className="w-full h-full object-cover" muted loop />
-                                            ) : (
-                                                <img src={slide.image_url} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                                            )}
-                                            <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                                                <button onClick={() => handleOpenModal(slide)} className="bg-white shadow-xl p-3 rounded-2xl text-gray-400 hover:text-brand-red transition-all hover:scale-110 active:scale-95">
-                                                    <Edit2 size={16} />
-                                                </button>
-                                                <button onClick={() => deleteSlide(slide.id)} className="bg-white shadow-xl p-3 rounded-2xl text-gray-400 hover:text-brand-red transition-all hover:scale-110 active:scale-95">
-                                                    <Trash2 size={16} />
-                                                </button>
-                                            </div>
-                                            <div className="absolute bottom-4 left-4">
-                                                <span className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border backdrop-blur-md ${slide.is_active
-                                                    ? 'bg-green-500/80 text-white border-transparent'
-                                                    : 'bg-red-500/80 text-white border-transparent'
-                                                    }`}>
-                                                    {slide.is_active ? 'Active' : 'Hidden'}
-                                                </span>
-                                            </div>
-                                            <div className="absolute top-4 left-4">
-                                                <div className="bg-black/20 backdrop-blur-md text-white text-[10px] font-black w-8 h-8 rounded-full flex items-center justify-center border border-white/20">
-                                                    {slide.order_index}
-                                                </div>
-                                            </div>
+                            <DndContext
+                                sensors={sensors}
+                                collisionDetection={closestCenter}
+                                onDragEnd={handleDragEnd}
+                            >
+                                <SortableContext
+                                    items={processedSlides.map(p => p.id)}
+                                    strategy={viewMode === 'list' ? verticalListSortingStrategy : rectSortingStrategy}
+                                >
+                                    {viewMode === 'list' ? (
+                                        <table className="min-w-full divide-y divide-gray-100">
+                                            <thead className="bg-gray-50/50">
+                                                <tr>
+                                                    <th className="px-8 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Slide Preview</th>
+                                                    <th className="px-8 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Order</th>
+                                                    <th className="px-8 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
+                                                    <th className="px-8 py-4 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="bg-white divide-y divide-gray-100">
+                                                {processedSlides.map((slide) => (
+                                                    <SortableTableRow 
+                                                        key={slide.id} 
+                                                        slide={slide} 
+                                                        handleOpenModal={handleOpenModal} 
+                                                        deleteSlide={deleteSlide} 
+                                                    />
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    ) : (
+                                        <div className="p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                                            {processedSlides.map((slide) => (
+                                                <SortableGridItem 
+                                                    key={slide.id} 
+                                                    slide={slide} 
+                                                    handleOpenModal={handleOpenModal} 
+                                                    deleteSlide={deleteSlide} 
+                                                />
+                                            ))}
                                         </div>
-                                        <div className="p-6 flex flex-col flex-1">
-                                            <div className="flex items-center gap-2 mb-3">
-                                                <span className="bg-gray-100 text-gray-400 text-[8px] font-black px-1.5 py-0.5 rounded uppercase border border-gray-200">
-                                                    {slide.alignment}
-                                                </span>
-                                                {slide.media_type === 'video' && (
-                                                    <span className="bg-blue-50 text-blue-600 text-[8px] font-black px-1.5 py-0.5 rounded uppercase border border-blue-100">Motion Asset</span>
-                                                )}
-                                            </div>
-                                            <h3 className="text-sm font-black text-gray-900 leading-snug mb-2 line-clamp-1">{slide.title}</h3>
-                                            <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed mb-4 flex-1 font-medium">
-                                                {slide.subtitle}
-                                            </p>
-                                            <div className="pt-4 border-t border-gray-50 flex items-center justify-between mt-auto">
-                                                <div className="flex items-center gap-1.5 text-[9px] font-black text-brand-red uppercase tracking-widest">
-                                                    <Layout size={12} />
-                                                    Hero Module
-                                                </div>
-                                                <div className="text-[9px] font-bold text-gray-300 uppercase tracking-widest">
-                                                    Opacity: {slide.overlay_opacity}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                                    )}
+                                </SortableContext>
+                            </DndContext>
                         )}
                     </div>
                 </CardContent>

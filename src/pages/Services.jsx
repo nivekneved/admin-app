@@ -267,7 +267,7 @@ const Services = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {currentItems.map(s => (
-                    <tr key={s.id} className="even:bg-gray-50/80 hover:bg-gray-100/50 transition-colors">
+                    <tr key={s.id} className="even:bg-gray-100/40 hover:bg-gray-100/60 transition-colors">
                       <td className="px-8 py-5">
                         <div className="flex items-center gap-4">
                           <Thumb src={s.image_url} size="md" />
@@ -298,8 +298,8 @@ const Services = () => {
                       </td>
                       <td className="px-8 py-5 text-right">
                         <div className="flex justify-end items-center gap-1">
-                          <button onClick={() => openEdit(s)} className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Edit Specification"><Edit2 size={16} /></button>
-                          <button onClick={() => deleteService(s.id)} className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Archive Listing"><Trash2 size={16} /></button>
+                          <button onClick={() => openEdit(s)} className="p-2.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Edit Specification"><Edit2 size={16} /></button>
+                          <button onClick={() => deleteService(s.id)} className="p-2.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Archive Listing"><Trash2 size={16} /></button>
                         </div>
                       </td>
                     </tr>
@@ -312,7 +312,7 @@ const Services = () => {
                   <div key={s.id} className="bg-white border border-gray-100 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500">
                     <div className="h-48 bg-gray-50 relative overflow-hidden">
                       <ServiceCardImage src={s.image_url} />
-                      <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all">
+                      <div className="absolute top-4 right-4 transition-all">
                         <button onClick={() => deleteService(s.id)} className="p-3 bg-white/90 backdrop-blur rounded-2xl text-brand-red shadow-xl hover:scale-110 active:scale-95 transition-all"><Trash2 size={16} /></button>
                       </div>
                     </div>

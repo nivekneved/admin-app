@@ -204,7 +204,7 @@ const News = () => {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filteredPosts.map((post) => (
-                  <tr key={post.id} className="hover:bg-slate-50/50 transition-all group border-b border-slate-50">
+                  <tr key={post.id} className="even:bg-gray-100/40 hover:bg-gray-100/60 transition-all group border-b border-slate-50">
                     <td className="px-6 py-6">
                       <div className="flex flex-col gap-1">
                         <span className="font-bold text-slate-900 group-hover:text-red-600 transition-colors">{post.title}</span>
@@ -229,7 +229,7 @@ const News = () => {
                           <button
                             onClick={() => handleStatusChange(post.id, 'published')}
                             title="Publish"
-                            className="p-2 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all"
+                            className="p-2 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all"
                           >
                             <CheckCircle2 size={18} />
                           </button>
@@ -238,20 +238,20 @@ const News = () => {
                           <button
                             onClick={() => handleStatusChange(post.id, 'archived')}
                             title="Archive"
-                            className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
+                            className="p-2 text-gray-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
                           >
                             <Archive size={18} />
                           </button>
                         )}
                         <button
-                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                          className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
                           onClick={() => navigate(`/news/edit/${post.id}`)}
                         >
                           <Edit3 size={18} />
                         </button>
                         <button
                           onClick={() => handleDelete(post.id)}
-                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                          className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
                         >
                           <Trash2 size={18} />
                         </button>
@@ -273,7 +273,7 @@ const News = () => {
                                     <ImageIcon size={48} />
                                 </div>
                             )}
-                            <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                            <div className="absolute top-4 right-4 flex flex-col gap-2 transition-all translate-x-4 group-hover:translate-x-0">
                                 <button onClick={() => navigate(`/news/edit/${post.id}`)} className="bg-white shadow-xl p-3 rounded-2xl text-slate-400 hover:text-red-600 transition-all hover:scale-110 active:scale-95">
                                     <Edit3 size={16} />
                                 </button>

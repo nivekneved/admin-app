@@ -240,7 +240,7 @@ const Team = () => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
                                     {currentItems.map((member) => (
-                                        <tr key={member.id} className="even:bg-gray-50/80 hover:bg-gray-100/50 transition-colors">
+                                        <tr key={member.id} className="even:bg-gray-100/40 hover:bg-gray-100/60 transition-colors">
                                             <td className="px-8 py-5">
                                                 <div className="flex items-center gap-4">
                                                     <div className="w-10 h-10 rounded-xl overflow-hidden bg-gray-100 border border-gray-300 shrink-0">
@@ -283,10 +283,10 @@ const Team = () => {
                                             </td>
                                             <td className="px-8 py-5 text-right">
                                                 <div className="flex justify-end items-center gap-1">
-                                                    <button onClick={() => openEdit(member)} className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Edit Profile">
+                                                    <button onClick={() => openEdit(member)} className="p-2.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Edit Profile">
                                                         <Edit2 size={16} />
                                                     </button>
-                                                    <button onClick={() => deleteMember(member.id)} className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Remove Access">
+                                                    <button onClick={() => deleteMember(member.id)} className="p-2.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Remove Access">
                                                         <Trash2 size={16} />
                                                     </button>
                                                 </div>
@@ -308,7 +308,7 @@ const Team = () => {
                                                 <Users size={48} />
                                             </div>
                                         )}
-                                        <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                                        <div className="absolute top-4 right-4 flex flex-col gap-2 transition-all translate-x-4 group-hover:translate-x-0">
                                             <button onClick={() => openEdit(member)} className="bg-white shadow-xl p-3 rounded-2xl text-gray-400 hover:text-brand-red transition-all hover:scale-110 active:scale-95">
                                                 <Edit2 size={16} />
                                             </button>

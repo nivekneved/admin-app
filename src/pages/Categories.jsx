@@ -380,7 +380,7 @@ const Categories = () => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
                                     {processed.map((cat) => (
-                                        <tr key={cat.id} className="even:bg-gray-50/80 hover:bg-gray-100/50 transition-colors">
+                                        <tr key={cat.id} className="even:bg-gray-100/40 hover:bg-gray-100/60 transition-colors">
                                             {/* Category Asset (Name + Icon + Slug) */}
                                             <td className="px-8 py-5 whitespace-nowrap">
                                                 <div className="flex items-center">
@@ -403,11 +403,11 @@ const Categories = () => {
                                                     <span className="text-[10px] font-black text-gray-300 uppercase">Sort Order:</span>
                                                     <span className="text-[11px] font-black text-gray-900 border-b-2 border-brand-red/20">{cat.display_order ?? '—'}</span>
                                                     <button type="button" onClick={() => shiftOrder(cat, -1)}
-                                                        className="p-1.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Move up">
+                                                        className="p-1.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Move up">
                                                         <ArrowUp size={14} />
                                                     </button>
                                                     <button type="button" onClick={() => shiftOrder(cat, 1)}
-                                                        className="p-1.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Move down">
+                                                        className="p-1.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Move down">
                                                         <ArrowDown size={14} />
                                                     </button>
                                                 </div>
@@ -444,17 +444,17 @@ const Categories = () => {
                                                 <div className="flex justify-end items-center gap-1">
                                                     <button type="button"
                                                         onClick={(e) => { e.stopPropagation(); openViewModal(cat); }}
-                                                        className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="View Specification">
+                                                        className="p-2.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="View Specification">
                                                         <Eye size={16} />
                                                     </button>
                                                     <button type="button"
                                                         onClick={(e) => { e.stopPropagation(); openEditModal(cat); }}
-                                                        className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Edit Specification">
+                                                        className="p-2.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Edit Specification">
                                                         <Edit2 size={16} />
                                                     </button>
                                                     <button type="button"
                                                         onClick={(e) => { e.stopPropagation(); deleteCategory(cat.id); }}
-                                                        className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Archive Listing">
+                                                        className="p-2.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Archive Listing">
                                                         <Trash2 size={16} />
                                                     </button>
                                                 </div>

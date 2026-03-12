@@ -500,7 +500,7 @@ Due Date  : ${formatDate(invoice.due_date)}
                 </thead>
                 <tbody className="divide-y divide-gray-50">
                   {currentInvoices.map((invoice) => (
-                    <tr key={invoice.id} className="even:bg-gray-50/80 hover:bg-gray-100/50 transition-colors">
+                    <tr key={invoice.id} className="even:bg-gray-100/40 hover:bg-gray-100/60 transition-colors">
                       <td className="px-8 py-5 whitespace-nowrap">
                         <div className="text-xs font-black text-gray-900 tracking-tighter font-mono mb-1">
                           {invoice.reference}
@@ -538,7 +538,7 @@ Due Date  : ${formatDate(invoice.due_date)}
                           <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); openViewModal(invoice); }}
-                            className="p-2 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
+                            className="p-2 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
                             title="X-Ray View"
                           >
                             <Eye size={16} />
@@ -547,7 +547,7 @@ Due Date  : ${formatDate(invoice.due_date)}
                           <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); openEditModal(invoice); }}
-                            className="p-2 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
+                            className="p-2 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
                             title="Registry Modification"
                           >
                             <Edit2 size={16} />
@@ -557,7 +557,7 @@ Due Date  : ${formatDate(invoice.due_date)}
                             type="button"
                             onClick={(e) => { e.stopPropagation(); togglePaid(invoice); }}
                             disabled={togglingId === invoice.id}
-                            className="p-2 text-gray-300 hover:text-green-500 hover:bg-green-50 rounded-xl transition-all disabled:opacity-40"
+                            className="p-2 text-gray-400 hover:text-green-500 hover:bg-green-50 rounded-xl transition-all disabled:opacity-40"
                             title={invoice.status === 'Paid' ? 'Revert to Pending' : 'Mark as Paid'}
                           >
                             {togglingId === invoice.id
@@ -569,7 +569,7 @@ Due Date  : ${formatDate(invoice.due_date)}
                           <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); handleDownload(invoice); }}
-                            className="p-2 text-gray-300 hover:text-purple-500 hover:bg-purple-50 rounded-xl transition-all"
+                            className="p-2 text-gray-400 hover:text-purple-500 hover:bg-purple-50 rounded-xl transition-all"
                             title="Export Artifact"
                           >
                             <Download size={16} />
@@ -578,7 +578,7 @@ Due Date  : ${formatDate(invoice.due_date)}
                           <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); handleSendInvoice(invoice); }}
-                            className="p-2 text-gray-300 hover:text-sky-500 hover:bg-sky-50 rounded-xl transition-all"
+                            className="p-2 text-gray-400 hover:text-sky-500 hover:bg-sky-50 rounded-xl transition-all"
                             title="Dispatch to Client"
                           >
                             <Send size={16} />
@@ -587,7 +587,7 @@ Due Date  : ${formatDate(invoice.due_date)}
                           <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); deleteInvoice(invoice.id); }}
-                            className="p-2 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
+                            className="p-2 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
                             title="Terminate Invoice"
                           >
                             <Trash2 size={16} />

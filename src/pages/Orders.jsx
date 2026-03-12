@@ -264,7 +264,7 @@ const Orders = () => {
                 <tbody className="divide-y divide-gray-200">
                   {currentOrders.map((order) => (
                     <React.Fragment key={order.id}>
-                      <tr key={order.id} className="even:bg-gray-50/80 hover:bg-gray-100/50 transition-colors">
+                      <tr key={order.id} className="even:bg-gray-100/40 hover:bg-gray-100/60 transition-colors">
                         <td className="px-8 py-5 whitespace-nowrap">
                           <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">#{order.id?.slice(0, 8)}</div>
                           <div className="text-xs font-semibold text-gray-500">{formatDate(order.created_at)}</div>
@@ -298,14 +298,14 @@ const Orders = () => {
                           <div className="flex justify-end items-center gap-1">
                             <button
                               onClick={() => toggleExpand(order.id)}
-                              className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
+                              className="p-2.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
                               title="Inspection"
                             >
                               <Info size={16} />
                             </button>
                             <button
                               onClick={() => deleteOrder(order.id)}
-                              className="p-2.5 text-gray-300 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
+                              className="p-2.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"
                               title="Archive Document"
                             >
                               <Trash2 size={16} />
