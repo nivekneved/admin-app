@@ -83,6 +83,8 @@ CREATE POLICY "Admins can manage admins" ON public.admins
     FOR ALL USING (public.is_admin());
 CREATE POLICY "Anyone authenticated can view the staff roster" ON public.admins 
     FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "Public can view active team members" ON public.admins
+    FOR SELECT USING (is_active = true AND show_on_front_page = true);
 
 -- --- Customers Table ---
 CREATE POLICY "Admins and Staff can manage customers" ON public.customers 
