@@ -56,3 +56,9 @@
 - Fixed data integrity: Refactored booking update logic to sync `total_amount` and resolved revenue leakage in the reporting engine.
 - Verified production readiness: SUCCESS on `npm run build` for both platforms.
 - Pushed all audit remediation changes to Git.
+
+## [2026-03-14 01:00] Antigravity
+
+- Hardened `.gitignore` in `admin-app` and `web-app` to strictly ignore all `.env*` files.
+- Verified ignore rules across both ecosystems using `git check-ignore`.
+- Synchronized repository settings to GitHub.
