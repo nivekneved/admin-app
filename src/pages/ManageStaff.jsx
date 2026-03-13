@@ -58,7 +58,7 @@ const ManageStaff = () => {
         try {
             const { data, error } = await supabase
                 .from('admins')
-                .select('*')
+                .select('id, username, email, role, name, bio, photo_url, linkedin_url, is_active, show_on_front_page, display_order')
                 .eq('id', id)
                 .single();
 

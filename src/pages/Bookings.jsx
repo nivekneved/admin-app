@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
 import {
   Search, Plus, Trash2, Eye, Calendar, MapPin, Loader2, RefreshCw,
   Star, Coffee, Plane, Sun, Edit2, CheckCircle, XCircle,
-  Hash, Tag, CreditCard, Clock, DollarSign, Users, ArrowUpDown, ChevronDown
+  Hash, Tag, CreditCard, Clock, DollarSign, ArrowUpDown, ChevronDown
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import Modal from '../components/Modal';
@@ -14,29 +15,43 @@ import { showAlert, showConfirm } from '../utils/swal';
 const selectCls = "bg-gray-50 border border-gray-300 text-gray-900 text-[11px] font-black uppercase tracking-widest rounded-2xl focus:ring-brand-red focus:border-brand-red block w-full p-2.5 appearance-none pr-8 transition-all cursor-pointer hover:bg-white";
 
 const Bookings = () => {
-  const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [bookingsPerPage] = useState(8);
+
+  // ─── Queries ─────────────────────────────────────────────────────────────
+  const { data: bookings = [], isLoading: loading, refetch: refetchBookings } = useQuery({
+    queryKey: ['bookings'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('bookings')
+        .select(`
+          *,
+          customers (
+            first_name,
+            last_name,
+            email
+          ),
+          booking_items (*)
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        if (error.message.includes('relation "public.bookings" does not exist')) return [];
+        throw error;
+      }
+      return data || [];
+    }
+  });
 
   // — Filtering & Sorting State —
   const [filterStatus, setFilterStatus] = useState('All');
   const [filterType, setFilterType] = useState('All');
   const [sortBy, setSortBy] = useState('created_at:desc');
 
-  // — Add Booking Modal —
-  const [showModal, setShowModal] = useState(false);
-  const [customers, setCustomers] = useState([]);
-  const [formLoading, setFormLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    customer_id: '',
-    activity_type: 'Lounge',
-    activity_name: '',
-    start_date: '',
-    amount: '',
-    status: 'Pending'
-  });
+  // Modal states
+
+
 
   // — View Booking Modal —
   const [showViewModal, setShowViewModal] = useState(false);
@@ -57,57 +72,9 @@ const Bookings = () => {
   // — Status toggle loading —
   const [togglingId, setTogglingId] = useState(null);
 
-  useEffect(() => {
-    fetchBookings();
-    fetchCustomers();
-  }, []);
 
-  const fetchBookings = async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('bookings')
-        .select(`
-          *,
-          customers (
-            first_name,
-            last_name,
-            email
-          ),
-          booking_items (*)
-        `)
-        .order('created_at', { ascending: false });
+  // Removed fetchCustomers as it was only used for the old Add Booking modal
 
-      if (error) {
-        if (error.message.includes('relation "public.bookings" does not exist')) {
-          setBookings([]);
-        } else {
-          throw error;
-        }
-      } else {
-        setBookings(data || []);
-      }
-    } catch (error) {
-      console.error('Error fetching bookings:', error);
-      showAlert('Database Error', 'Failed to load bookings from database', 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchCustomers = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('customers')
-        .select('id, first_name, last_name, email')
-        .order('first_name', { ascending: true });
-
-      if (error) throw error;
-      setCustomers(data || []);
-    } catch (error) {
-      console.error('Error loading customers:', error);
-    }
-  };
 
   const getActivityIcon = (type) => {
     switch (type?.toLowerCase()) {
@@ -125,51 +92,8 @@ const Bookings = () => {
     return 'bg-red-50 text-red-700 border-red-100';
   };
 
-  // ─── Add Booking ──────────────────────────────────────────────────────────
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+  // Removed redundant handleSubmit - Use CreateBooking page for transactional safety
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setFormLoading(true);
-
-    if (!formData.customer_id) {
-      showAlert('Required', 'Please select a customer for this booking', 'warning');
-      setFormLoading(false);
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('bookings')
-        .insert([{
-          ...formData,
-          amount: parseFloat(formData.amount) || 0,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }]);
-
-      if (error) throw error;
-
-      showAlert('Success', 'Booking created successfully');
-      setShowModal(false);
-      setFormData({
-        customer_id: '',
-        activity_type: 'Lounge',
-        activity_name: '',
-        start_date: '',
-        amount: '',
-        status: 'Pending'
-      });
-      fetchBookings();
-    } catch (err) {
-      showAlert('Action Failed', err.message || 'Error creating booking', 'error');
-    } finally {
-      setFormLoading(false);
-    }
-  };
 
   // ─── View Booking ─────────────────────────────────────────────────────────
   const openViewModal = (booking) => {
@@ -206,6 +130,7 @@ const Bookings = () => {
           activity_name: editFormData.activity_name,
           start_date: editFormData.start_date,
           amount: parseFloat(editFormData.amount) || 0,
+          total_amount: parseFloat(editFormData.amount) || 0, // Ensure both are synced
           status: editFormData.status,
           updated_at: new Date().toISOString()
         })
@@ -215,7 +140,7 @@ const Bookings = () => {
 
       showAlert('Updated', 'Booking updated successfully');
       setShowEditModal(false);
-      fetchBookings();
+      refetchBookings();
     } catch (error) {
       console.error('Update error:', error);
       showAlert('Update Failed', error.message || 'Error updating booking', 'error');
@@ -241,10 +166,7 @@ const Bookings = () => {
         .eq('id', booking.id);
 
       if (error) throw error;
-
-      setBookings(prev =>
-        prev.map(b => b.id === booking.id ? { ...b, status: nextStatus } : b)
-      );
+      refetchBookings();
     } catch (error) {
       console.error('Status toggle error:', error);
       showAlert('Error', 'Could not update booking status', 'error');
@@ -271,7 +193,7 @@ const Bookings = () => {
       if (error) throw error;
 
       showAlert('Success', 'Booking deleted successfully');
-      setBookings(bookings.filter(booking => booking.id !== id));
+      refetchBookings();
     } catch (error) {
       console.error('Delete error:', error);
       showAlert('Error', 'Failed to delete order', 'error');
@@ -349,9 +271,6 @@ const Bookings = () => {
     setCurrentPage(1);
   };
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, filterStatus, filterType]);
 
   const indexOfLastBooking = currentPage * bookingsPerPage;
   const indexOfFirstBooking = indexOfLastBooking - bookingsPerPage;
@@ -369,7 +288,7 @@ const Bookings = () => {
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
-            onClick={fetchBookings}
+            onClick={() => refetchBookings()}
             className="text-gray-500 border-gray-200 flex items-center gap-2"
             disabled={loading}
           >
@@ -580,7 +499,7 @@ const Bookings = () => {
                 <Button
                   variant="outline"
                   className="mt-6 border-gray-200 hover:bg-gray-50"
-                  onClick={fetchBookings}
+                  onClick={() => refetchBookings()}
                 >
                   Refresh Database
                 </Button>
@@ -864,133 +783,8 @@ const Bookings = () => {
         </form>
       </Modal>
 
-      {/* ═══════════════════════════════════════════════════════════════
-          ADD Booking Modal
-      ═══════════════════════════════════════════════════════════════ */}
-      <Modal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        title="Create New Booking"
-      >
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 flex items-center">
-              <Users size={12} className="mr-1" /> Select Customer
-            </label>
-            <select
-              name="customer_id"
-              required
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all appearance-none font-medium text-sm text-gray-800"
-              value={formData.customer_id}
-              onChange={handleInputChange}
-            >
-              <option value="">-- Choose a customer --</option>
-              {customers.map(c => (
-                <option key={c.id} value={c.id}>
-                  {c.first_name} {c.last_name} ({c.email})
-                </option>
-              ))}
-            </select>
-          </div>
+      {/* Modal for adding removed to favor transactional CreateBooking page */}
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Activity Type</label>
-              <select
-                name="activity_type"
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all appearance-none font-medium text-sm text-gray-800"
-                value={formData.activity_type}
-                onChange={handleInputChange}
-              >
-                <option value="Lounge">Lounge Access</option>
-                <option value="Hotel">Hotel / Resort</option>
-                <option value="Activity">Local Activity</option>
-                <option value="Tour">Guided Tour</option>
-                <option value="Cruise">Ocean Cruise</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 flex items-center">
-                <Plus size={12} className="mr-1" /> Status
-              </label>
-              <select
-                name="status"
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all appearance-none font-medium text-sm text-gray-800"
-                value={formData.status}
-                onChange={handleInputChange}
-              >
-                <option value="Pending">Pending Payment</option>
-                <option value="Confirmed">Confirmed</option>
-                <option value="Cancelled">Cancelled</option>
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 flex items-center">
-              <Sun size={12} className="mr-1" /> Activity / Service Name
-            </label>
-            <input
-              type="text"
-              name="activity_name"
-              required
-              placeholder="e.g. Premium Executive Lounge"
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
-              value={formData.activity_name}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 flex items-center">
-                <Calendar size={12} className="mr-1" /> Booking Date
-              </label>
-              <input
-                type="date"
-                name="start_date"
-                required
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
-                value={formData.start_date}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div>
-              <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 flex items-center">
-                <DollarSign size={12} className="mr-1" /> Amount (Mauritius Rupees - Rs)
-              </label>
-              <input
-                type="number"
-                name="amount"
-                required
-                placeholder="0.00"
-                step="0.01"
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
-                value={formData.amount}
-                onChange={handleInputChange}
-              />
-            </div>
-          </div>
-
-          <div className="pt-4 flex justify-end gap-3 border-t border-gray-50">
-            <button
-              type="button"
-              onClick={() => setShowModal(false)}
-              className="px-6 py-2.5 text-sm font-bold text-gray-400 hover:text-gray-600 transition-all"
-            >
-              Cancel
-            </button>
-            <Button
-              type="submit"
-              disabled={formLoading}
-              className="bg-brand-red text-white px-8 py-2.5 rounded-xl shadow-lg shadow-red-100 flex items-center font-bold"
-            >
-              {formLoading && <Loader2 className="animate-spin mr-2" size={16} />}
-              Confirm Booking
-            </Button>
-          </div>
-        </form>
-      </Modal>
     </div >
   );
 };

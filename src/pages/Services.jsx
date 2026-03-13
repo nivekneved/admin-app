@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import {
   Tag, Loader2, RefreshCw, Plus, Search, Edit2, Trash2,
@@ -66,56 +67,27 @@ const ServiceCardImage = ({ src }) => {
 // ═════════════════════════════════════════════════════════════════════════════
 const Services = () => {
   const navigate = useNavigate();
-  const [services, setServices] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [categories, setCategories] = useState([]);
-
-  // — Toolbar —
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [filterStatus, setFilterStatus] = useState('All');
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
-  const [selectedAmenities, setSelectedAmenities] = useState([]);
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [sortBy, setSortBy] = useState('created_at:desc');
   const [viewMode, setViewMode] = useState('list');
   const [perPage] = useState(8);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Derived unique amenities from services
-  const allAmenities = useMemo(() => {
-    const set = new Set();
-    services.forEach(s => {
-      if (Array.isArray(s.amenities)) {
-        s.amenities.forEach(a => set.add(a));
-      }
-    });
-    return Array.from(set).sort();
-  }, [services]);
-
-  // Fetch categories from site categories table
-  const fetchCategories = async () => {
-    try {
+  // ─── Queries ─────────────────────────────────────────────────────────────
+  const { data: categories = [], isLoading: categoriesLoading } = useQuery({
+    queryKey: ['categories'],
+    queryFn: async () => {
       const { data, error } = await supabase
         .from('categories')
         .select('name')
         .eq('is_active', true)
         .order('display_order', { ascending: true });
       if (error) throw error;
-      setCategories((data || []).map(c => c.name));
-    } catch (e) { void e; }
-  };
+      return (data || []).map(c => c.name);
+    }
+  });
 
-  useEffect(() => {
-    fetchServices();
-    fetchCategories();
-  }, []);
-
-  // ─── Fetch services ────────────────────────────────────────────────────────
-  const fetchServices = async () => {
-    setLoading(true);
-    try {
+  const { data: services = [], isLoading: servicesLoading, refetch: refetchServices } = useQuery({
+    queryKey: ['services'],
+    queryFn: async () => {
       const { data, error } = await supabase
         .from('services')
         .select(`
@@ -130,23 +102,43 @@ const Services = () => {
         .order('created_at', { ascending: false });
 
       if (error) {
-        if (error.message.includes('relation "public.services" does not exist')) setServices([]);
-        else throw error;
-      } else {
-        // Map the complicated nested relation into a simpler categories_list for the UI/filters
-        const mappedData = (data || []).map(s => ({
-          ...s,
-          categories_list: s.service_categories
-            ? s.service_categories.map(pc => pc.categories).filter(Boolean)
-            : []
-        }));
-        setServices(mappedData);
+        if (error.message.includes('relation "public.services" does not exist')) return [];
+        throw error;
       }
-    } catch (e) {
-      console.error(e);
-      showAlert('Error', 'Failed to load services', 'error');
-    } finally { setLoading(false); }
-  };
+      
+      // Map the complicated nested relation into a simpler categories_list for the UI/filters
+      return (data || []).map(s => ({
+        ...s,
+        categories_list: s.service_categories
+          ? s.service_categories.map(pc => pc.categories).filter(Boolean)
+          : []
+      }));
+    }
+  });
+
+  const loading = categoriesLoading || servicesLoading;
+
+  // — Toolbar —
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [filterStatus, setFilterStatus] = useState('All');
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+  const [selectedAmenities, setSelectedAmenities] = useState([]);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [sortBy, setSortBy] = useState('created_at:desc');
+
+  // Derived unique amenities from services
+  const allAmenities = useMemo(() => {
+    const set = new Set();
+    services.forEach(s => {
+      if (Array.isArray(s.amenities)) {
+        s.amenities.forEach(a => set.add(a));
+      }
+    });
+    return Array.from(set).sort();
+  }, [services]);
+
 
   // ─── Handlers ─────────────────────────────────────────────────────────────
   const openCreate = () => navigate('/services/create');
@@ -159,7 +151,7 @@ const Services = () => {
       const { error } = await supabase.from('services').delete().eq('id', id);
       if (error) throw error;
       showAlert('Deleted', 'Service removed');
-      setServices(prev => prev.filter(s => s.id !== id));
+      refetchServices();
     } catch (e) { void e; showAlert('Error', 'Failed to delete service', 'error'); }
   };
 
@@ -247,7 +239,7 @@ const Services = () => {
           <p className="text-gray-400 text-sm font-medium">Manage your agency services and rental inventory</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button onClick={fetchServices} variant="outline" className="text-gray-500 border-gray-200 flex items-center gap-2">
+          <Button onClick={() => refetchServices()} variant="outline" className="text-gray-500 border-gray-200 flex items-center gap-2">
             <RefreshCw size={15} className={loading ? 'animate-spin' : ''} /> Sync
           </Button>
           <Button onClick={openCreate} className="bg-brand-red hover:opacity-90 text-white flex items-center gap-2 shadow-lg shadow-red-100">
@@ -397,7 +389,7 @@ const Services = () => {
               </div>
             ) : viewMode === 'list' ? (
               <table className="min-w-full divide-y divide-gray-50">
-                <thead className="bg-gray-50/30">
+                <thead className="hidden sm:table-header-group bg-gray-50/30">
                   <tr>
                     <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Specification & Pricing</th>
                     <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Inventory Status</th>
@@ -406,8 +398,8 @@ const Services = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {currentItems.map(s => (
-                    <tr key={s.id} className="even:bg-gray-100/40 hover:bg-gray-100/60 transition-colors">
-                      <td className="px-8 py-5">
+                    <tr key={s.id} className="flex flex-col sm:table-row even:bg-gray-100/40 hover:bg-gray-100/60 transition-colors border-b sm:border-b-0 border-gray-100">
+                      <td className="px-8 py-5 sm:table-cell">
                         <div className="flex items-center gap-4">
                           <Thumb src={s.image_url} size="md" />
                           <div>
@@ -429,16 +421,22 @@ const Services = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="px-8 py-5">
-                        <div className="flex flex-col gap-1">
-                          <span className={`w-fit px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border ${statusBadge(s.status)}`}>{s.status}</span>
-                          <p className="text-[10px] font-bold text-gray-400 pl-1">{s.stock} units available</p>
+                      <td className="px-8 py-2 sm:py-5 sm:table-cell">
+                        <div className="flex items-center sm:flex-col sm:items-start gap-3 sm:gap-1">
+                          <span className="sm:hidden text-[10px] font-black text-gray-400 uppercase tracking-widest min-w-[80px]">Status:</span>
+                          <div className="flex flex-col gap-1">
+                            <span className={`w-fit px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border ${statusBadge(s.status)}`}>{s.status}</span>
+                            <p className="hidden sm:block text-[10px] font-bold text-gray-400 pl-1">{s.stock} units available</p>
+                          </div>
                         </div>
                       </td>
-                      <td className="px-8 py-5 text-right">
-                        <div className="flex justify-end items-center gap-1">
-                          <button onClick={() => openEdit(s)} className="p-2.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Edit Specification"><Edit2 size={16} /></button>
-                          <button onClick={() => deleteService(s.id)} className="p-2.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Archive Listing"><Trash2 size={16} /></button>
+                      <td className="px-8 py-4 sm:py-5 sm:table-cell text-right">
+                        <div className="flex justify-between sm:justify-end items-center gap-1">
+                           <span className="sm:hidden text-[10px] font-black text-gray-400 uppercase tracking-widest">Manage:</span>
+                           <div className="flex gap-1">
+                             <button onClick={() => openEdit(s)} className="p-2.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Edit Specification"><Edit2 size={16} /></button>
+                             <button onClick={() => deleteService(s.id)} className="p-2.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Archive Listing"><Trash2 size={16} /></button>
+                           </div>
                         </div>
                       </td>
                     </tr>

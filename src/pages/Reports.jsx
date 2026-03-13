@@ -139,7 +139,31 @@ const Reports = () => {
     const confirmed = data.filter(b => b.status === 'Confirmed').length;
     const pending = data.filter(b => b.status === 'Pending').length;
     const cancelled = data.filter(b => b.status === 'Cancelled').length;
-    const revenue = data.reduce((sum, b) => sum + Number(b.total_amount || b.amount || 0), 0);
+    // Fetching bookings with items for accurate revenue calculation
+    const { data: revenueData, error: revenueError } = await supabase
+        .from('bookings')
+        .select(`
+            id,
+            total_amount,
+            amount,
+            booking_items (
+                price,
+                quantity
+            )
+        `);
+
+    if (revenueError) {
+        console.error('Error fetching deep revenue stats:', revenueError);
+    }
+
+    const revenue = revenueData?.reduce((sum, b) => {
+        // If booking_items exist, sum them for maximum precision
+        if (b.booking_items && b.booking_items.length > 0) {
+            return sum + b.booking_items.reduce((itemSum, item) => itemSum + (Number(item.price || 0) * Number(item.quantity || 1)), 0);
+        }
+        // Fallback to parent amount if no items are found
+        return sum + Number(b.total_amount || b.amount || 0);
+    }, 0) || 0;
 
     setStats(prev => ({
       ...prev,
@@ -221,7 +245,7 @@ const Reports = () => {
 
     const { data, error } = await supabase
         .from('bookings')
-        .select('created_at, total_amount, amount')
+        .select('created_at, total_amount, amount, booking_items(price, quantity)')
         .gte('created_at', sixMonthsAgo.toISOString());
 
     if (error) {
@@ -237,7 +261,12 @@ const Reports = () => {
       const key = `${d.getFullYear()}-${d.getMonth()}`;
       if (!map[key]) map[key] = { month: MONTH_NAMES[d.getMonth()], year: d.getFullYear(), count: 0, revenue: 0 };
       map[key].count += 1;
-      map[key].revenue += Number(b.total_amount || b.amount || 0);
+      
+      let bookingRev = Number(b.total_amount || b.amount || 0);
+      if (b.booking_items && b.booking_items.length > 0) {
+        bookingRev = b.booking_items.reduce((acc, it) => acc + (Number(it.price || 0) * Number(it.quantity || 1)), 0);
+      }
+      map[key].revenue += bookingRev;
     });
 
     // Fill in empty months within the last 6
@@ -255,7 +284,7 @@ const Reports = () => {
   const fetchTopActivities = async () => {
     const { data, error } = await supabase
         .from('bookings')
-        .select('activity_type, activity_name, total_amount, amount');
+        .select('activity_type, activity_name, total_amount, amount, booking_items(price, quantity)');
 
     if (error) {
         console.error('Error fetching top activities:', error);
@@ -268,7 +297,12 @@ const Reports = () => {
       const key = b.activity_name || b.lounge_name || 'Unknown';
       if (!map[key]) map[key] = { name: key, type: b.activity_type, count: 0, revenue: 0 };
       map[key].count += 1;
-      map[key].revenue += Number(b.total_amount || b.amount || 0);
+      
+      let bookingRev = Number(b.total_amount || b.amount || 0);
+      if (b.booking_items && b.booking_items.length > 0) {
+        bookingRev = b.booking_items.reduce((acc, it) => acc + (Number(it.price || 0) * Number(it.quantity || 1)), 0);
+      }
+      map[key].revenue += bookingRev;
     });
 
     const sorted = Object.values(map).sort((a, b) => b.count - a.count).slice(0, 7);
@@ -281,7 +315,8 @@ const Reports = () => {
         .from('bookings')
         .select(`
         id, status, activity_name, activity_type, amount, total_amount, created_at,
-        customers ( first_name, last_name )
+        customers ( first_name, last_name ),
+        booking_items ( price, quantity )
       `)
         .order('created_at', { ascending: false })
         .limit(8);

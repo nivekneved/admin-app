@@ -25,6 +25,11 @@ export default [
         { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
       ],
       "no-undef": "error"
+    },
+    settings: {
+      react: {
+        version: "detect"
+      }
     }
   }
 ];

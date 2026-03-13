@@ -32,7 +32,16 @@ import CreateNews from './pages/CreateNews';
 import PopupAds from './pages/PopupAds';
 import NavigationManager from './pages/NavigationManager';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      gcTime: 1000 * 60 * 10,   // 10 minutes
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function App() {
   return (

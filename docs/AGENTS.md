@@ -45,4 +45,13 @@
 - Fixed navigation text visibility issues by updating `tailwind.config.ts` and increasing contrast on level 0 menu items (`text-slate-800`).
 - Corrected CTA button and icon colors to ensure visibility on white background.
 - Finalized all navigation and design tasks across both apps and verified production build.
-- **2026-03-13**: Created and integrated 9 missing pages in `web-app` (Flights, Local Deals, Tailormade, Group Tours, Visa Services, Mauritius, Rodrigues Hotels, Day Packages, and Our Story). Generated custom hero images and resolved all build/lint issues.
+- ## [2026-03-14 00:55] Antigravity
+
+- Performed Level 4 Forensic Audit on `admin-app` and `web-app`.
+- Remediated security vulnerabilities: Commented out hardcoded `JWT_SECRET` and `SUPABASE_SERVICE_ROLE_KEY`.
+- Implemented production resilience: 
+    - Added Next.js Edge Middleware for route protection in `web-app`.
+    - Integrated global `ErrorBoundary` in `admin-app` and `error.tsx/loading.tsx` in `web-app`.
+- Fixed data integrity: Refactored booking update logic to sync `total_amount` and resolved revenue leakage in the reporting engine.
+- Verified production readiness: SUCCESS on `npm run build` for both platforms.
+- Pushed all audit remediation changes to Git.

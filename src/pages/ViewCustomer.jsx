@@ -27,7 +27,7 @@ const ViewCustomer = () => {
             // Fetch Customer Profile
             const { data: customerData, error: customerError } = await supabase
                 .from('customers')
-                .select('*')
+                .select('id, first_name, last_name, email, phone, country, is_subscriber, status, created_at')
                 .eq('id', id)
                 .single();
 
@@ -37,7 +37,7 @@ const ViewCustomer = () => {
             // Fetch Related Bookings
             const { data: bookingsData, error: bookingsError } = await supabase
                 .from('bookings')
-                .select('*')
+                .select('id, activity_type, activity_name, amount, start_date, status')
                 .eq('customer_id', id)
                 .order('start_date', { ascending: false });
 
@@ -50,7 +50,7 @@ const ViewCustomer = () => {
             // Fetch Related Orders
             const { data: ordersData, error: ordersError } = await supabase
                 .from('orders')
-                .select('*')
+                .select('id, total_items, amount, payment_method, status, created_at')
                 .eq('customer_id', id)
                 .order('created_at', { ascending: false });
 
