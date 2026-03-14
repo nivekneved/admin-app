@@ -139,6 +139,11 @@ const Services = () => {
     return Array.from(set).sort();
   }, [services]);
 
+  // Reset page when filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategories, filterStatus, minPrice, maxPrice, selectedAmenities, sortBy]);
+
 
   // ─── Handlers ─────────────────────────────────────────────────────────────
   const openCreate = () => navigate('/services/create');
@@ -154,7 +159,6 @@ const Services = () => {
       refetchServices();
     } catch (e) { void e; showAlert('Error', 'Failed to delete service', 'error'); }
   };
-
   const clearFilters = () => {
     setSearchTerm('');
     setSelectedCategories([]);
@@ -163,6 +167,7 @@ const Services = () => {
     setMaxPrice('');
     setSelectedAmenities([]);
     setSortBy('created_at:desc');
+    setCurrentPage(1);
   };
 
   const hasActiveFilters = searchTerm || selectedCategories.length > 0 || filterStatus !== 'All' || minPrice || maxPrice || selectedAmenities.length > 0;
