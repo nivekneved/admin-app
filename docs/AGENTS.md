@@ -100,3 +100,11 @@
   - Finalized design consistency for `AnnouncementPopup` and `Footer`.
 - Verified production readiness with zero errors in both `web-app` and `admin-app`.
 - Synchronized all codebases with a final Git push.
+
+## [2026-03-14 18:35] Antigravity
+
+- **Design Refinement**:
+  - Reduced homepage Hero slider height to `70vh` for better layout focus.
+  - Removed `MegaMenu` from desktop navigation as requested, reverting to standard top-level navigation.
+  - Preserved `MegaMenu.tsx` logic via commenting for potential future restoration.
+- Pushed all design refinements to GitHub.
