@@ -34,6 +34,7 @@ const CreateService = () => {
         status: 'In Stock',
         description: '',
         image_url: '',
+        amenities: [],
         room_types: [],
         itinerary: []
     });
@@ -85,6 +86,7 @@ const CreateService = () => {
                     status: data.status || 'In Stock',
                     description: data.description || '',
                     image_url: data.image_url || '',
+                    amenities: data.amenities || [],
                     room_types: data.room_types || [],
                     itinerary: data.itinerary || []
                 });
@@ -153,9 +155,48 @@ const CreateService = () => {
             room_types: [...prev.room_types, {
                 type: '',
                 available: true,
+                features: [],
                 prices: { mon: '', tue: '', wed: '', thu: '', fri: '', sat: '', sun: '' }
             }]
         }));
+    };
+
+    const toggleAmenity = (amenity) => {
+        if (!amenity) return;
+        setFormData(prev => {
+            const current = [...prev.amenities];
+            if (current.includes(amenity)) {
+                return { ...prev, amenities: current.filter(a => a !== amenity) };
+            } else {
+                return { ...prev, amenities: [...current, amenity] };
+            }
+        });
+    };
+
+    const addRoomFeature = (roomIdx, feature) => {
+        if (!feature) return;
+        setFormData(prev => {
+            const updatedRooms = [...prev.room_types];
+            const currentFeatures = updatedRooms[roomIdx].features || [];
+            if (!currentFeatures.includes(feature)) {
+                updatedRooms[roomIdx] = {
+                    ...updatedRooms[roomIdx],
+                    features: [...currentFeatures, feature]
+                };
+            }
+            return { ...prev, room_types: updatedRooms };
+        });
+    };
+
+    const removeRoomFeature = (roomIdx, feature) => {
+        setFormData(prev => {
+            const updatedRooms = [...prev.room_types];
+            updatedRooms[roomIdx] = {
+                ...updatedRooms[roomIdx],
+                features: (updatedRooms[roomIdx].features || []).filter(f => f !== feature)
+            };
+            return { ...prev, room_types: updatedRooms };
+        });
     };
 
     const removeRoomType = (idx) => {
@@ -245,6 +286,7 @@ const CreateService = () => {
                 status: formData.status,
                 description: formData.description,
                 image_url: formData.image_url,
+                amenities: formData.amenities,
                 room_types: formData.room_types,
                 itinerary: formData.itinerary,
                 updated_at: new Date().toISOString()
@@ -501,6 +543,49 @@ const CreateService = () => {
                                         placeholder="Describe the inclusions, terms, and luxury standards of this service..."
                                     />
                                 </div>
+
+                                <div>
+                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Service Amenities (Add Tags)</label>
+                                    <div className="flex flex-wrap gap-2 mb-3">
+                                        {formData.amenities.map(amenity => (
+                                            <span key={amenity} className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-brand-red border border-red-100 rounded-xl text-[10px] font-black uppercase tracking-widest animate-in zoom-in-95 duration-200">
+                                                {amenity}
+                                                <button type="button" onClick={() => toggleAmenity(amenity)} className="hover:text-red-700 transition-colors">
+                                                    <X size={12} />
+                                                </button>
+                                            </span>
+                                        ))}
+                                        {formData.amenities.length === 0 && (
+                                            <span className="text-[10px] font-bold text-gray-300 uppercase italic">No amenities listed yet...</span>
+                                        )}
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            id="new_amenity"
+                                            placeholder="e.g. Free WiFi, Infinity Pool"
+                                            className="grow px-6 py-3 bg-gray-50 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-xs font-bold"
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    e.preventDefault();
+                                                    toggleAmenity(e.target.value);
+                                                    e.target.value = '';
+                                                }
+                                            }}
+                                        />
+                                        <Button
+                                            type="button"
+                                            onClick={() => {
+                                                const input = document.getElementById('new_amenity');
+                                                toggleAmenity(input.value);
+                                                input.value = '';
+                                            }}
+                                            className="bg-brand-charcoal text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-transform"
+                                        >
+                                            Add
+                                        </Button>
+                                    </div>
+                                </div>
                             </div>
                         </section>
 
@@ -560,6 +645,46 @@ const CreateService = () => {
                                                             >
                                                                 {rt.available ? <ToggleRight size={20} /> : <ToggleLeft size={20} />}
                                                                 <span className="text-[10px] font-black uppercase tracking-widest">{rt.available ? 'Rentable' : 'Rent Stopped'}</span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="space-y-4 pb-6 border-b border-gray-300">
+                                                        <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Room Amenities (e.g. Ocean View, Mini Bar)</label>
+                                                        <div className="flex flex-wrap gap-2 mb-2">
+                                                            {(rt.features || []).map(feature => (
+                                                                <span key={feature} className="flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-600 rounded-lg text-[9px] font-bold uppercase tracking-widest">
+                                                                    {feature}
+                                                                    <button type="button" onClick={() => removeRoomFeature(idx, feature)} className="hover:text-brand-red transition-colors">
+                                                                        <X size={10} />
+                                                                    </button>
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                        <div className="flex gap-2">
+                                                            <input
+                                                                type="text"
+                                                                id={`new_feature_${idx}`}
+                                                                placeholder="Add feature..."
+                                                                className="grow px-4 py-2 bg-white border border-gray-300 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-1 focus:ring-brand-red"
+                                                                onKeyDown={(e) => {
+                                                                    if (e.key === 'Enter') {
+                                                                        e.preventDefault();
+                                                                        addRoomFeature(idx, e.target.value);
+                                                                        e.target.value = '';
+                                                                    }
+                                                                }}
+                                                            />
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    const input = document.getElementById(`new_feature_${idx}`);
+                                                                    addRoomFeature(idx, input.value);
+                                                                    input.value = '';
+                                                                }}
+                                                                className="px-4 py-2 border border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal hover:text-white rounded-xl text-[9px] font-black uppercase transition-all"
+                                                            >
+                                                                Add
                                                             </button>
                                                         </div>
                                                     </div>
