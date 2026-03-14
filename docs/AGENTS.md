@@ -108,3 +108,11 @@
   - Removed `MegaMenu` from desktop navigation as requested, reverting to standard top-level navigation.
   - Preserved `MegaMenu.tsx` logic via commenting for potential future restoration.
 - Pushed all design refinements to GitHub.
+
+## [2026-03-14 18:55] Antigravity
+
+- **Build Systems & Bug Fixes**:
+  - Resolved Tailwind v4 compatibility error (`border-border`) by implementing proper theme mapping in `globals.css`.
+  - Fixed client component error in `contact/page.tsx` by adding missing `'use client'` directive.
+  - Resolved `React.Children.only` error in production build by refactoring `Button.tsx` to correctly handle `asChild` prop and `Slot` children.
+- Verified fixes with successful `npm run build` locally and pushed to GitHub.
