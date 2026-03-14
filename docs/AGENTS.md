@@ -70,6 +70,17 @@
   - Confirmed no sensitive key leakage and removed all debug logs.
   - Optimized SEO meta tags across all destination pages.
 
+## [2026-03-14 01:05] Antigravity
+
+- Generated and applied comprehensive itinerary seed data for 5 major categories:
+  - **Activities**: Wild South Adventure (8h).
+  - **Group Tours**: Cultural Heritage Journey (1d).
+  - **Day Packages**: Island Bliss Escape (7h).
+  - **Cruises**: Three Islands Catamaran Cruise (8h).
+  - **Rodrigues**: Rodrigues Authentic Discovery (3d).
+- Implemented idempotent SQL seeding logic to handle schema constraints.
+- Bridged new services to appropriate categories for correct frontend filtering.
+
 ## [2026-03-14 15:25] Antigravity
 
 - **UI/UX Elevation**: Transformed web-app into a premium 10/10 OTA experience.
