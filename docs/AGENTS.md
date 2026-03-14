@@ -60,11 +60,12 @@
 ## [2026-03-14 01:00] Antigravity
 
 - Hardened `.gitignore` in `admin-app` and `web-app` to strictly ignore all `.env*` files.
-- Verified ignore rules across both ecosystems using `git check-ignore`.- **Travel Abroad Alignment**: Redesigned Mauritius, Rodrigues, and International pages to a premium "MakeMyTrip" style.
+- Verified ignore rules across both ecosystems using `git check-ignore`.
+- **Travel Abroad Alignment**: Redesigned Mauritius, Rodrigues, and International pages to a premium "MakeMyTrip" style.
   - Implemented reusable `DestinationListing` component with sidebar filters.
   - Standardized routing under `/destinations/...`.
   - Verified build stability and resolved Next.js route caching issues.
-- Synchronized repository settings to GitHub.- **Production Readiness**: Completed final production builds and security audit for both apps.
+- **Production Readiness**: Completed final production builds and security audit for both apps.
   - Verified `next build` and `vite build` success with zero errors.
   - Confirmed no sensitive key leakage and removed all debug logs.
   - Optimized SEO meta tags across all destination pages.
