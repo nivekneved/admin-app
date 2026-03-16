@@ -20,10 +20,12 @@ const CreateService = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const fileInputRef = useRef(null);
+    const roomFileInputRef = useRef(null);
 
     const [pageLoading, setPageLoading] = useState(false);
     const [formLoading, setFormLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [uploadingRoom, setUploadingRoom] = useState(null); // { index, type }
     const [categories, setCategories] = useState([]);
 
     const [formData, setFormData] = useState({
@@ -147,6 +149,59 @@ const CreateService = () => {
         } finally {
             setUploading(false);
         }
+    };
+
+    const handleRoomFileUpload = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file || !uploadingRoom) return;
+
+        // Validation: File Size (2MB)
+        const maxSize = 2 * 1024 * 1024;
+        if (file.size > maxSize) {
+            showAlert('File Too Large', 'Maximum image size is 2MB.', 'error');
+            if (roomFileInputRef.current) roomFileInputRef.current.value = '';
+            return;
+        }
+
+        const { index, type } = uploadingRoom;
+        setUploadingRoom(prev => ({ ...prev, loading: true }));
+
+        try {
+            const ext = file.name.split('.').pop();
+            const fileName = `room-${index}-${Date.now()}-${Math.random().toString(36).substring(2)}.${ext}`;
+            const filePath = `${FOLDER}/${fileName}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from(BUCKET)
+                .upload(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            const { data } = supabase.storage
+                .from(BUCKET)
+                .getPublicUrl(filePath);
+
+            if (type === 'main') {
+                updateRoomType(index, 'image_url', data.publicUrl);
+            } else {
+                addRoomImage(index, data.publicUrl);
+            }
+
+            showAlert('Success', 'Room image uploaded successfully', 'success');
+        } catch (error) {
+            console.error('Room upload error:', error);
+            showAlert('Upload Failed', error.message || 'Error uploading room image', 'error');
+        } finally {
+            setUploadingRoom(null);
+            if (roomFileInputRef.current) roomFileInputRef.current.value = '';
+        }
+    };
+
+    const triggerRoomFileUpload = (index, type) => {
+        setUploadingRoom({ index, type, loading: false });
+        setTimeout(() => {
+            roomFileInputRef.current?.click();
+        }, 100);
     };
 
     const addRoomType = () => {
@@ -666,13 +721,23 @@ const CreateService = () => {
                                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                                                 <div>
                                                                     <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Main Room Image URL</label>
-                                                                    <input
-                                                                        type="text"
-                                                                        placeholder="https://..."
-                                                                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
-                                                                        value={rt.image_url || ''}
-                                                                        onChange={e => updateRoomType(idx, 'image_url', e.target.value)}
-                                                                    />
+                                                                    <div className="flex gap-2">
+                                                                        <input
+                                                                            type="text"
+                                                                            placeholder="https://..."
+                                                                            className="grow px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                                                                            value={rt.image_url || ''}
+                                                                            onChange={e => updateRoomType(idx, 'image_url', e.target.value)}
+                                                                        />
+                                                                        <Button
+                                                                            type="button"
+                                                                            onClick={() => triggerRoomFileUpload(idx, 'main')}
+                                                                            className="bg-brand-charcoal text-white rounded-xl p-3 hover:scale-105 transition-transform shrink-0"
+                                                                            title="Upload from PC"
+                                                                        >
+                                                                            <Upload size={18} />
+                                                                        </Button>
+                                                                    </div>
                                                                 </div>
                                                                 <div>
                                                                     <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Additional Gallery Images</label>
@@ -701,6 +766,14 @@ const CreateService = () => {
                                                                         >
                                                                             Add
                                                                         </button>
+                                                                        <Button
+                                                                            type="button"
+                                                                            onClick={() => triggerRoomFileUpload(idx, 'gallery')}
+                                                                            className="bg-brand-red text-white rounded-xl p-3 hover:scale-105 transition-transform shrink-0"
+                                                                            title="Upload from PC"
+                                                                        >
+                                                                            <Upload size={18} />
+                                                                        </Button>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -717,11 +790,20 @@ const CreateService = () => {
                                                                         >
                                                                             <X size={14} />
                                                                         </button>
+                                                                        {uploadingRoom?.index === idx && uploadingRoom?.type === 'gallery' && uploadingRoom?.loading && (
+                                                                            <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
+                                                                                <Loader2 size={14} className="animate-spin text-brand-red" />
+                                                                            </div>
+                                                                        )}
                                                                     </div>
                                                                 ))}
                                                                 {(!rt.images || rt.images.length === 0) && (
                                                                     <div className="flex items-center justify-center w-20 h-20 rounded-xl border-2 border-dashed border-gray-100 text-gray-300">
-                                                                        <Camera size={20} className="opacity-20" />
+                                                                        {uploadingRoom?.index === idx && uploadingRoom?.type === 'gallery' && uploadingRoom?.loading ? (
+                                                                            <Loader2 size={16} className="animate-spin text-brand-red" />
+                                                                        ) : (
+                                                                            <Camera size={20} className="opacity-20" />
+                                                                        )}
                                                                     </div>
                                                                 )}
                                                             </div>
@@ -995,6 +1077,13 @@ const CreateService = () => {
                         {isEdit ? 'Update Service' : 'Create Service'}
                     </Button>
                 </div>
+                <input
+                    type="file"
+                    ref={roomFileInputRef}
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleRoomFileUpload}
+                />
             </form>
         </div>
     );
