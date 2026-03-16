@@ -139,7 +139,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             src={logo} 
             alt="Travel Lounge" 
             className="h-10 mb-3 object-contain" 
-            style={{ filter: 'hue-rotate(-140deg) saturate(1.5)' }}
           />
           <h1 className="text-[10px] font-black tracking-[0.2em] uppercase text-gray-500">Dashboard</h1>
         </div>
