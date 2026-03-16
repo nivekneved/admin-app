@@ -11,17 +11,17 @@ const Layout = ({ children }) => {
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-14 bg-brand-red text-white flex items-center justify-between px-6 sticky top-0 z-10 shadow-lg shadow-red-900/10">
+        <header className="h-14 bg-white text-gray-900 flex items-center justify-between px-6 sticky top-0 z-10 border-b border-gray-200">
           <div className="flex items-center gap-4">
             {!isSidebarOpen && (
               <button
                 onClick={() => setIsSidebarOpen(true)}
-                className="p-2 -ml-2 text-white/70 hover:text-white transition-all duration-300 hover:bg-white/10 rounded-xl mr-2"
+                className="p-2 -ml-2 text-gray-400 hover:text-brand-red transition-all duration-300 hover:bg-gray-50 rounded-xl mr-2"
               >
                 <Menu size={24} />
               </button>
             )}
-            <span className="hidden md:block text-[10px] font-black uppercase tracking-widest text-white/80">Security Cleared Admin</span>
+            <span className="hidden md:block text-[10px] font-black uppercase tracking-widest text-gray-400">Security Cleared Admin</span>
           </div>
           <div className="flex items-center gap-4">
             <img src={logo} alt="Travel Lounge" className="h-8 object-contain" />
