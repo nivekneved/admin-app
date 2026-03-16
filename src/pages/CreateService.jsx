@@ -721,11 +721,11 @@ const CreateService = () => {
                                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                                                 <div>
                                                                     <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Main Room Image URL</label>
-                                                                    <div className="flex gap-2">
+                                                                    <div className="flex items-center gap-2">
                                                                         <input
                                                                             type="text"
                                                                             placeholder="https://..."
-                                                                            className="grow px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                                                                            className="min-w-0 grow px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
                                                                             value={rt.image_url || ''}
                                                                             onChange={e => updateRoomType(idx, 'image_url', e.target.value)}
                                                                         />
@@ -741,39 +741,43 @@ const CreateService = () => {
                                                                 </div>
                                                                 <div>
                                                                     <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Additional Gallery Images</label>
-                                                                    <div className="flex gap-2">
-                                                                        <input
-                                                                            type="text"
-                                                                            id={`new_room_image_${idx}`}
-                                                                            placeholder="Add image URL..."
-                                                                            className="grow px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
-                                                                            onKeyDown={(e) => {
-                                                                                if (e.key === 'Enter') {
-                                                                                    e.preventDefault();
-                                                                                    addRoomImage(idx, e.target.value);
-                                                                                    e.target.value = '';
-                                                                                }
-                                                                            }}
-                                                                        />
+                                                                    <div className="flex flex-col sm:flex-row gap-2">
+                                                                        <div className="flex grow gap-2">
+                                                                            <input
+                                                                                type="text"
+                                                                                id={`new_room_image_${idx}`}
+                                                                                placeholder="Add image URL..."
+                                                                                className="min-w-0 grow px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                                                                                onKeyDown={(e) => {
+                                                                                    if (e.key === 'Enter') {
+                                                                                        e.preventDefault();
+                                                                                        addRoomImage(idx, e.target.value);
+                                                                                        e.target.value = '';
+                                                                                    }
+                                                                                }}
+                                                                            />
+                                                                            <Button
+                                                                                type="button"
+                                                                                onClick={() => triggerRoomFileUpload(idx, 'gallery')}
+                                                                                className="bg-brand-red text-white rounded-xl p-3 hover:scale-105 transition-transform shrink-0"
+                                                                                title="Upload from PC"
+                                                                            >
+                                                                                <Upload size={18} />
+                                                                            </Button>
+                                                                        </div>
                                                                         <button
                                                                             type="button"
                                                                             onClick={() => {
                                                                                 const input = document.getElementById(`new_room_image_${idx}`);
-                                                                                addRoomImage(idx, input.value);
-                                                                                input.value = '';
+                                                                                if (input.value) {
+                                                                                    addRoomImage(idx, input.value);
+                                                                                    input.value = '';
+                                                                                }
                                                                             }}
-                                                                            className="px-6 py-3 bg-brand-charcoal text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-transform"
+                                                                            className="shrink-0 px-6 py-3 bg-brand-charcoal text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-transform"
                                                                         >
                                                                             Add
                                                                         </button>
-                                                                        <Button
-                                                                            type="button"
-                                                                            onClick={() => triggerRoomFileUpload(idx, 'gallery')}
-                                                                            className="bg-brand-red text-white rounded-xl p-3 hover:scale-105 transition-transform shrink-0"
-                                                                            title="Upload from PC"
-                                                                        >
-                                                                            <Upload size={18} />
-                                                                        </Button>
                                                                     </div>
                                                                 </div>
                                                             </div>
