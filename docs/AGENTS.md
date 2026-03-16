@@ -137,3 +137,4 @@
   - Seeded high-quality room data for *The Oberoi Beach Resort* via Supabase.
   - Implemented a premium "Choose Your Room" interactive UI in `HotelClientWrapper.tsx`.
   - Integrated selection logic with `BookingWizard.tsx` and updated dynamic pricing.
+- [2026-03-16 08:15] **Build Error Fix**: Resolved TypeScript error in `lib/bookingService.ts` by adding `roomPreference` to the `BookingRequestData` interface. Updated booking description to include selected room details.

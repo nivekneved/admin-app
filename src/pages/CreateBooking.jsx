@@ -172,8 +172,10 @@ const CreateBooking = () => {
                         <ArrowLeft size={20} />
                     </Link>
                     <div>
-                        <h1 className="text-3xl font-black text-gray-900 tracking-tight">Reserve New Itinerary</h1>
-                        <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mt-1">Global Booking Engine / Manual Entry</p>
+-                        <h1 className="text-3xl font-black text-gray-900 tracking-tight">Reserve New Itinerary</h1>
++                        <h1 className="text-3xl font-black text-gray-900 tracking-tight">New Booking</h1>
+-                        <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mt-1">Global Booking Engine / Manual Entry</p>
++                        <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mt-1">Global Travel Planner / Manual Entry</p>
                     </div>
                 </div>
             </div>
@@ -187,7 +189,8 @@ const CreateBooking = () => {
                                 <div className="p-4 bg-red-50 text-brand-red rounded-3xl">
                                     <Plane size={24} />
                                 </div>
-                                <CardTitle className="text-xl font-black text-gray-900 uppercase tracking-tight">Multi-Service Itinerary Matrix</CardTitle>
+-                                <CardTitle className="text-xl font-black text-gray-900 uppercase tracking-tight">Multi-Service Itinerary Matrix</CardTitle>
++                                <CardTitle className="text-xl font-black text-gray-900 uppercase tracking-tight">Service Itinerary Overview</CardTitle>
                             </div>
                         </CardHeader>
                         <CardContent className="p-10">
@@ -217,7 +220,8 @@ const CreateBooking = () => {
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     <div className="space-y-3">
-                                        <label className="block text-[11px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">Execution Date</label>
+-                                        <label className="block text-[11px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">Execution Date</label>
++                                        <label className="block text-[11px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">Travel Date</label>
                                         <div className="relative group">
                                             <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 transition-colors group-focus-within:text-brand-red">
                                                 <Calendar size={18} />
@@ -418,8 +422,10 @@ const CreateBooking = () => {
                                                 </>
                                             ) : (
                                                 <>
-                                                    <CheckCircle2 size={20} className="mr-3" />
-                                                    Commit Booking
+-                                                    <CheckCircle2 size={20} className="mr-3" />
+-                                                    Commit Booking
++                                                    <CheckCircle2 size={20} className="mr-3" />
++                                                    Confirm Booking
                                                 </>
                                             )}
                                         </Button>
@@ -433,9 +439,9 @@ const CreateBooking = () => {
                 <div className="xl:col-span-4 space-y-8">
                     <Card className="border border-gray-300 shadow-xl shadow-gray-100 rounded-3xl overflow-hidden bg-brand-charcoal text-white">
                         <CardHeader className="pt-8 px-8">
-                            <CardTitle className="text-sm font-black uppercase tracking-[0.2em] text-gray-400 flex items-center gap-2">
-                                <Info size={16} className="text-brand-red" /> Dispatch Protocol
-                            </CardTitle>
+                                <CardTitle className="text-sm font-black uppercase tracking-[0.2em] text-gray-400 flex items-center gap-2">
+                                    <Info size={16} className="text-brand-red" /> Travel Guide
+                                </CardTitle>
                         </CardHeader>
                         <CardContent className="px-8 pb-8 space-y-8">
                             <div className="space-y-4">
@@ -455,7 +461,8 @@ const CreateBooking = () => {
 
                             <div className="pt-8 border-t border-white/5">
                                 <div className="p-8 bg-red-600/10 rounded-[40px] border border-white/5 relative overflow-hidden text-center">
-                                    <h4 className="text-[10px] font-black text-brand-red uppercase tracking-[0.2em]">Matrix Status</h4>
+-                                    <h4 className="text-[10px] font-black text-brand-red uppercase tracking-[0.2em]">Matrix Status</h4>
++                                    <h4 className="text-[10px] font-black text-brand-red uppercase tracking-[0.2em]">Sync Status</h4>
                                     <div className="text-2xl font-black text-white italic">SYNCHRONIZED</div>
                                 </div>
                             </div>
@@ -467,7 +474,8 @@ const CreateBooking = () => {
                             <MapPin size={120} />
                         </div>
                         <div className="relative">
-                            <h4 className="text-sm font-black text-red-900 mb-2 uppercase tracking-widest underline decoration-red-200 decoration-4 underline-offset-4">Location Matrix</h4>
+-                            <h4 className="text-sm font-black text-red-900 mb-2 uppercase tracking-widest underline decoration-red-200 decoration-4 underline-offset-4">Location Matrix</h4>
++                            <h4 className="text-sm font-black text-red-900 mb-2 uppercase tracking-widest underline decoration-red-200 decoration-4 underline-offset-4">Location Finder</h4>
                             <p className="text-xs text-red-700/80 font-bold leading-relaxed">
                                 Localized itineraries automatically update based on the geolocation of the selected activity service.
                             </p>

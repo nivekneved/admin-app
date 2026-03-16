@@ -261,7 +261,7 @@ const Services = () => {
                 <Search className="absolute left-3 top-2.5 text-gray-300" size={16} />
                 <input
                   type="text"
-                  placeholder="Query global inventory…"
+                  placeholder="Search all services…"
                   className="pl-9 pr-9 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}

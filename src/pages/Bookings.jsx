@@ -32,7 +32,12 @@ const Bookings = () => {
             last_name,
             email
           ),
-          booking_items (*)
+          booking_items (
+            *,
+            services (
+              image_url
+            )
+          )
         `)
         .order('created_at', { ascending: false });
 
@@ -282,8 +287,9 @@ const Bookings = () => {
     <div>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-black text-gray-900 tracking-tight">Bookings Management</h1>
-          <p className="text-gray-400 text-sm font-medium">Coordinate and track global travel luxury reservations</p>
+-          <h1 className="text-2xl font-black text-gray-900 tracking-tight">Bookings</h1>
++          <h1 className="text-2xl font-black text-gray-900 tracking-tight">Bookings Management</h1>
+          <p className="text-gray-400 text-sm font-medium">Manage your customer bookings and travel plans</p>
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -389,10 +395,10 @@ const Bookings = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50/30">
                   <tr>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Reservation & Timing</th>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Customer Details</th>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Activity Specification</th>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Rate & Status</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Date & Time</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Customer</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Booking Details</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Price & Status</th>
                     <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
                   </tr>
                 </thead>
@@ -615,14 +621,18 @@ const Bookings = () => {
               {viewingBooking.booking_items && viewingBooking.booking_items.length > 0 && (
                 <div className="bg-white rounded-2xl p-6 border border-gray-200 col-span-2 shadow-sm">
                   <div className="flex items-center text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">
-                    <Tag size={12} className="mr-2" /> Detailed Itinerary Specification
+                    <Tag size={12} className="mr-2" /> Detailed Booking Items
                   </div>
                   <div className="space-y-4">
-                    {viewingBooking.booking_items.map((it, idx) => (
+                    {viewingBooking.booking_items.map((it) => (
                       <div key={it.id} className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
                         <div className="flex items-center gap-3">
-                          <div className="w-6 h-6 rounded-lg bg-gray-50 flex items-center justify-center text-[10px] font-black text-gray-400">
-                            {idx + 1}
+                          <div className="w-12 h-12 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center overflow-hidden shrink-0">
+                            {it.services?.image_url ? (
+                              <img src={it.services.image_url} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="text-[10px] font-black text-gray-300">N/A</div>
+                            )}
                           </div>
                           <div>
                             <p className="text-xs font-black text-gray-900">{it.service_name}</p>
