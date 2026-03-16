@@ -30,6 +30,7 @@ const CreateService = () => {
         status: 'In Stock',
         description: '',
         image_url: '',
+        secondary_image_url: '',
         amenities: [],
         room_types: [],
         itinerary: []
@@ -82,6 +83,7 @@ const CreateService = () => {
                     status: data.status || 'In Stock',
                     description: data.description || '',
                     image_url: data.image_url || '',
+                    secondary_image_url: data.secondary_image_url || '',
                     amenities: data.amenities || [],
                     room_types: data.room_types || [],
                     itinerary: data.itinerary || []
@@ -223,7 +225,7 @@ const CreateService = () => {
     const addItineraryDay = () => {
         setFormData(prev => ({
             ...prev,
-            itinerary: [...prev.itinerary, { day: `Day ${prev.itinerary.length + 1}`, title: '', description: '' }]
+            itinerary: [...prev.itinerary, { day: `Day ${prev.itinerary.length + 1}`, title: '', description: '', image_url: '' }]
         }));
     };
 
@@ -265,6 +267,7 @@ const CreateService = () => {
                 status: formData.status,
                 description: formData.description,
                 image_url: formData.image_url,
+                secondary_image_url: formData.secondary_image_url,
                 amenities: formData.amenities,
                 room_types: formData.room_types,
                 itinerary: formData.itinerary,
@@ -470,17 +473,15 @@ const CreateService = () => {
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Secondary Image Vector (Optional URL)</label>
-                                        <div className="relative">
-                                            <input
-                                                type="text"
-                                                name="image_url"
-                                                className="w-full pl-6 pr-12 py-4 bg-gray-50 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-sm font-medium"
-                                                value={formData.image_url}
-                                                onChange={handleInputChange}
-                                                placeholder="https://..."
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Secondary Image Vector (Optional Selection)</label>
+                                        <div className="h-32">
+                                            <ImageUpload
+                                                value={formData.secondary_image_url}
+                                                onChange={(url) => setFormData(prev => ({ ...prev, secondary_image_url: url }))}
+                                                folder="services"
+                                                aspectRatio="aspect-video"
+                                                placeholder="Secondary Image"
                                             />
-                                            <Camera size={16} className="absolute right-4 top-4 text-gray-300" />
                                         </div>
                                     </div>
                                 </div>
@@ -811,15 +812,28 @@ const CreateService = () => {
                                                         </div>
 
                                                         <div className="flex-1 space-y-4">
-                                                            <div>
-                                                                <label className="block text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Stop Title / Highlight</label>
-                                                                <input
-                                                                    type="text"
-                                                                    placeholder="e.g. Arrival at Blue Bay Marine Park"
-                                                                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-brand-red"
-                                                                    value={it.title}
-                                                                    onChange={e => updateItineraryDay(idx, 'title', e.target.value)}
-                                                                />
+                                                            <div className="flex flex-col md:flex-row gap-4">
+                                                                <div className="flex-1">
+                                                                    <label className="block text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Stop Title / Highlight</label>
+                                                                    <input
+                                                                        type="text"
+                                                                        placeholder="e.g. Arrival at Blue Bay Marine Park"
+                                                                        className="w-full px-4 py-2 bg-white border border-gray-300 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-brand-red"
+                                                                        value={it.title}
+                                                                        onChange={e => updateItineraryDay(idx, 'title', e.target.value)}
+                                                                    />
+                                                                </div>
+                                                                <div className="w-full md:w-48 h-20">
+                                                                    <label className="block text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Stop Illustration</label>
+                                                                    <ImageUpload
+                                                                        value={it.image_url}
+                                                                        onChange={url => updateItineraryDay(idx, 'image_url', url)}
+                                                                        folder="itineraries"
+                                                                        aspectRatio="aspect-video"
+                                                                        showUrlInput={false}
+                                                                        placeholder="Add Image"
+                                                                    />
+                                                                </div>
                                                             </div>
                                                             <div>
                                                                 <label className="block text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Stop Description</label>
