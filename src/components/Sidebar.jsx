@@ -141,7 +141,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             className="h-10 mb-3 object-contain" 
             style={{ filter: 'hue-rotate(-140deg) saturate(1.5)' }}
           />
-          <h1 className="text-[10px] font-black tracking-[0.2em] uppercase text-gray-500">Travel Management Hub</h1>
+          <h1 className="text-[10px] font-black tracking-[0.2em] uppercase text-gray-500">Dashboard</h1>
         </div>
 
         <nav className="mt-2 px-3 flex-1 overflow-y-auto custom-scrollbar pb-20">
@@ -154,7 +154,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 }`}
             >
               <Home size={18} className="mr-3" />
-              <span className="font-bold text-xs uppercase tracking-tight">Dashboard Overview</span>
+              <span className="font-bold text-xs uppercase tracking-tight">Dashboard</span>
             </Link>
           </div>
 
