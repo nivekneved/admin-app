@@ -154,6 +154,7 @@ const CreateService = () => {
             ...prev,
             room_types: [...prev.room_types, {
                 type: '',
+                image_url: '',
                 available: true,
                 features: [],
                 prices: { mon: '', tue: '', wed: '', thu: '', fri: '', sat: '', sun: '' }
@@ -632,6 +633,16 @@ const CreateService = () => {
                                                                 className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
                                                                 value={rt.type}
                                                                 onChange={e => updateRoomType(idx, 'type', e.target.value)}
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Room Image URL</label>
+                                                            <input
+                                                                type="text"
+                                                                placeholder="https://..."
+                                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                                                                value={rt.image_url || ''}
+                                                                onChange={e => updateRoomType(idx, 'image_url', e.target.value)}
                                                             />
                                                         </div>
                                                         <div className="flex items-end pb-1 px-1">

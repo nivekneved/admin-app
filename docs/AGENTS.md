@@ -132,3 +132,8 @@
 - **Prop Completeness**: Added missing required `id` prop to all `ServiceCard` component instances globally.
 - **Final Verification**: Confirmed success with `npx tsc --noEmit` and local `npm run build` (Exit Code 0).
 - **Git Synchronization**: Pushed all build remediation changes to GitHub.
+- [2026-03-16 06:55] **Room Type Selection & Preview**:
+  - Enhanced Admin App with `image_url` field for room types in `CreateService.jsx`.
+  - Seeded high-quality room data for *The Oberoi Beach Resort* via Supabase.
+  - Implemented a premium "Choose Your Room" interactive UI in `HotelClientWrapper.tsx`.
+  - Integrated selection logic with `BookingWizard.tsx` and updated dynamic pricing.
