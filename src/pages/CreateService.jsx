@@ -30,6 +30,7 @@ const CreateService = () => {
         status: 'In Stock',
         description: '',
         image_url: '',
+        secondary_image_url: '',
         amenities: [],
         room_types: [],
         itinerary: []
@@ -79,8 +80,10 @@ const CreateService = () => {
                     category_ids: data.service_categories?.map(pc => pc.category_id) || [],
                     price: data.base_price || '',
                     stock: data.stock || '',
+                    status: data.status || 'In Stock',
                     description: data.description || '',
                     image_url: data.image_url || '',
+                    secondary_image_url: data.secondary_image_url || '',
                     amenities: data.amenities || [],
                     room_types: data.room_types || [],
                     itinerary: data.itinerary || []
@@ -264,6 +267,7 @@ const CreateService = () => {
                 status: formData.status,
                 description: formData.description,
                 image_url: formData.image_url,
+                secondary_image_url: formData.secondary_image_url,
                 amenities: formData.amenities,
                 room_types: formData.room_types,
                 itinerary: formData.itinerary,
@@ -442,7 +446,6 @@ const CreateService = () => {
                                         placeholder="e.g. Premium VIP Lounge Access"
                                     />
                                 </div>
-
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Service Categories (Select Multiple)</label>
@@ -468,7 +471,18 @@ const CreateService = () => {
                                             )}
                                         </div>
                                     </div>
-                                    {/* Removed redundant Secondary Image field that caused schema errors */}
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Secondary Image Vector (Optional Selection)</label>
+                                        <div className="h-32">
+                                            <ImageUpload
+                                                value={formData.secondary_image_url}
+                                                onChange={(url) => setFormData(prev => ({ ...prev, secondary_image_url: url }))}
+                                                folder="services"
+                                                aspectRatio="aspect-video"
+                                                placeholder="Secondary Image"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div>
