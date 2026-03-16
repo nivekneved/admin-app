@@ -4,11 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import {
   Tag, Loader2, RefreshCw, Plus, Search, Edit2, Trash2,
   LayoutGrid, List, ArrowUpDown, Package,
-  ChevronDown
+  ChevronDown, FileSpreadsheet
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
+import ExcelImport from '../components/ExcelImport';
+import { bulkSyncServices } from '../services/serviceSync';
 import { showAlert, showConfirm } from '../utils/swal';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -70,6 +72,7 @@ const Services = () => {
   const [viewMode, setViewMode] = useState('list');
   const [perPage] = useState(8);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   // ─── Queries ─────────────────────────────────────────────────────────────
   const { data: categories = [], isLoading: categoriesLoading } = useQuery({
@@ -169,6 +172,17 @@ const Services = () => {
     setSortBy('created_at:desc');
     setCurrentPage(1);
   };
+  
+  const handleBulkImport = async (data) => {
+    try {
+      await bulkSyncServices(data);
+      showAlert('Success', `${data.length} services imported successfully`, 'success');
+      refetchServices();
+    } catch (error) {
+      console.error('Import error:', error);
+      throw error; // Re-throw to be caught by ExcelImport component handleImport
+    }
+  };
 
   const hasActiveFilters = searchTerm || selectedCategories.length > 0 || filterStatus !== 'All' || minPrice || maxPrice || selectedAmenities.length > 0;
   const selectCls = 'px-3 py-2 text-sm font-semibold bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red appearance-none cursor-pointer text-gray-700 hover:border-gray-300 transition-colors';
@@ -247,11 +261,20 @@ const Services = () => {
           <Button onClick={() => refetchServices()} variant="outline" className="text-gray-500 border-gray-200 flex items-center gap-2">
             <RefreshCw size={15} className={loading ? 'animate-spin' : ''} /> Sync
           </Button>
+          <Button onClick={() => setIsImportModalOpen(true)} variant="outline" className="text-gray-500 border-gray-200 flex items-center gap-2">
+            <FileSpreadsheet size={15} /> Import Excel
+          </Button>
           <Button onClick={openCreate} className="bg-brand-red hover:opacity-90 text-white flex items-center gap-2 shadow-lg shadow-red-100">
             <Plus size={16} /> Add Service
           </Button>
         </div>
       </div>
+
+      <ExcelImport 
+        isOpen={isImportModalOpen} 
+        onClose={() => setIsImportModalOpen(false)} 
+        onImport={handleBulkImport} 
+      />
 
       <Card className="border border-gray-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
         <CardHeader className="border-b border-gray-50 pb-4 bg-white px-8 pt-8">
