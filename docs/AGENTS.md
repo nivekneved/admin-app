@@ -144,3 +144,4 @@
   - Fixed broken image paths for "Catamaran Sunset" and updated cruise placeholders globally in the database.
   - Synchronized `web-app` repository state with a final Git push.
 - [2026-03-16 17:35] **Build Error Remediation**: Fixed Vercel build failure by adding the missing `'use client'` directive to `app/transfers/page.tsx`. Pushed the fix to the `main` branch.
+- [2026-03-16 17:40] **UI Visibility Fix**: Resolved "white text on white background" issue in horizontal menu. Restored premium transparent-to-white navbar transition and implemented scroll-aware dynamic text colors in `NavRecursive.tsx`.
