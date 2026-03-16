@@ -155,6 +155,7 @@ const CreateService = () => {
             room_types: [...prev.room_types, {
                 type: '',
                 image_url: '',
+                images: [], // Support for multiple images
                 available: true,
                 features: [],
                 prices: { mon: '', tue: '', wed: '', thu: '', fri: '', sat: '', sun: '' }
@@ -195,6 +196,32 @@ const CreateService = () => {
             updatedRooms[roomIdx] = {
                 ...updatedRooms[roomIdx],
                 features: (updatedRooms[roomIdx].features || []).filter(f => f !== feature)
+            };
+            return { ...prev, room_types: updatedRooms };
+        });
+    };
+
+    const addRoomImage = (roomIdx, url) => {
+        if (!url) return;
+        setFormData(prev => {
+            const updatedRooms = [...prev.room_types];
+            const currentImages = updatedRooms[roomIdx].images || [];
+            if (!currentImages.includes(url)) {
+                updatedRooms[roomIdx] = {
+                    ...updatedRooms[roomIdx],
+                    images: [...currentImages, url]
+                };
+            }
+            return { ...prev, room_types: updatedRooms };
+        });
+    };
+
+    const removeRoomImage = (roomIdx, url) => {
+        setFormData(prev => {
+            const updatedRooms = [...prev.room_types];
+            updatedRooms[roomIdx] = {
+                ...updatedRooms[roomIdx],
+                images: (updatedRooms[roomIdx].images || []).filter(img => img !== url)
             };
             return { ...prev, room_types: updatedRooms };
         });
@@ -635,15 +662,69 @@ const CreateService = () => {
                                                                 onChange={e => updateRoomType(idx, 'type', e.target.value)}
                                                             />
                                                         </div>
-                                                        <div>
-                                                            <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Room Image URL</label>
-                                                            <input
-                                                                type="text"
-                                                                placeholder="https://..."
-                                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
-                                                                value={rt.image_url || ''}
-                                                                onChange={e => updateRoomType(idx, 'image_url', e.target.value)}
-                                                            />
+                                                        <div className="md:col-span-2 space-y-4">
+                                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                                <div>
+                                                                    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Main Room Image URL</label>
+                                                                    <input
+                                                                        type="text"
+                                                                        placeholder="https://..."
+                                                                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                                                                        value={rt.image_url || ''}
+                                                                        onChange={e => updateRoomType(idx, 'image_url', e.target.value)}
+                                                                    />
+                                                                </div>
+                                                                <div>
+                                                                    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Additional Gallery Images</label>
+                                                                    <div className="flex gap-2">
+                                                                        <input
+                                                                            type="text"
+                                                                            id={`new_room_image_${idx}`}
+                                                                            placeholder="Add image URL..."
+                                                                            className="grow px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                                                                            onKeyDown={(e) => {
+                                                                                if (e.key === 'Enter') {
+                                                                                    e.preventDefault();
+                                                                                    addRoomImage(idx, e.target.value);
+                                                                                    e.target.value = '';
+                                                                                }
+                                                                            }}
+                                                                        />
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => {
+                                                                                const input = document.getElementById(`new_room_image_${idx}`);
+                                                                                addRoomImage(idx, input.value);
+                                                                                input.value = '';
+                                                                            }}
+                                                                            className="px-6 py-3 bg-brand-charcoal text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-transform"
+                                                                        >
+                                                                            Add
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            {/* Room Image Gallery Preview */}
+                                                            <div className="flex flex-wrap gap-3 mt-2">
+                                                                {(rt.images || []).map((imgUrl, imgIdx) => (
+                                                                    <div key={imgIdx} className="relative group/img w-20 h-20 rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+                                                                        <img src={imgUrl} alt={`Room ${idx} image ${imgIdx}`} className="w-full h-full object-cover" />
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => removeRoomImage(idx, imgUrl)}
+                                                                            className="absolute inset-0 bg-red-600/80 text-white opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center"
+                                                                        >
+                                                                            <X size={14} />
+                                                                        </button>
+                                                                    </div>
+                                                                ))}
+                                                                {(!rt.images || rt.images.length === 0) && (
+                                                                    <div className="flex items-center justify-center w-20 h-20 rounded-xl border-2 border-dashed border-gray-100 text-gray-300">
+                                                                        <Camera size={20} className="opacity-20" />
+                                                                    </div>
+                                                                )}
+                                                            </div>
                                                         </div>
                                                         <div className="flex items-end pb-1 px-1">
                                                             <button
