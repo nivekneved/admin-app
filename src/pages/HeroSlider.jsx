@@ -19,13 +19,14 @@ import { CSS } from '@dnd-kit/utilities';
 import {
     Video, Plus, Search, Edit2, Trash2,
     RefreshCw, Loader2, X,
-    Layout, AlignLeft, AlignCenter, AlignRight, Check, Upload, Image as ImageIcon,
+    Layout, AlignLeft, AlignCenter, AlignRight, Check, ImageIcon,
     GripVertical
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
 import { showAlert, showConfirm } from '../utils/swal';
+import ImageUpload from '../components/ImageUpload';
 
 // --- Sortable Item Components ---
 
@@ -199,7 +200,6 @@ const HeroSlider = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentSlide, setCurrentSlide] = useState(null);
     const [formLoading, setFormLoading] = useState(false);
-    const [uploading, setUploading] = useState(false);
 
     // Form State
     const [formData, setFormData] = useState({
@@ -283,39 +283,6 @@ const HeroSlider = () => {
         setIsModalOpen(true);
     };
 
-    const handleFileUpload = async (e) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        setUploading(true);
-        try {
-            const fileExt = file.name.split('.').pop();
-            const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
-            const filePath = `hero-slides/${fileName}`;
-
-            const { error: uploadError } = await supabase.storage
-                .from('bucket')
-                .upload(filePath, file);
-
-            if (uploadError) throw uploadError;
-
-            const { data: { publicUrl } } = supabase.storage
-                .from('bucket')
-                .getPublicUrl(filePath);
-
-            setFormData(prev => ({
-                ...prev,
-                [formData.media_type === 'video' ? 'video_url' : 'image_url']: publicUrl
-            }));
-
-            showAlert('Success', 'Media uploaded successfully', 'success');
-        } catch (error) {
-            console.error('Error uploading file:', error);
-            showAlert('Error', error.message || 'Failed to upload media', 'error');
-        } finally {
-            setUploading(false);
-        }
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -635,71 +602,31 @@ const HeroSlider = () => {
                                         </div>
                                     </div>
 
-                                    <div className="space-y-2">
-                                        <div className="flex items-center justify-between ml-1">
-                                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Primary Asset (Image URL)</label>
-                                            <label className="cursor-pointer group flex items-center gap-1.5 text-[9px] font-black text-brand-red uppercase tracking-wider hover:opacity-80 transition-opacity">
-                                                <input
-                                                    type="file"
-                                                    className="hidden"
-                                                    accept={formData.media_type === 'video' ? "video/*" : "image/*"}
-                                                    onChange={handleFileUpload}
-                                                    disabled={uploading}
-                                                />
-                                                {uploading ? (
-                                                    <Loader2 size={12} className="animate-spin" />
-                                                ) : (
-                                                    <Upload size={12} />
-                                                )}
-                                                {uploading ? 'Uploading...' : 'Upload from PC'}
-                                            </label>
-                                        </div>
-                                        <div className="relative group">
-                                            <input
-                                                required
-                                                type="text"
-                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-mono text-[10px] text-gray-500 pr-12"
-                                                value={formData.image_url}
-                                                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                                                placeholder="https://images.unsplash.com/..."
-                                            />
-                                            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300">
-                                                <ImageIcon size={16} />
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <ImageUpload
+                                        label={formData.media_type === 'video' ? "Motion Graphic (Video/Image)" : "Primary Identity (Image)"}
+                                        value={formData.media_type === 'video' ? formData.video_url : formData.image_url}
+                                        onChange={(url) => setFormData(prev => ({ 
+                                            ...prev, 
+                                            [formData.media_type === 'video' ? 'video_url' : 'image_url']: url 
+                                        }))}
+                                        folder="hero-slides"
+                                        aspectRatio="aspect-video"
+                                        placeholder={`Click to upload ${formData.media_type === 'video' ? 'Video' : 'Image'} Asset`}
+                                    />
 
                                     {formData.media_type === 'video' && (
                                         <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
                                             <div className="flex items-center justify-between ml-1">
-                                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Motion Buffer (Video URL)</label>
-                                                <label className="cursor-pointer group flex items-center gap-1.5 text-[9px] font-black text-brand-red uppercase tracking-wider hover:opacity-80 transition-opacity">
-                                                    <input
-                                                        type="file"
-                                                        className="hidden"
-                                                        accept="video/*"
-                                                        onChange={handleFileUpload}
-                                                        disabled={uploading}
-                                                    />
-                                                    {uploading ? (
-                                                        <Loader2 size={12} className="animate-spin" />
-                                                    ) : (
-                                                        <Upload size={12} />
-                                                    )}
-                                                    {uploading ? 'Uploading...' : 'Upload Video'}
-                                                </label>
+                                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Static Fallback (Poster Image)</label>
                                             </div>
-                                            <div className="relative group">
-                                                <input
-                                                    type="text"
-                                                    className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-mono text-[10px] text-gray-500 pr-12"
-                                                    value={formData.video_url}
-                                                    onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
-                                                />
-                                                <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300">
-                                                    <Video size={16} />
-                                                </div>
-                                            </div>
+                                            <ImageUpload
+                                                value={formData.image_url}
+                                                onChange={(url) => setFormData(prev => ({ ...prev, image_url: url }))}
+                                                folder="hero-slides"
+                                                aspectRatio="aspect-video"
+                                                showUrlInput={true}
+                                                placeholder="Static Poster Identity"
+                                            />
                                         </div>
                                     )}
 

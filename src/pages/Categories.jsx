@@ -10,6 +10,7 @@ import {
 import { supabase } from '../lib/supabase';
 import Modal from '../components/Modal';
 import { showAlert, showConfirm } from '../utils/swal';
+import ImageUpload from '../components/ImageUpload';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const slugify = (str) =>
@@ -159,6 +160,7 @@ const Categories = () => {
             return updated;
         });
     };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -384,8 +386,12 @@ const Categories = () => {
                                             {/* Category Asset (Name + Icon + Slug) */}
                                             <td className="px-8 py-5 whitespace-nowrap">
                                                 <div className="flex items-center">
-                                                    <div className="w-10 h-10 rounded-2xl bg-red-50/50 border border-red-100/50 flex items-center justify-center text-brand-red mr-4 shrink-0 shadow-sm">
-                                                        {getCategoryIcon(cat.name)}
+                                                    <div className="w-10 h-10 rounded-2xl bg-red-50/50 border border-red-100/50 flex items-center justify-center text-brand-red mr-4 shrink-0 shadow-sm overflow-hidden">
+                                                        {cat.image_url ? (
+                                                            <img src={cat.image_url} alt="" className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            getCategoryIcon(cat.name)
+                                                        )}
                                                     </div>
                                                     <div>
                                                         <div className="text-sm font-black text-gray-900 mb-0.5 tracking-tight">{cat.name}</div>
@@ -468,10 +474,14 @@ const Categories = () => {
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-8 bg-gray-50/30">
                             {processed.map((cat) => (
                                 <div key={cat.id} className="group relative bg-white border border-gray-200 rounded-3xl p-5 shadow-sm hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 flex flex-col h-full">
-                                    {/* Icon & Status */}
+                                    {/* Icon/Image & Status */}
                                     <div className="flex items-start justify-between mb-4">
-                                        <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center text-brand-red shadow-inner group-hover:scale-110 transition-transform duration-500">
-                                            {getCategoryIcon(cat.name)}
+                                        <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center text-brand-red shadow-inner group-hover:scale-110 transition-transform duration-500 overflow-hidden">
+                                            {cat.image_url ? (
+                                                <img src={cat.image_url} alt="" className="w-full h-full object-cover" />
+                                            ) : (
+                                                getCategoryIcon(cat.name)
+                                            )}
                                         </div>
                                         <button
                                             type="button"
@@ -674,14 +684,13 @@ const Categories = () => {
                         </div>
                     </div>
 
-                    <div>
-                        <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Image URL (optional)</label>
-                        <input type="text" name="image_url"
-                            placeholder="https://..."
-                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-sm"
-                            value={formData.image_url} onChange={handleInputChange}
-                        />
-                    </div>
+                    <ImageUpload
+                        label="Category Image"
+                        value={formData.image_url}
+                        onChange={(url) => setFormData(prev => ({ ...prev, image_url: url }))}
+                        folder="categories"
+                        aspectRatio="aspect-video"
+                    />
 
                     {/* Toggles */}
                     <div className="flex items-center gap-6 pt-1">
