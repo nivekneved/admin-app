@@ -4,7 +4,7 @@ import {
   Users, 
   UserCheck, 
   Package, 
-  ShoppingCart, 
+  // ShoppingCart, 
   Settings, 
   LogOut, 
   Home, 
@@ -73,9 +73,9 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       items: [
         { title: 'Services', path: '/services', icon: <Package size={16} /> },
         { title: 'Categories', path: '/categories', icon: <Layers size={16} /> },
-        { title: 'Orders', path: '/orders', icon: <ShoppingCart size={16} /> },
+        // { title: 'Orders', path: '/orders', icon: <ShoppingCart size={16} /> },
         { title: 'Bookings', path: '/bookings', icon: <Calendar size={16} /> },
-        { title: 'Invoices', path: '/invoices', icon: <FileEdit size={16} /> },
+        // { title: 'Invoices', path: '/invoices', icon: <FileEdit size={16} /> },
         { title: 'Reports', path: '/reports', icon: <BarChart2 size={16} /> },
       ]
     },
