@@ -2,8 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
-import { Search, Plus, Edit, Trash2, Mail, Phone, MapPin, Loader2, RefreshCw, UserCheck, UserPlus, Eye, ChevronDown, ArrowUpDown } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Mail, Phone, MapPin, Loader2, RefreshCw, UserCheck, UserPlus, Eye, ChevronDown, ArrowUpDown, Printer } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import logo from '../assets/logo.png';
 import Modal from '../components/Modal';
 import { showAlert, showConfirm } from '../utils/swal';
 
@@ -237,7 +238,18 @@ const Customers = () => {
 
     return (
         <div>
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            {/* Print Header */}
+            <div className="hidden print-only mb-8 border-b-2 border-brand-red pb-4">
+                <div className="flex justify-between items-center">
+                    <div>
+                        <h1 className="text-3xl font-black text-gray-900 uppercase tracking-tighter">Customer Audit Registry</h1>
+                        <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mt-1">Travel Lounge Official Document | {new Date().toLocaleDateString()}</p>
+                    </div>
+                    <img src={logo} alt="Travel Lounge" className="h-12 object-contain" />
+                </div>
+            </div>
+
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 no-print">
                 <div>
                     <h1 className="text-2xl font-black text-gray-900 tracking-tight">Customer Management</h1>
                     <p className="text-gray-400 text-sm font-medium">Coordinate global relationships and luxury clientele data</p>
@@ -252,6 +264,14 @@ const Customers = () => {
                         <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
                         Sync
                     </Button>
+                    <Button
+                        variant="outline"
+                        onClick={() => window.print()}
+                        className="text-gray-500 border-gray-200 flex items-center gap-2"
+                    >
+                        <Printer size={15} />
+                        Print List
+                    </Button>
                     <Link to="/customers/create">
                         <Button className="bg-brand-red hover:opacity-90 text-white flex items-center gap-2 shadow-lg shadow-red-100 font-bold">
                             <Plus size={16} />
@@ -260,8 +280,7 @@ const Customers = () => {
                     </Link>
                 </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 no-print">
                 <Card className="border border-gray-200 shadow-lg shadow-gray-100 rounded-3xl overflow-hidden bg-white">
                     <CardContent className="flex items-center p-6">
                         <div className="p-4 bg-red-50 text-brand-red rounded-2xl mr-4">
@@ -383,7 +402,7 @@ const Customers = () => {
                                         <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Client Identity/ID</th>
                                         <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Communications</th>
                                         <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Profile & Status</th>
-                                        <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
+                                        <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest no-print">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
@@ -433,7 +452,7 @@ const Customers = () => {
                                                     </span>
                                                 </div>
                                             </td>
-                                            <td className="px-8 py-5 whitespace-nowrap text-right">
+                                            <td className="px-8 py-5 whitespace-nowrap text-right no-print">
                                                 <div className="flex justify-end items-center gap-1">
                                                     <Link to={`/customers/${customer.id}`}>
                                                         <button
