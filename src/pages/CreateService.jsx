@@ -491,12 +491,12 @@ const CreateService = () => {
                                     </div>
                                     <div>
                                         <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Secondary Image Vector (Optional Selection)</label>
-                                        <div className="h-32">
+                                        <div className="min-h-[128px]">
                                             <ImageUpload
                                                 value={formData.secondary_image_url}
                                                 onChange={(url) => setFormData(prev => ({ ...prev, secondary_image_url: url }))}
                                                 folder="services"
-                                                aspectRatio="aspect-video"
+                                                aspectRatio="aspect-[3/1]"
                                                 placeholder="Secondary Image"
                                             />
                                         </div>
