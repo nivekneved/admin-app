@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader } from '../components/Card';
 import {
   RefreshCw, TrendingUp, Users, Calendar,
-  ShoppingBag, FileText, CheckCircle, Clock, XCircle, BarChart2,
+  // ShoppingBag, FileText, 
+  CheckCircle, Clock, XCircle, BarChart2,
   Activity, Coffee, Star, MapPin, Plane, Sun
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -358,13 +359,13 @@ const Reports = () => {
         <StatCard icon={TrendingUp} label="Booking Revenue" value={fmtRs(stats.totalRevenue)} color="green" loading={loading} />
         <StatCard icon={Users} label="Total Customers" value={fmtNum(stats.totalCustomers)} color="blue" loading={loading}
           sub={`${fmtNum(stats.totalSubscribers)} subscribers`} />
-        <StatCard icon={ShoppingBag} label="Total Orders" value={fmtNum(stats.totalOrders)} color="purple" loading={loading}
-          sub={fmtRs(stats.totalOrderRevenue)} />
+        {/* <StatCard icon={ShoppingBag} label="Total Orders" value={fmtNum(stats.totalOrders)} color="purple" loading={loading}
+          sub={fmtRs(stats.totalOrderRevenue)} /> */}
         <StatCard icon={CheckCircle} label="Confirmed" value={fmtNum(stats.confirmedBookings)} color="green" loading={loading} />
         <StatCard icon={Clock} label="Pending" value={fmtNum(stats.pendingBookings)} color="amber" loading={loading} />
         <StatCard icon={XCircle} label="Cancelled" value={fmtNum(stats.cancelledBookings)} color="red" loading={loading} />
-        <StatCard icon={FileText} label="Invoices" value={fmtNum(stats.totalInvoices)} color="blue" loading={loading}
-          sub={`${fmtNum(stats.paidInvoices)} paid`} />
+        {/* <StatCard icon={FileText} label="Invoices" value={fmtNum(stats.totalInvoices)} color="blue" loading={loading}
+          sub={`${fmtNum(stats.paidInvoices)} paid`} /> */}
       </div>
 
       {/* ── Two-column section ── */}
@@ -482,10 +483,10 @@ const Reports = () => {
                         {stats.totalBookings > 0 ? fmtRs(stats.totalRevenue / stats.totalBookings) : '—'}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center">
+                    {/* <div className="flex justify-between items-center">
                       <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Invoiced Value</span>
                       <span className="text-sm font-black text-brand-red">{fmtRs(stats.totalInvoiceRevenue)}</span>
-                    </div>
+                    </div> */}
                   </div>
                 )}
               </div>
