@@ -33,7 +33,13 @@ const CreateService = () => {
         secondary_image_url: '',
         amenities: [],
         room_types: [],
-        itinerary: []
+        itinerary: [],
+        region: 'Mauritius',
+        service_type: 'activity',
+        location: '',
+        featured: false,
+        priority: 0,
+        max_group_size: ''
     });
 
     const isEdit = !!id;
@@ -86,7 +92,13 @@ const CreateService = () => {
                     secondary_image_url: data.secondary_image_url || '',
                     amenities: data.amenities || [],
                     room_types: data.room_types || [],
-                    itinerary: data.itinerary || []
+                    itinerary: data.itinerary || [],
+                    region: data.region || 'Mauritius',
+                    service_type: data.service_type || 'activity',
+                    location: data.location || '',
+                    featured: data.featured || false,
+                    priority: data.priority || 0,
+                    max_group_size: data.max_group_size || ''
                 });
             }
         } catch (e) {
@@ -271,6 +283,12 @@ const CreateService = () => {
                 amenities: formData.amenities,
                 room_types: formData.room_types,
                 itinerary: formData.itinerary,
+                region: formData.region,
+                service_type: formData.service_type,
+                location: formData.location,
+                featured: formData.featured,
+                priority: parseInt(formData.priority) || 0,
+                max_group_size: parseInt(formData.max_group_size) || null,
                 updated_at: new Date().toISOString()
             };
 
@@ -482,6 +500,55 @@ const CreateService = () => {
                                                 placeholder="Secondary Image"
                                             />
                                         </div>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Geographic Region</label>
+                                        <select
+                                            name="region"
+                                            className="w-full px-6 py-4 bg-gray-50 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
+                                            value={formData.region}
+                                            onChange={handleInputChange}
+                                        >
+                                            <option value="Mauritius">Mauritius</option>
+                                            <option value="Rodrigues">Rodrigues</option>
+                                            <option value="Reunion">Reunion</option>
+                                            <option value="Seychelles">Seychelles</option>
+                                            <option value="International">International</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Activity Classification</label>
+                                        <select
+                                            name="service_type"
+                                            className="w-full px-6 py-4 bg-gray-50 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
+                                            value={formData.service_type}
+                                            onChange={handleInputChange}
+                                        >
+                                            <option value="land_activity">Land activity</option>
+                                            <option value="sea_activity">Sea activity</option>
+                                            <option value="hotel">Hotel</option>
+                                            <option value="cruise">Cruise</option>
+                                            <option value="tour">Tour</option>
+                                            <option value="activity">General Activity</option>
+                                            <option value="transfer">Transfer</option>
+                                            <option value="flight">Flight</option>
+                                            <option value="visa">Visa Service</option>
+                                            <option value="corporate">Corporate Service</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Specific Location / Area</label>
+                                        <input
+                                            type="text"
+                                            name="location"
+                                            className="w-full px-6 py-4 bg-gray-50 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
+                                            value={formData.location}
+                                            onChange={handleInputChange}
+                                            placeholder="e.g. Grand Baie, North"
+                                        />
                                     </div>
                                 </div>
 
@@ -896,6 +963,42 @@ const CreateService = () => {
                                             placeholder="0"
                                         />
                                         <Package size={20} className="absolute left-4 top-4 text-brand-red" />
+                                    </div>
+                                </div>
+
+                                <div className="pt-4 border-t border-white/5">
+                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Grouping & Group Size</label>
+                                    <div className="relative mb-4">
+                                        <input
+                                            type="number"
+                                            name="max_group_size"
+                                            className="w-full pl-6 pr-6 py-4 bg-white/5 border border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-black text-xl text-white outline-none"
+                                            value={formData.max_group_size}
+                                            onChange={handleInputChange}
+                                            placeholder="No limit"
+                                        />
+                                        <div className="absolute right-4 top-4 text-[10px] font-black text-gray-500 uppercase tracking-widest">PAX MAX</div>
+                                    </div>
+                                    <div className="flex items-center justify-between px-2">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Featured Status</label>
+                                        <button
+                                            type="button"
+                                            onClick={() => setFormData(prev => ({ ...prev, featured: !prev.featured }))}
+                                            className={`p-1.5 rounded-xl transition-all ${formData.featured ? 'bg-brand-red text-white' : 'bg-white/10 text-gray-500 hover:bg-white/20'}`}
+                                        >
+                                            {formData.featured ? <ToggleRight size={24} /> : <ToggleLeft size={24} />}
+                                        </button>
+                                    </div>
+                                    <div className="mt-4">
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Sorting Priority</label>
+                                        <input
+                                            type="number"
+                                            name="priority"
+                                            className="w-full px-6 py-3 bg-white/5 border border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-black text-white text-center"
+                                            value={formData.priority}
+                                            onChange={handleInputChange}
+                                            placeholder="0"
+                                        />
                                     </div>
                                 </div>
 
