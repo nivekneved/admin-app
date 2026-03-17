@@ -317,10 +317,10 @@ const Customers = () => {
             </div>
 
             <Card className="border border-gray-200 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
-                <CardHeader className="border-b border-gray-200 pb-4 bg-white px-8 pt-8">
+                <CardHeader className="border-b border-gray-200 pb-4 bg-white px-4 pt-8">
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                            <div className="relative flex-1 min-w-0 max-w-md">
+                            <div className="relative flex-1 min-w-0 max-w-xs">
                                 <Search className="absolute left-3 top-2.5 text-gray-300" size={16} />
                                 <input
                                     type="text"
@@ -399,16 +399,16 @@ const Customers = () => {
                             <table className="min-w-full divide-y divide-gray-50">
                                 <thead className="bg-gray-50/30">
                                     <tr>
-                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Client Identity/ID</th>
-                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Communications</th>
-                                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Profile & Status</th>
-                                        <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest no-print">Actions</th>
+                                        <th className="px-4 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Client Identity/ID</th>
+                                        <th className="px-4 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Communications</th>
+                                        <th className="px-4 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Profile & Status</th>
+                                        <th className="px-4 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest no-print">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
                                     {currentCustomers.map((customer) => (
                                         <tr key={customer.id} className="even:bg-gray-100/40 hover:bg-gray-100/60 transition-colors">
-                                            <td className="px-8 py-5 whitespace-nowrap">
+                                            <td className="px-4 py-5 whitespace-nowrap">
                                                 <div className="flex items-center gap-3">
                                                     <div className="h-10 w-10 rounded-2xl bg-gray-50 border border-gray-200 flex items-center justify-center text-sm font-black text-gray-400 shrink-0">
                                                         {customer.first_name?.charAt(0)}{customer.last_name?.charAt(0)}
@@ -419,7 +419,7 @@ const Customers = () => {
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-8 py-5 whitespace-nowrap">
+                                            <td className="px-4 py-5">
                                                 <div className="flex items-center text-xs font-black text-gray-900 mb-1.5 leading-tight tracking-tight">
                                                     <Mail size={12} className="mr-2 text-gray-300 shrink-0" />
                                                     {customer.email}
@@ -429,7 +429,7 @@ const Customers = () => {
                                                     {customer.phone || 'NO VOX DATA'}
                                                 </div>
                                             </td>
-                                            <td className="px-8 py-5 whitespace-nowrap">
+                                            <td className="px-4 py-5">
                                                 <div className="flex flex-col gap-2">
                                                     <div className="flex items-center gap-2">
                                                         <MapPin size={12} className="text-gray-300 shrink-0" />
@@ -452,7 +452,7 @@ const Customers = () => {
                                                     </span>
                                                 </div>
                                             </td>
-                                            <td className="px-8 py-5 whitespace-nowrap text-right no-print">
+                                            <td className="px-4 py-5 whitespace-nowrap text-right no-print">
                                                 <div className="flex justify-end items-center gap-1">
                                                     <Link to={`/customers/${customer.id}`}>
                                                         <button
@@ -503,7 +503,7 @@ const Customers = () => {
 
                     {/* Pagination */}
                     {processedCustomers.length > customersPerPage && (
-                        <div className="flex items-center justify-between px-8 py-6 bg-gray-50/50 border-t border-gray-200">
+                        <div className="flex items-center justify-between px-4 py-6 bg-gray-50/50 border-t border-gray-200">
                             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                                 Page {currentPage} of {totalPages}
                             </span>
