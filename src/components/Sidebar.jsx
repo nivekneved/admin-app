@@ -15,7 +15,7 @@ import {
   Layout, 
   MessageSquare, 
   HelpCircle, 
-  FileEdit, 
+  // FileEdit, 
   Inbox, 
   Mail,
   FileText,
@@ -95,7 +95,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       title: 'Content & CMS',
       icon: <Globe size={18} />,
       items: [
-        { title: 'CMS Pages', path: '/cms', icon: <FileEdit size={16} /> },
+        // { title: 'CMS Pages', path: '/cms', icon: <FileEdit size={16} /> },
         { title: 'News Editor', path: '/news', icon: <FileText size={16} /> },
         { title: 'Hero Slider', path: '/hero-slider', icon: <Layout size={16} /> },
         { title: 'Navigation', path: '/navigation', icon: <Layers size={16} /> },
