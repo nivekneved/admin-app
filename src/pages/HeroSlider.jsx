@@ -309,18 +309,24 @@ const HeroSlider = () => {
         e.preventDefault();
         setFormLoading(true);
 
+        const payload = {
+            ...formData,
+            start_date: formData.start_date || null,
+            end_date: formData.end_date || null
+        };
+
         try {
             if (currentSlide) {
                 const { error } = await supabase
                     .from('hero_slides')
-                    .update(formData)
+                    .update(payload)
                     .eq('id', currentSlide.id);
                 if (error) throw error;
                 showAlert('Success', 'Slide updated successfully', 'success');
             } else {
                 const { error } = await supabase
                     .from('hero_slides')
-                    .insert([formData]);
+                    .insert([payload]);
                 if (error) throw error;
                 showAlert('Success', 'New slide added', 'success');
             }
