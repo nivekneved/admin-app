@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   Tag, Loader2, RefreshCw, Plus, Search, Edit2, Trash2,
   LayoutGrid, List, ArrowUpDown, Package,
-  ChevronDown, FileSpreadsheet
+  ChevronDown, FileSpreadsheet, Sparkles
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Card, CardContent, CardHeader } from '../components/Card';
