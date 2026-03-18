@@ -126,6 +126,7 @@ const CreateService = () => {
                 image_url: '',
                 images: [], // Support for multiple images
                 available: true,
+                min_stay: 1,
                 features: [],
                 prices: { mon: '', tue: '', wed: '', thu: '', fri: '', sat: '', sun: '' }
             }]
@@ -695,6 +696,17 @@ const CreateService = () => {
                                                                 className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
                                                                 value={rt.type}
                                                                 onChange={e => updateRoomType(idx, 'type', e.target.value)}
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Minimum Stay (Days)</label>
+                                                            <input
+                                                                type="number"
+                                                                min="1"
+                                                                placeholder="e.g. 1"
+                                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                                                                value={rt.min_stay || 1}
+                                                                onChange={e => updateRoomType(idx, 'min_stay', parseInt(e.target.value) || 1)}
                                                             />
                                                         </div>
                                                         <div className="md:col-span-2 space-y-4">
