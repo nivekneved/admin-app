@@ -214,7 +214,14 @@ const HeroSlider = () => {
         order_index: 0,
         is_active: true,
         alignment: 'center',
-        overlay_opacity: 0.4
+        overlay_opacity: 0.4,
+        animation_type: 'fade',
+        duration: 6000,
+        start_date: '',
+        end_date: '',
+        mobile_image_url: '',
+        badge_text: '',
+        badge_color: '#EF4444'
     });
 
     const sensors = useSensors(
@@ -261,7 +268,14 @@ const HeroSlider = () => {
                 order_index: slide.order_index || 0,
                 is_active: slide.is_active !== false,
                 alignment: slide.alignment || 'center',
-                overlay_opacity: slide.overlay_opacity || 0.4
+                overlay_opacity: slide.overlay_opacity || 0.4,
+                animation_type: slide.animation_type || 'fade',
+                duration: slide.duration || 6000,
+                start_date: slide.start_date || '',
+                end_date: slide.end_date || '',
+                mobile_image_url: slide.mobile_image_url || '',
+                badge_text: slide.badge_text || '',
+                badge_color: slide.badge_color || '#EF4444'
             });
         } else {
             setCurrentSlide(null);
@@ -277,7 +291,14 @@ const HeroSlider = () => {
                 order_index: slides.length,
                 is_active: true,
                 alignment: 'center',
-                overlay_opacity: 0.4
+                overlay_opacity: 0.4,
+                animation_type: 'fade',
+                duration: 6000,
+                start_date: '',
+                end_date: '',
+                mobile_image_url: '',
+                badge_text: '',
+                badge_color: '#EF4444'
             });
         }
         setIsModalOpen(true);
@@ -564,6 +585,59 @@ const HeroSlider = () => {
                                             />
                                         </div>
                                     </div>
+
+                                    <h3 className="text-[11px] font-black text-brand-red uppercase tracking-[0.2em] border-b border-red-100 pb-2 pt-4">Campaign Strategy</h3>
+                                    
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Start Projection (Date)</label>
+                                            <input
+                                                type="datetime-local"
+                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
+                                                value={formData.start_date ? new Date(formData.start_date).toISOString().slice(0, 16) : ''}
+                                                onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">End Duration (Date)</label>
+                                            <input
+                                                type="datetime-local"
+                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
+                                                value={formData.end_date ? new Date(formData.end_date).toISOString().slice(0, 16) : ''}
+                                                onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Promotional Badge</label>
+                                            <input
+                                                type="text"
+                                                placeholder="e.g. SUMMER SALE"
+                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
+                                                value={formData.badge_text}
+                                                onChange={(e) => setFormData({ ...formData, badge_text: e.target.value })}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Badge Theme ($HEX)</label>
+                                            <div className="flex gap-2">
+                                                <input
+                                                    type="color"
+                                                    className="w-12 h-12 p-1 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none cursor-pointer"
+                                                    value={formData.badge_color}
+                                                    onChange={(e) => setFormData({ ...formData, badge_color: e.target.value })}
+                                                />
+                                                <input
+                                                    type="text"
+                                                    className="flex-1 px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 uppercase"
+                                                    value={formData.badge_color}
+                                                    onChange={(e) => setFormData({ ...formData, badge_color: e.target.value })}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 {/* Visual Assets & Configuration */}
@@ -602,6 +676,34 @@ const HeroSlider = () => {
                                         </div>
                                     </div>
 
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Motion preset</label>
+                                            <select
+                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 appearance-none"
+                                                value={formData.animation_type}
+                                                onChange={(e) => setFormData({ ...formData, animation_type: e.target.value })}
+                                            >
+                                                <option value="fade">Classic Fade</option>
+                                                <option value="ken-burns">Ken Burns (Zoom)</option>
+                                                <option value="slide-up">Dynamic Slide Up</option>
+                                                <option value="bounce-reveal">Bounce Reveal</option>
+                                                <option value="parallax-shift">Parallax Shift</option>
+                                            </select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Playback Duration (MS)</label>
+                                            <input
+                                                type="number"
+                                                step="500"
+                                                min="1000"
+                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
+                                                value={formData.duration}
+                                                onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) })}
+                                            />
+                                        </div>
+                                    </div>
+
                                     <ImageUpload
                                         label={formData.media_type === 'video' ? "Motion Graphic (Video/Image)" : "Primary Identity (Image)"}
                                         value={formData.media_type === 'video' ? formData.video_url : formData.image_url}
@@ -629,6 +731,18 @@ const HeroSlider = () => {
                                             />
                                         </div>
                                     )}
+
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Projected Mobile Asset</label>
+                                        <ImageUpload
+                                            value={formData.mobile_image_url}
+                                            onChange={(url) => setFormData(prev => ({ ...prev, mobile_image_url: url }))}
+                                            folder="hero-slides"
+                                            aspectRatio="aspect-[9/16]"
+                                            showUrlInput={true}
+                                            placeholder="Upload Mobile Optimized Identity"
+                                        />
+                                    </div>
 
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-2">

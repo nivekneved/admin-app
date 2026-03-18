@@ -39,7 +39,9 @@ const CreateService = () => {
         location: '',
         featured: false,
         priority: 0,
-        max_group_size: ''
+        max_group_size: '',
+        is_seasonal_deal: false,
+        deal_note: 'Limited Time'
     });
 
     const isEdit = !!id;
@@ -98,7 +100,9 @@ const CreateService = () => {
                     location: data.location || '',
                     featured: data.featured || false,
                     priority: data.priority || 0,
-                    max_group_size: data.max_group_size || ''
+                    max_group_size: data.max_group_size || '',
+                    is_seasonal_deal: data.is_seasonal_deal || false,
+                    deal_note: data.deal_note || 'Limited Time'
                 });
             }
         } catch (e) {
@@ -289,6 +293,8 @@ const CreateService = () => {
                 featured: formData.featured,
                 priority: parseInt(formData.priority) || 0,
                 max_group_size: parseInt(formData.max_group_size) || null,
+                is_seasonal_deal: formData.is_seasonal_deal,
+                deal_note: formData.deal_note,
                 updated_at: new Date().toISOString()
             };
 
@@ -605,6 +611,43 @@ const CreateService = () => {
                                             Add
                                         </Button>
                                     </div>
+                                </div>
+                            </div>
+                        </section>
+
+
+                        {/* Section: Promotional Strategy */}
+                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-gray-200 space-y-6">
+                            <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em] mb-4">
+                                <Tag size={16} className="text-brand-red" /> Promotional Strategy
+                            </h3>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="p-6 bg-red-50/50 rounded-2xl border border-red-100 flex items-center justify-between group">
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-black text-brand-red uppercase tracking-widest leading-none">Seasonal Deal</p>
+                                        <p className="text-[9px] text-gray-400 font-bold">Feature in Homepage Deals Carousel</p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setFormData(p => ({ ...p, is_seasonal_deal: !p.is_seasonal_deal }))}
+                                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${formData.is_seasonal_deal ? 'bg-brand-red' : 'bg-gray-300'}`}
+                                    >
+                                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${formData.is_seasonal_deal ? 'translate-x-6' : 'translate-x-1'}`} />
+                                    </button>
+                                </div>
+
+                                <div className={`transition-all duration-500 ${formData.is_seasonal_deal ? 'opacity-100 translate-y-0' : 'opacity-40 pointer-events-none'}`}>
+                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Promo Badge Note</label>
+                                    <input
+                                        type="text"
+                                        name="deal_note"
+                                        className="w-full px-6 py-4 bg-gray-50 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
+                                        value={formData.deal_note}
+                                        onChange={handleInputChange}
+                                        placeholder="e.g. Limited Time, 20% OFF"
+                                        disabled={!formData.is_seasonal_deal}
+                                    />
                                 </div>
                             </div>
                         </section>
