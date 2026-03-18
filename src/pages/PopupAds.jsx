@@ -30,7 +30,7 @@ const PopupAds = () => {
         cta_text: 'Learn More',
         cta_link: '',
         is_active: true,
-        display_frequency: 'once_per_session',
+        display_frequency: 'always',
         start_at: '',
         end_at: ''
     });
@@ -82,7 +82,7 @@ const PopupAds = () => {
                 cta_text: 'Learn More',
                 cta_link: '',
                 is_active: true,
-                display_frequency: 'once_per_session',
+                display_frequency: 'always',
                 start_at: '',
                 end_at: ''
             });
