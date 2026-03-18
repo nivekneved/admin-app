@@ -435,6 +435,11 @@ const Services = () => {
                             <div className="flex flex-wrap items-center gap-2">
                               <p className="text-xs font-black text-brand-red leading-none">MUR {Number(s.base_price).toLocaleString()}</p>
                               <div className="flex flex-wrap gap-1">
+                                {s.is_seasonal_deal && (
+                                  <span className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-amber-50 text-amber-600 border border-amber-100 flex items-center gap-1">
+                                    <Sparkles size={8} /> {s.deal_note || 'Seasonal'}
+                                  </span>
+                                )}
                                 {(s.categories_list && s.categories_list.length > 0) ? (
                                   s.categories_list.map(cat => (
                                     <span key={cat.id} className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-red-50 text-brand-red border border-red-100">
@@ -492,6 +497,11 @@ const Services = () => {
                             ))
                           ) : (
                             <span className="text-[9px] font-bold text-gray-400">Unassigned</span>
+                          )}
+                          {s.is_seasonal_deal && (
+                            <span className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-amber-50 text-amber-600 border border-amber-100 flex items-center gap-1">
+                              <Sparkles size={8} /> {s.deal_note || 'Deal'}
+                            </span>
                           )}
                         </div>
                         <div className={`w-2 h-2 rounded-full ${s.status === 'In Stock' ? 'bg-green-500' : s.status === 'Low Stock' ? 'bg-amber-500' : 'bg-red-500'}`}></div>
