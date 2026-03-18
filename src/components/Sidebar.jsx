@@ -124,13 +124,13 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         />
       )}
 
-      <div className={`fixed inset-y-0 left-0 w-64 bg-brand-charcoal text-white z-30 border-r border-white/5 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'
-        } shadow-2xl lg:shadow-none flex flex-col`}>
+      <div className={`fixed inset-y-0 left-0 w-64 bg-white text-gray-900 z-30 border-r border-gray-100 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'
+        } shadow-2xl lg:shadow-[20px_0_50px_-20px_rgba(0,0,0,0.05)] flex flex-col`}>
 
-        <div className="flex flex-col items-center justify-center py-3 px-4 border-b border-white/5 bg-white/5 relative shrink-0">
+        <div className="flex flex-col items-center justify-center py-6 px-4 border-b border-gray-50 bg-white relative shrink-0">
           <button
             onClick={() => setIsOpen(false)}
-            className="absolute top-4 right-4 p-2 text-gray-500 hover:text-white hover:bg-white/5 rounded-xl transition-all duration-300"
+            className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-all duration-300 lg:hidden"
             title="Collapse Sidebar"
           >
             <X size={18} />
@@ -147,9 +147,9 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           <div className="mb-4">
             <Link
               to="/"
-              className={`flex items-center px-3.5 py-2.5 rounded-xl mb-1 transition-all duration-200 ${location.pathname === '/'
-                ? 'bg-brand-red text-white shadow-lg shadow-red-900/20'
-                : 'text-gray-400 hover:text-white hover:bg-white/5'
+              className={`flex items-center px-4 py-3 rounded-xl mb-1 transition-all duration-300 ${location.pathname === '/'
+                ? 'bg-brand-red text-white shadow-lg shadow-red-200'
+                : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
                 }`}
             >
               <Home size={18} className="mr-3" />
@@ -161,15 +161,15 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             <div key={group.id} className="mb-2">
               <button
                 onClick={() => toggleGroup(group.id)}
-                className="w-full flex items-center justify-between px-3.5 py-2 text-gray-500 hover:text-gray-300 transition-colors group"
+                className="w-full flex items-center justify-between px-3.5 py-2 text-gray-400 hover:text-gray-900 transition-colors group"
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-gray-600 group-hover:text-brand-red transition-colors">{group.icon}</span>
-                  <span className="text-[10px] font-black uppercase tracking-widest">{group.title}</span>
+                  <span className="text-gray-300 group-hover:text-brand-red transition-colors">{group.icon}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-gray-600">{group.title}</span>
                 </div>
                 <ChevronDown 
                   size={14} 
-                  className={`transition-transform duration-300 ${openGroups[group.id] ? 'rotate-180' : ''}`} 
+                  className={`transition-transform duration-300 ${openGroups[group.id] ? 'rotate-180 text-brand-red' : 'text-gray-300'}`} 
                 />
               </button>
 
@@ -179,12 +179,12 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                     <li key={idx}>
                       <Link
                         to={item.path}
-                        className={`flex items-center px-4 py-2 rounded-xl transition-all duration-200 ${location.pathname === item.path
-                          ? 'bg-white/10 text-brand-red'
-                          : 'text-gray-400 hover:text-white hover:bg-white/5'
+                        className={`flex items-center px-4 py-2.5 rounded-xl transition-all duration-200 ${location.pathname === item.path
+                          ? 'bg-red-50 text-brand-red'
+                          : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
                           }`}
                       >
-                        <span className="mr-3 shrink-0 opacity-70">{item.icon}</span>
+                        <span className="mr-3 shrink-0 opacity-50 group-hover:opacity-100 transition-opacity">{item.icon}</span>
                         <span className="font-bold text-[11px] uppercase tracking-tight">{item.title}</span>
                       </Link>
                     </li>
@@ -195,10 +195,10 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           ))}
         </nav>
 
-        <div className="absolute bottom-0 w-full p-4 border-t border-white/5 bg-brand-charcoal/95 backdrop-blur-sm">
+        <div className="absolute bottom-0 w-full p-4 border-t border-gray-50 bg-white">
           <button
             onClick={handleLogout}
-            className="flex items-center text-gray-400 hover:text-brand-red w-full px-3.5 py-2.5 rounded-xl hover:bg-red-500/5 transition-all duration-200 group"
+            className="flex items-center text-gray-500 hover:text-brand-red w-full px-4 py-3 rounded-xl hover:bg-red-50 transition-all duration-300 group"
           >
             <LogOut size={18} className="mr-3 group-hover:scale-110 transition-transform" />
             <span className="font-bold text-xs uppercase tracking-tight">Logout</span>
