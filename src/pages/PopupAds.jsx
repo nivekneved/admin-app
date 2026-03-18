@@ -347,7 +347,7 @@ const PopupAds = () => {
                                                             setCurrentAd(ad);
                                                             setIsPreviewOpen(true);
                                                         }}
-                                                        className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                                                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
                                                         title="Preview Popup"
                                                     >
                                                         <Eye size={16} />
@@ -387,7 +387,7 @@ const PopupAds = () => {
                                                 </div>
                                             )}
                                             <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                                                <button onClick={() => { setCurrentAd(ad); setIsPreviewOpen(true); }} className="bg-white shadow-xl p-3 rounded-2xl text-gray-400 hover:text-blue-600 transition-all hover:scale-110 active:scale-95">
+                                                <button onClick={() => { setCurrentAd(ad); setIsPreviewOpen(true); }} className="bg-white shadow-xl p-3 rounded-2xl text-gray-400 hover:text-red-600 transition-all hover:scale-110 active:scale-95">
                                                     <Eye size={16} />
                                                 </button>
                                                 <button onClick={() => handleOpenModal(ad)} className="bg-white shadow-xl p-3 rounded-2xl text-gray-400 hover:text-brand-red transition-all hover:scale-110 active:scale-95">

@@ -84,7 +84,7 @@ const Bookings = () => {
   const getActivityIcon = (type) => {
     switch (type?.toLowerCase()) {
       case 'lounge': return <Coffee size={14} className="text-amber-500" />;
-      case 'hotel': return <Star size={14} className="text-blue-500" />;
+      case 'hotel': return <Star size={14} className="text-red-500" />;
       case 'tour': return <MapPin size={14} className="text-green-500" />;
       case 'cruise': return <Plane size={14} className="text-sky-500" />;
       default: return <Sun size={14} className="text-orange-500" />;

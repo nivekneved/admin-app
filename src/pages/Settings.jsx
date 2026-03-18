@@ -27,6 +27,18 @@ const Settings = () => {
     currency: '',
     dateFormat: '',
     timeFormat: '',
+    seo: {
+      metaTitle: '',
+      metaDescription: '',
+      metaKeywords: '',
+      ogImage: ''
+    },
+    mobile: {
+      supportPhone: '',
+      supportEmail: '',
+      appVersion: '1.0.0',
+      primaryColor: '#DC2626'
+    },
     notifications: {
       email: true,
       sms: false,
@@ -57,6 +69,10 @@ const Settings = () => {
         data.forEach(item => {
           if (item.key === 'general_config') {
             Object.assign(newFormData, item.value);
+          } else if (item.key === 'seo_config') {
+            newFormData.seo = item.value;
+          } else if (item.key === 'mobile_config') {
+            newFormData.mobile = item.value;
           } else if (item.key === 'security_config') {
             newFormData.security = item.value;
           } else if (item.key === 'notifications_config') {
@@ -82,7 +98,7 @@ const Settings = () => {
         ...prev,
         [section]: {
           ...prev[section],
-          [field]: checked
+          [field]: type === 'checkbox' ? checked : value
         }
       }));
     } else {
@@ -106,6 +122,7 @@ const Settings = () => {
         value = {
           siteTitle: formData.siteTitle,
           contactPhone: formData.contactPhone,
+          contactEmail: formData.contactEmail,
           whatsappNumber1: formData.whatsappNumber1,
           whatsappNumber2: formData.whatsappNumber2,
           office1Title: formData.office1Title,
@@ -121,6 +138,14 @@ const Settings = () => {
           dateFormat: formData.dateFormat,
           timeFormat: formData.timeFormat
         };
+      } else if (activeTab === 'seo') {
+        key = 'seo_config';
+        category = 'seo';
+        value = formData.seo;
+      } else if (activeTab === 'mobile') {
+        key = 'mobile_config';
+        category = 'mobile';
+        value = formData.mobile;
       } else if (activeTab === 'security') {
         key = 'security_config';
         category = 'security';
@@ -138,7 +163,7 @@ const Settings = () => {
           value,
           category,
           updated_at: new Date().toISOString()
-        });
+        }, { onConflict: 'key' });
 
       if (error) throw error;
 
@@ -161,14 +186,14 @@ const Settings = () => {
   }
 
   return (
-    <div className="animate-in fade-in duration-500">
+    <div className="animate-in fade-in duration-500 pb-20">
       <div className="mb-6">
         <h1 className="text-2xl font-black text-gray-900">Platform Settings</h1>
         <p className="text-sm text-gray-400 font-medium">Global configurations for Travel Lounge infrastructure</p>
       </div>
 
-      <div className="flex space-x-2 border-b border-gray-100 mb-8 overflow-x-auto pb-px">
-        {['general', 'security', 'notifications'].map((tab) => (
+      <div className="flex space-x-2 border-b border-gray-100 mb-8 overflow-x-auto pb-px scrollbar-hide">
+        {['general', 'seo', 'mobile', 'security', 'notifications'].map((tab) => (
           <button
             key={tab}
             className={`px-6 py-3 text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === tab
@@ -383,6 +408,119 @@ const Settings = () => {
                       <option value="USD">US Dollar (USD)</option>
                       <option value="EUR">Euro (EUR)</option>
                     </select>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'seo' && (
+              <div className="space-y-8">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Meta Title Tag</label>
+                  <input
+                    type="text"
+                    name="seo.metaTitle"
+                    placeholder="Travel Lounge - Your Premiere Holiday Provider"
+                    className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                    value={formData.seo.metaTitle}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Meta Description</label>
+                  <textarea
+                    name="seo.metaDescription"
+                    rows={3}
+                    placeholder="Brief description of your site for search engines..."
+                    className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900 resize-none"
+                    value={formData.seo.metaDescription}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Keywords (Comma separated)</label>
+                  <input
+                    type="text"
+                    name="seo.metaKeywords"
+                    placeholder="travel, mauritius, holidays, packages, tours"
+                    className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                    value={formData.seo.metaKeywords}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">OG Image URL (Social Sharing)</label>
+                  <input
+                    type="text"
+                    name="seo.ogImage"
+                    placeholder="https://example.com/social-share.jpg"
+                    className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                    value={formData.seo.ogImage}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'mobile' && (
+              <div className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Support Phone</label>
+                    <input
+                      type="text"
+                      name="mobile.supportPhone"
+                      placeholder="+230 5940 7701"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      value={formData.mobile.supportPhone}
+                      onChange={handleChange}
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Support Email</label>
+                    <input
+                      type="email"
+                      name="mobile.supportEmail"
+                      placeholder="support@travellounge.mu"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      value={formData.mobile.supportEmail}
+                      onChange={handleChange}
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">App Version</label>
+                    <input
+                      type="text"
+                      name="mobile.appVersion"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      value={formData.mobile.appVersion}
+                      onChange={handleChange}
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Primary Brand Color</label>
+                    <div className="flex gap-4">
+                      <input
+                        type="color"
+                        name="mobile.primaryColor"
+                        className="h-12 w-20 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 p-1 cursor-pointer"
+                        value={formData.mobile.primaryColor}
+                        onChange={handleChange}
+                      />
+                      <input
+                        type="text"
+                        name="mobile.primaryColor"
+                        className="flex-grow px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                        value={formData.mobile.primaryColor}
+                        onChange={handleChange}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

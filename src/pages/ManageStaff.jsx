@@ -393,7 +393,7 @@ const ManageStaff = () => {
                                                 value={formData.linkedin_url} onChange={e => setFormData({ ...formData, linkedin_url: e.target.value })}
                                                 placeholder="linkedin.com/in/..."
                                             />
-                                            <Linkedin size={18} className="absolute left-4 top-4 text-blue-600" />
+                                            <Linkedin size={18} className="absolute left-4 top-4 text-red-600" />
                                         </div>
                                     </div>
                                     <div>

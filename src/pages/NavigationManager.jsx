@@ -65,7 +65,7 @@ const SortableNavItem = ({ item, level = 0, onEdit, onDelete, onToggle, onAddSub
               <span className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-gray-100 text-gray-400 border border-gray-200">Hidden</span>
             )}
             {level > 0 && (
-              <span className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-blue-50 text-blue-400 border border-blue-100">Submenu</span>
+              <span className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-red-50 text-red-400 border border-red-100">Submenu</span>
             )}
           </div>
           <div className="flex items-center gap-3 text-[10px] font-bold text-gray-400">

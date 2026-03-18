@@ -25,7 +25,7 @@ const statusColor = (s) => {
 const ActivityIcon = ({ type }) => {
   switch (type?.toLowerCase()) {
     case 'lounge': return <Coffee size={13} className="text-amber-500" />;
-    case 'hotel': return <Star size={13} className="text-blue-500" />;
+    case 'hotel': return <Star size={13} className="text-red-500" />;
     case 'tour': return <MapPin size={13} className="text-green-500" />;
     case 'cruise': return <Plane size={13} className="text-sky-500" />;
     default: return <Sun size={13} className="text-orange-500" />;
@@ -37,7 +37,7 @@ const StatCard = ({ icon: Icon, label, value, sub, color = 'red', loading }) => 
   const colors = {
     red: 'bg-red-50 text-brand-red border-red-100',
     green: 'bg-green-50 text-green-600 border-green-100',
-    blue: 'bg-blue-50 text-blue-600 border-blue-100',
+    blue: 'bg-red-50 text-red-600 border-red-100',
     purple: 'bg-purple-50 text-purple-600 border-purple-100',
     Card: 'border border-gray-100 shadow-sm rounded-3xl overflow-hidden bg-white hover:shadow-md transition-shadow duration-300',
   };

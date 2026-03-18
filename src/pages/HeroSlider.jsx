@@ -174,7 +174,7 @@ const SortableGridItem = ({ slide, handleOpenModal, deleteSlide }) => {
                         {slide.alignment}
                     </span>
                     {slide.media_type === 'video' && (
-                        <span className="bg-blue-50 text-blue-600 text-[8px] font-black px-1.5 py-0.5 rounded uppercase border border-blue-100">Motion Asset</span>
+                        <span className="bg-red-50 text-red-600 text-[8px] font-black px-1.5 py-0.5 rounded uppercase border border-red-100">Motion Asset</span>
                     )}
                 </div>
                 <h3 className="text-sm font-black text-gray-900 leading-snug mb-2 line-clamp-1">{slide.title}</h3>

@@ -286,7 +286,7 @@ const Orders = () => {
                             : order.status === 'Pending'
                               ? 'bg-yellow-50 text-yellow-700 border-yellow-100'
                               : order.status === 'Processing'
-                                ? 'bg-blue-50 text-blue-700 border-blue-100'
+                                ? 'bg-red-50 text-red-700 border-red-100'
                                 : order.status === 'Shipped'
                                   ? 'bg-purple-50 text-purple-700 border-purple-100'
                                   : 'bg-red-50 text-red-700 border-red-100'

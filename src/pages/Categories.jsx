@@ -596,7 +596,7 @@ const Categories = () => {
                             {viewingCat.link && (
                                 <div className="col-span-2 bg-gray-50 rounded-xl p-3 border border-gray-200">
                                     <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1"><LinkIcon size={10} className="mr-1" /> Link</div>
-                                    <p className="text-xs font-mono text-blue-600 truncate">{viewingCat.link}</p>
+                                    <p className="text-xs font-mono text-red-600 truncate">{viewingCat.link}</p>
                                 </div>
                             )}
 
