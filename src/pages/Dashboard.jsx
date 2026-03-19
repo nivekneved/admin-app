@@ -13,6 +13,7 @@ const Dashboard = () => {
   const [recentAdmins, setRecentAdmins] = useState([]);
   const [recentBookings, setRecentBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [lastSynced, setLastSynced] = useState(null);
 
   useEffect(() => {
     fetchDashboardData();
@@ -21,14 +22,19 @@ const Dashboard = () => {
   const fetchDashboardData = async () => {
     setLoading(true);
     try {
-      // 1. Fetch Counts
+      // Get the start of today in local time (UTC+4 for Mauritius)
+      const now = new Date();
+      const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      
+      // 1. Fetch Exact Counts using head queries (no row limits)
       const { count: adminCount } = await supabase.from('admins').select('*', { count: 'exact', head: true });
       const { count: customerCount } = await supabase.from('customers').select('*', { count: 'exact', head: true });
+      const { count: bookingCount } = await supabase.from('bookings').select('*', { count: 'exact', head: true });
 
       // 2. Fetch Recent Admins
       const { data: admins } = await supabase
         .from('admins')
-        .select('id, username, email, role, created_at')
+        .select('id, username, email, role, created_at, photo_url, name')
         .order('created_at', { ascending: false })
         .limit(4);
 
@@ -50,24 +56,41 @@ const Dashboard = () => {
         .order('created_at', { ascending: false })
         .limit(4);
 
-      // 4. Calculate Total Revenue from all bookings
-      const { data: allBookings } = await supabase
+      // 4. Calculate Total Revenue & Today's Stats
+      // Fetch more rows to ensure accurate calculation for revenue (limit to 10k for safety)
+      const { data: allBookingsData } = await supabase
         .from('bookings')
-        .select('total_amount, amount, status');
+        .select('total_amount, amount, status, created_at')
+        .range(0, 9999);
 
-      const revenue = (allBookings || [])
-        .filter(b => b.status === 'Confirmed' || b.status === 'Completed')
+      const allBookings = allBookingsData || [];
+      
+      // Revenue should only count confirmed/completed bookings (case-insensitive check)
+      const confirmedStatuses = ['confirmed', 'completed', 'paid'];
+      
+      const revenue = allBookings
+        .filter(b => confirmedStatuses.includes(b.status?.toLowerCase()))
+        .reduce((sum, b) => sum + (Number(b.total_amount || b.amount) || 0), 0);
+
+      // Today's Stats
+      const todayBookings = allBookings.filter(b => new Date(b.created_at) >= startOfToday);
+      const todayTotal = todayBookings.length;
+      const todayRevenue = todayBookings
+        .filter(b => confirmedStatuses.includes(b.status?.toLowerCase()))
         .reduce((sum, b) => sum + (Number(b.total_amount || b.amount) || 0), 0);
 
       setStats({
         totalAdmins: adminCount || 0,
         totalCustomers: customerCount || 0,
-        totalBookings: allBookings?.length || 0,
-        totalRevenue: revenue
+        totalBookings: bookingCount || 0,
+        totalRevenue: revenue,
+        todayBookings: todayTotal,
+        todayRevenue: todayRevenue
       });
 
       setRecentAdmins(admins || []);
       setRecentBookings(bookings || []);
+      setLastSynced(new Date().toLocaleTimeString());
 
     } catch (err) {
       console.error('Dashboard Data Sync Error:', err);
@@ -92,12 +115,19 @@ const Dashboard = () => {
           <h1 className="text-2xl font-bold text-gray-900">Enterprise Dashboard</h1>
           <p className="text-sm text-gray-400 font-medium">Real-time business intelligence & monitoring</p>
         </div>
-        <button
-          onClick={fetchDashboardData}
-          className="bg-white border border-gray-200 text-gray-600 px-4 py-2 rounded-xl text-sm font-bold hover:bg-gray-50 transition-all flex items-center shadow-sm"
-        >
-          <span className="mr-2">↻</span> Sync Data
-        </button>
+        <div className="flex flex-col items-end">
+          <button
+            onClick={fetchDashboardData}
+            className="bg-white border border-gray-200 text-gray-600 px-4 py-2 rounded-xl text-sm font-bold hover:bg-gray-50 transition-all flex items-center shadow-sm"
+          >
+            <span className="mr-2">↻</span> Sync Data
+          </button>
+          {lastSynced && (
+            <span className="text-[10px] text-gray-400 font-bold mt-2 uppercase tracking-widest">
+              Last Synced: {lastSynced}
+            </span>
+          )}
+        </div>
       </div>
 
       {loading ? (
@@ -144,7 +174,10 @@ const Dashboard = () => {
                   <span className="text-[10px] font-black text-green-400 uppercase tracking-widest bg-green-50 px-2 py-0.5 rounded-lg border border-green-100">Activity</span>
                 </div>
                 <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">Bookings</h3>
-                <div className="text-3xl font-black text-gray-900">{stats.totalBookings}</div>
+                <div className="flex items-baseline gap-2">
+                  <div className="text-3xl font-black text-gray-900">{stats.totalBookings}</div>
+                  <span className="text-[10px] font-black text-green-600 bg-green-100/50 px-1.5 py-0.5 rounded">+{stats.todayBookings} TODAY</span>
+                </div>
               </CardContent>
             </Card>
 
@@ -160,6 +193,9 @@ const Dashboard = () => {
                 </div>
                 <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">Revenue</h3>
                 <div className="text-3xl font-black text-gray-900">Rs {stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+                <div className="text-[10px] font-bold text-gray-400 mt-2">
+                  TODAY: <span className="text-green-600 font-black">Rs {stats.todayRevenue.toLocaleString()}</span>
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -237,8 +273,9 @@ const Dashboard = () => {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right">
                             <div className="text-sm font-black text-gray-900">Rs {(booking.total_amount || booking.amount || 0).toFixed(2)}</div>
-                            <span className={`px-2 py-0.5 text-[9px] font-black uppercase tracking-tighter rounded-full border ${booking.status === 'Confirmed' ? 'bg-green-50 text-green-700 border-green-100' :
-                              booking.status === 'Pending' ? 'bg-yellow-50 text-yellow-700 border-yellow-100' :
+                            <span className={`px-2 py-0.5 text-[9px] font-black uppercase tracking-tighter rounded-full border ${
+                              booking.status?.toLowerCase() === 'confirmed' || booking.status?.toLowerCase() === 'completed' ? 'bg-green-50 text-green-700 border-green-100' :
+                              booking.status?.toLowerCase() === 'pending' ? 'bg-yellow-50 text-yellow-700 border-yellow-100' :
                                 'bg-red-50 text-red-700 border-red-100'
                               }`}>
                               {booking.status}

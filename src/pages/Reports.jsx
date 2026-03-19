@@ -16,9 +16,10 @@ const fmtNum = (n) => Number(n || 0).toLocaleString();
 const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 const statusColor = (s) => {
-  if (s === 'Confirmed' || s === 'Completed' || s === 'Paid') return 'bg-green-50 text-green-700 border-green-100';
-  if (s === 'Pending') return 'bg-yellow-50 text-yellow-700 border-yellow-100';
-  if (s === 'Cancelled' || s === 'Overdue') return 'bg-red-50 text-red-700 border-red-100';
+  const status = s?.toLowerCase();
+  if (status === 'confirmed' || status === 'completed' || status === 'paid') return 'bg-green-50 text-green-700 border-green-100';
+  if (status === 'pending') return 'bg-yellow-50 text-yellow-700 border-yellow-100';
+  if (status === 'cancelled' || status === 'overdue') return 'bg-red-50 text-red-700 border-red-100';
   return 'bg-gray-50 text-gray-500 border-gray-100';
 };
 
@@ -138,13 +139,19 @@ const Reports = () => {
   const fetchBookingStats = async () => {
     const { data } = await supabase.from('bookings').select('status, amount, total_amount, booking_items(price, quantity)');
     if (!data) return;
-    const confirmed = data.filter(b => b.status === 'Confirmed').length;
-    const pending = data.filter(b => b.status === 'Pending').length;
-    const cancelled = data.filter(b => b.status === 'Cancelled').length;
-    const revenue = data.reduce((sum, b) => {
-      if (b.booking_items?.length) return sum + b.booking_items.reduce((is, it) => is + (Number(it.price) * Number(it.quantity || 1)), 0);
-      return sum + Number(b.total_amount || b.amount || 0);
-    }, 0);
+    
+    const confirmedStatuses = ['confirmed', 'completed', 'paid'];
+    const confirmed = data.filter(b => b.status?.toLowerCase() === 'confirmed' || b.status?.toLowerCase() === 'completed').length;
+    const pending = data.filter(b => b.status?.toLowerCase() === 'pending').length;
+    const cancelled = data.filter(b => b.status?.toLowerCase() === 'cancelled').length;
+    
+    const revenue = data
+      .filter(b => confirmedStatuses.includes(b.status?.toLowerCase()))
+      .reduce((sum, b) => {
+        if (b.booking_items?.length) return sum + b.booking_items.reduce((is, it) => is + (Number(it.price) * Number(it.quantity || 1)), 0);
+        return sum + Number(b.total_amount || b.amount || 0);
+      }, 0);
+
     setStats(prev => ({ ...prev, totalBookings: data.length, confirmedBookings: confirmed, pendingBookings: pending, cancelledBookings: cancelled, totalRevenue: revenue }));
     setStatusBreakdown([
       { label: 'Confirmed', count: confirmed, color: 'bg-green-400' },
@@ -162,7 +169,12 @@ const Reports = () => {
   const fetchInvoiceStats = async () => {
     const { data } = await supabase.from('invoices').select('amount, status');
     if (!data) return;
-    setStats(prev => ({ ...prev, totalInvoices: data.length, totalInvoiceRevenue: data.reduce((s, i) => s + Number(i.amount || 0), 0), paidInvoices: data.filter(i => i.status === 'Paid').length }));
+    setStats(prev => ({ 
+      ...prev, 
+      totalInvoices: data.length, 
+      totalInvoiceRevenue: data.reduce((s, i) => s + Number(i.amount || 0), 0), 
+      paidInvoices: data.filter(i => i.status?.toLowerCase() === 'paid').length 
+    }));
   };
 
   const fetchMonthlyBookings = async () => {

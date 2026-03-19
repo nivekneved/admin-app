@@ -12,10 +12,11 @@ import { showAlert, showConfirm } from '../utils/swal';
 
 // ─── Status helpers ────────────────────────────────────────────────────────
 const statusBadge = (s) => {
-  if (s === 'Paid') return 'bg-green-50 text-green-700 border-green-100';
-  if (s === 'Pending') return 'bg-yellow-50 text-yellow-700 border-yellow-100';
-  if (s === 'Overdue') return 'bg-red-50 text-red-700 border-red-100';
-  if (s === 'Cancelled') return 'bg-gray-100 text-gray-500 border-gray-100';
+  const status = s?.toLowerCase();
+  if (status === 'paid') return 'bg-green-50 text-green-700 border-green-100';
+  if (status === 'pending') return 'bg-yellow-50 text-yellow-700 border-yellow-100';
+  if (status === 'overdue') return 'bg-red-50 text-red-700 border-red-100';
+  if (status === 'cancelled') return 'bg-gray-100 text-gray-500 border-gray-100';
   return 'bg-red-50 text-red-600 border-red-100';
 };
 
