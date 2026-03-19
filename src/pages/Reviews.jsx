@@ -115,7 +115,7 @@ const Reviews = () => {
                     <Button
                         onClick={fetchReviews}
                         variant="outline"
-                        className="text-gray-500 border-gray-200 flex items-center gap-2"
+                        className="text-gray-500 border-slate-300 flex items-center gap-2"
                     >
                         <RefreshCw size={15} className={loading ? 'animate-spin' : ''} /> Sync
                     </Button>
@@ -124,7 +124,7 @@ const Reviews = () => {
 
             {/* Stats Overview */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card className="bg-white border border-gray-200 shadow-sm">
+                <Card className="bg-white border border-slate-300 shadow-sm">
                     <CardContent className="p-4 flex items-center gap-4">
                         <div className="p-3 bg-red-50 text-red-600 rounded-2xl">
                             <MessageSquare size={20} />
@@ -135,7 +135,7 @@ const Reviews = () => {
                         </div>
                     </CardContent>
                 </Card>
-                <Card className="bg-white border border-gray-200 shadow-sm">
+                <Card className="bg-white border border-slate-300 shadow-sm">
                     <CardContent className="p-4 flex items-center gap-4">
                         <div className="p-3 bg-yellow-50 text-yellow-600 rounded-2xl">
                             <RefreshCw size={20} />
@@ -146,7 +146,7 @@ const Reviews = () => {
                         </div>
                     </CardContent>
                 </Card>
-                <Card className="bg-white border border-gray-200 shadow-sm">
+                <Card className="bg-white border border-slate-300 shadow-sm">
                     <CardContent className="p-4 flex items-center gap-4">
                         <div className="p-3 bg-green-50 text-green-600 rounded-2xl">
                             <Check size={20} />
@@ -159,7 +159,7 @@ const Reviews = () => {
                 </Card>
             </div>
 
-            <Card className="border border-gray-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
+            <Card className="border border-slate-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
                 <CardHeader className="border-b border-gray-50 pb-4 px-8 pt-8">
                     <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
                         <div className="flex items-center gap-4 flex-1">
@@ -168,7 +168,7 @@ const Reviews = () => {
                                 <input
                                     type="text"
                                     placeholder="Search by customer or comment..."
-                                    className="pl-9 pr-4 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+                                    className="pl-9 pr-4 py-2.5 w-full border border-slate-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
@@ -186,7 +186,7 @@ const Reviews = () => {
                                     className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all whitespace-nowrap ${
                                         statusFilter === status 
                                         ? 'bg-brand-red text-white border-brand-red shadow-lg shadow-red-100' 
-                                        : 'bg-white text-gray-400 border-gray-200 hover:bg-gray-50'
+                                        : 'bg-white text-gray-400 border-slate-300 hover:bg-gray-50'
                                     }`}
                                 >
                                     {status}
@@ -225,7 +225,7 @@ const Reviews = () => {
                                         <tr key={review.id} className="even:bg-gray-100/40 hover:bg-gray-100/60 transition-colors group">
                                             <td className="px-8 py-4">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 border border-gray-200">
+                                                    <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 border border-slate-300">
                                                         <User size={18} />
                                                     </div>
                                                     <div className="min-w-0">
@@ -315,7 +315,7 @@ const Reviews = () => {
                         ) : (
                             <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                 {processedReviews.map((review) => (
-                                    <div key={review.id} className="bg-white border border-gray-200 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500 flex flex-col p-6">
+                                    <div key={review.id} className="bg-white border border-slate-300 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500 flex flex-col p-6">
                                         <div className="flex items-center justify-between mb-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="h-12 w-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 border border-gray-100">

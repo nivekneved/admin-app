@@ -227,7 +227,7 @@ const Settings = () => {
                     <input
                       type="text"
                       name="siteTitle"
-                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
                       value={formData.siteTitle}
                       onChange={handleChange}
                       required
@@ -239,7 +239,7 @@ const Settings = () => {
                     <input
                       type="email"
                       name="contactEmail"
-                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
                       value={formData.contactEmail}
                       onChange={handleChange}
                       required
@@ -251,7 +251,7 @@ const Settings = () => {
                     <input
                       type="text"
                       name="contactPhone"
-                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
                       value={formData.contactPhone}
                       onChange={handleChange}
                     />
@@ -263,7 +263,7 @@ const Settings = () => {
                       type="text"
                       name="whatsappNumber1"
                       placeholder="+230 5940 7711"
-                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
                       value={formData.whatsappNumber1}
                       onChange={handleChange}
                     />
@@ -275,7 +275,7 @@ const Settings = () => {
                       type="text"
                       name="whatsappNumber2"
                       placeholder="+230 5940 7701"
-                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
                       value={formData.whatsappNumber2}
                       onChange={handleChange}
                     />
@@ -287,7 +287,7 @@ const Settings = () => {
                       type="text"
                       name="workingHours"
                       placeholder="Mon - Fri: 08:30 - 17:00"
-                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
                       value={formData.workingHours}
                       onChange={handleChange}
                     />
@@ -301,7 +301,7 @@ const Settings = () => {
                       type="text"
                       name="office1Title"
                       placeholder="Port Louis Office"
-                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
                       value={formData.office1Title}
                       onChange={handleChange}
                     />
@@ -312,7 +312,7 @@ const Settings = () => {
                       type="text"
                       name="office2Title"
                       placeholder="Ebene Office"
-                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
                       value={formData.office2Title}
                       onChange={handleChange}
                     />
@@ -325,7 +325,7 @@ const Settings = () => {
                     <textarea
                       name="office1Address"
                       rows={2}
-                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900 resize-none"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900 resize-none"
                       value={formData.office1Address}
                       onChange={handleChange}
                     />
@@ -335,7 +335,7 @@ const Settings = () => {
                     <textarea
                       name="office2Address"
                       rows={2}
-                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900 resize-none"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900 resize-none"
                       value={formData.office2Address}
                       onChange={handleChange}
                     />
@@ -348,7 +348,7 @@ const Settings = () => {
                     <input
                       type="text"
                       name="facebookUrl"
-                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
                       value={formData.facebookUrl}
                       onChange={handleChange}
                     />
@@ -358,7 +358,7 @@ const Settings = () => {
                     <input
                       type="text"
                       name="instagramUrl"
-                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
                       value={formData.instagramUrl}
                       onChange={handleChange}
                     />
@@ -368,7 +368,7 @@ const Settings = () => {
                     <input
                       type="text"
                       name="linkedinUrl"
-                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
                       value={formData.linkedinUrl}
                       onChange={handleChange}
                     />
@@ -380,7 +380,7 @@ const Settings = () => {
                     <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Timezone</label>
                     <select
                       name="timezone"
-                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900 appearance-none"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900 appearance-none"
                       value={formData.timezone}
                       onChange={handleChange}
                     >
@@ -400,7 +400,7 @@ const Settings = () => {
                     <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Local Currency</label>
                     <select
                       name="currency"
-                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900 appearance-none"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900 appearance-none"
                       value={formData.currency}
                       onChange={handleChange}
                     >
@@ -421,7 +421,7 @@ const Settings = () => {
                     type="text"
                     name="seo.metaTitle"
                     placeholder="Travel Lounge - Your Premiere Holiday Provider"
-                    className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                    className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
                     value={formData.seo.metaTitle}
                     onChange={handleChange}
                   />
@@ -433,7 +433,7 @@ const Settings = () => {
                     name="seo.metaDescription"
                     rows={3}
                     placeholder="Brief description of your site for search engines..."
-                    className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900 resize-none"
+                    className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900 resize-none"
                     value={formData.seo.metaDescription}
                     onChange={handleChange}
                   />
@@ -445,7 +445,7 @@ const Settings = () => {
                     type="text"
                     name="seo.metaKeywords"
                     placeholder="travel, mauritius, holidays, packages, tours"
-                    className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                    className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
                     value={formData.seo.metaKeywords}
                     onChange={handleChange}
                   />
@@ -457,7 +457,7 @@ const Settings = () => {
                     type="text"
                     name="seo.ogImage"
                     placeholder="https://example.com/social-share.jpg"
-                    className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                    className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
                     value={formData.seo.ogImage}
                     onChange={handleChange}
                   />
@@ -474,7 +474,7 @@ const Settings = () => {
                       type="text"
                       name="mobile.supportPhone"
                       placeholder="+230 5940 7701"
-                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
                       value={formData.mobile.supportPhone}
                       onChange={handleChange}
                     />
@@ -486,7 +486,7 @@ const Settings = () => {
                       type="email"
                       name="mobile.supportEmail"
                       placeholder="support@travellounge.mu"
-                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
                       value={formData.mobile.supportEmail}
                       onChange={handleChange}
                     />
@@ -497,7 +497,7 @@ const Settings = () => {
                     <input
                       type="text"
                       name="mobile.appVersion"
-                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
                       value={formData.mobile.appVersion}
                       onChange={handleChange}
                     />
@@ -509,14 +509,14 @@ const Settings = () => {
                       <input
                         type="color"
                         name="mobile.primaryColor"
-                        className="h-12 w-20 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 p-1 cursor-pointer"
+                        className="h-12 w-20 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 p-1 cursor-pointer"
                         value={formData.mobile.primaryColor}
                         onChange={handleChange}
                       />
                       <input
                         type="text"
                         name="mobile.primaryColor"
-                        className="flex-grow px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                        className="flex-grow px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
                         value={formData.mobile.primaryColor}
                         onChange={handleChange}
                       />
@@ -541,7 +541,7 @@ const Settings = () => {
                       checked={formData.security.twoFactorAuth}
                       onChange={handleChange}
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-red"></div>
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-red"></div>
                   </label>
                 </div>
 
@@ -553,7 +553,7 @@ const Settings = () => {
                       name="security.passwordExpiry"
                       min="1"
                       max="365"
-                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
                       value={formData.security.passwordExpiry}
                       onChange={handleChange}
                     />
@@ -566,7 +566,7 @@ const Settings = () => {
                       name="security.sessionTimeout"
                       min="1"
                       max="480"
-                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
                       value={formData.security.sessionTimeout}
                       onChange={handleChange}
                     />
@@ -595,7 +595,7 @@ const Settings = () => {
                         checked={formData.notifications[item.key]}
                         onChange={handleChange}
                       />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-red"></div>
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-red"></div>
                     </label>
                   </div>
                 ))}

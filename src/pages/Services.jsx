@@ -185,7 +185,7 @@ const Services = () => {
   };
 
   const hasActiveFilters = searchTerm || selectedCategories.length > 0 || filterStatus !== 'All' || minPrice || maxPrice || selectedAmenities.length > 0;
-  const selectCls = 'px-3 py-2 text-sm font-semibold bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red appearance-none cursor-pointer text-gray-700 hover:border-gray-300 transition-colors';
+  const selectCls = 'px-3 py-2 text-sm font-semibold bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red appearance-none cursor-pointer text-gray-700 hover:border-slate-300 transition-colors';
 
   const toggleCategory = (cat) => {
     setSelectedCategories(prev =>
@@ -258,10 +258,10 @@ const Services = () => {
           <p className="text-gray-400 text-sm font-medium">Manage your agency services and rental inventory</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button onClick={() => refetchServices()} variant="outline" className="text-gray-500 border-gray-200 flex items-center gap-2">
+          <Button onClick={() => refetchServices()} variant="outline" className="text-gray-500 border-slate-300 flex items-center gap-2">
             <RefreshCw size={15} className={loading ? 'animate-spin' : ''} /> Sync
           </Button>
-          <Button onClick={() => setIsImportModalOpen(true)} variant="outline" className="text-gray-500 border-gray-200 flex items-center gap-2">
+          <Button onClick={() => setIsImportModalOpen(true)} variant="outline" className="text-gray-500 border-slate-300 flex items-center gap-2">
             <FileSpreadsheet size={15} /> Import Excel
           </Button>
           <Button onClick={openCreate} className="bg-brand-red hover:opacity-90 text-white flex items-center gap-2 shadow-lg shadow-red-100">
@@ -276,7 +276,7 @@ const Services = () => {
         onImport={handleBulkImport} 
       />
 
-      <Card className="border border-gray-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
+      <Card className="border border-slate-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
         <CardHeader className="border-b border-gray-50 pb-4 bg-white px-8 pt-8">
           <div className="flex flex-col gap-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
@@ -285,7 +285,7 @@ const Services = () => {
                 <input
                   type="text"
                   placeholder="Search all services…"
-                  className="pl-9 pr-9 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+                  className="pl-9 pr-9 py-2.5 w-full border border-slate-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -294,7 +294,7 @@ const Services = () => {
                 <button
                   type="button"
                   onClick={() => setShowAdvanced(!showAdvanced)}
-                  className={`px-4 py-2.5 rounded-2xl border text-xs font-black uppercase tracking-widest transition-all ${showAdvanced ? 'bg-brand-red text-white border-brand-red' : 'bg-white text-gray-400 border-gray-200 hover:border-gray-300'}`}
+                  className={`px-4 py-2.5 rounded-2xl border text-xs font-black uppercase tracking-widest transition-all ${showAdvanced ? 'bg-brand-red text-white border-brand-red' : 'bg-white text-gray-400 border-slate-300 hover:border-slate-300'}`}
                 >
                   {showAdvanced ? 'Simple View' : 'Advanced Filters'}
                 </button>
@@ -313,7 +313,7 @@ const Services = () => {
                     <input
                       type="number"
                       placeholder="Min"
-                      className="w-full px-3 py-2 text-xs font-bold border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red"
+                      className="w-full px-3 py-2 text-xs font-bold border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red"
                       value={minPrice}
                       onChange={(e) => setMinPrice(e.target.value)}
                     />
@@ -321,7 +321,7 @@ const Services = () => {
                     <input
                       type="number"
                       placeholder="Max"
-                      className="w-full px-3 py-2 text-xs font-bold border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red"
+                      className="w-full px-3 py-2 text-xs font-bold border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red"
                       value={maxPrice}
                       onChange={(e) => setMaxPrice(e.target.value)}
                     />
@@ -336,7 +336,7 @@ const Services = () => {
                         key={cat}
                         type="button"
                         onClick={() => toggleCategory(cat)}
-                        className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border transition-all ${selectedCategories.includes(cat) ? 'bg-brand-red text-white border-brand-red' : 'bg-white text-gray-400 border-gray-200 hover:border-gray-300'}`}
+                        className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border transition-all ${selectedCategories.includes(cat) ? 'bg-brand-red text-white border-brand-red' : 'bg-white text-gray-400 border-slate-300 hover:border-slate-300'}`}
                       >
                         {cat}
                       </button>
@@ -363,7 +363,7 @@ const Services = () => {
                         key={amenity}
                         type="button"
                         onClick={() => toggleAmenity(amenity)}
-                        className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border transition-all ${selectedAmenities.includes(amenity) ? 'bg-brand-red text-white border-brand-red' : 'bg-white text-gray-400 border-gray-200 hover:border-gray-300'}`}
+                        className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border transition-all ${selectedAmenities.includes(amenity) ? 'bg-brand-red text-white border-brand-red' : 'bg-white text-gray-400 border-slate-300 hover:border-slate-300'}`}
                       >
                         {amenity}
                       </button>
@@ -381,7 +381,7 @@ const Services = () => {
                   <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Sort By:</span>
                   <div className="relative">
                     <select
-                      className="pl-3 pr-7 py-1.5 text-[10px] font-black uppercase tracking-widest bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-red appearance-none cursor-pointer text-gray-500"
+                      className="pl-3 pr-7 py-1.5 text-[10px] font-black uppercase tracking-widest bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-red appearance-none cursor-pointer text-gray-500"
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value)}
                     >

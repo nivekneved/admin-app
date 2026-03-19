@@ -215,7 +215,7 @@ const PopupAds = () => {
                     <Button
                         onClick={fetchAds}
                         variant="outline"
-                        className="text-gray-500 border-gray-200 flex items-center gap-2"
+                        className="text-gray-500 border-slate-300 flex items-center gap-2"
                     >
                         <RefreshCw size={15} className={loading ? 'animate-spin' : ''} /> Sync
                     </Button>
@@ -228,7 +228,7 @@ const PopupAds = () => {
                 </div>
             </div>
 
-            <Card className="border border-gray-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
+            <Card className="border border-slate-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
                 <CardHeader className="border-b border-gray-50 pb-4 px-8 pt-8">
                     <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
                         <div className="relative w-full max-w-md">
@@ -236,7 +236,7 @@ const PopupAds = () => {
                             <input
                                 type="text"
                                 placeholder="Search advertisements..."
-                                className="pl-9 pr-4 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+                                className="pl-9 pr-4 py-2.5 w-full border border-slate-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -289,7 +289,7 @@ const PopupAds = () => {
                                         <tr key={ad.id} className="hover:bg-gray-50/80 transition-colors group">
                                             <td className="px-8 py-4">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="h-12 w-12 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 relative shrink-0">
+                                                    <div className="h-12 w-12 rounded-xl overflow-hidden bg-gray-100 border border-slate-300 relative shrink-0">
                                                         {ad.media_type === 'video' ? (
                                                             <div className="absolute inset-0 flex items-center justify-center bg-brand-charcoal">
                                                                 <Video size={16} className="text-white opacity-50" />
@@ -313,7 +313,7 @@ const PopupAds = () => {
                                                 </div>
                                             </td>
                                             <td className="px-8 py-4">
-                                                <span className="bg-gray-100 text-gray-600 text-[8px] font-black px-1.5 py-0.5 rounded uppercase border border-gray-200">
+                                                <span className="bg-gray-100 text-gray-600 text-[8px] font-black px-1.5 py-0.5 rounded uppercase border border-slate-300">
                                                     {ad.display_frequency.replace(/_/g, ' ')}
                                                 </span>
                                             </td>
@@ -375,7 +375,7 @@ const PopupAds = () => {
                         ) : (
                             <div className="p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                                 {processedAds.map((ad) => (
-                                    <div key={ad.id} className="bg-white border border-gray-300 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500 flex flex-col">
+                                    <div key={ad.id} className="bg-white border border-slate-300 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500 flex flex-col">
                                         <div className="h-48 bg-gray-50 relative overflow-hidden">
                                             {ad.media_type === 'video' ? (
                                                 <video src={ad.media_url} className="w-full h-full object-cover" muted loop />
@@ -408,7 +408,7 @@ const PopupAds = () => {
                                         </div>
                                         <div className="p-6 flex flex-col flex-1">
                                             <div className="flex items-center justify-between mb-2">
-                                                <span className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-gray-100 text-gray-500 border border-gray-200">
+                                                <span className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-gray-100 text-gray-500 border border-slate-300">
                                                     {ad.display_frequency.replace(/_/g, ' ')}
                                                 </span>
                                                 <div className="flex items-center gap-1.5 text-[9px] font-bold text-gray-400">
@@ -441,7 +441,7 @@ const PopupAds = () => {
             {/* Modal / Editor */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-charcoal/40 backdrop-blur-sm animate-in fade-in duration-300">
-                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-gray-200 flex flex-col">
+                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-slate-300 flex flex-col">
                         <div className="sticky top-0 bg-white border-b border-gray-100 p-6 flex items-center justify-between z-10">
                             <div className="flex items-center gap-3">
                                 <div className="p-3 bg-red-50 text-brand-red rounded-2xl">
@@ -471,7 +471,7 @@ const PopupAds = () => {
                                         <input
                                             required
                                             type="text"
-                                            className="w-full px-5 py-3.5 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
+                                            className="w-full px-5 py-3.5 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
                                             value={formData.title}
                                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                             placeholder="e.g. Exclusive Spring Deals"
@@ -481,7 +481,7 @@ const PopupAds = () => {
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Body Text / Message</label>
                                         <textarea
-                                            className="w-full px-5 py-3.5 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 h-24 resize-none"
+                                            className="w-full px-5 py-3.5 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 h-24 resize-none"
                                             value={formData.content}
                                             onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                                             placeholder="Enter the main message for your visitors..."
@@ -493,7 +493,7 @@ const PopupAds = () => {
                                             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Button Text</label>
                                             <input
                                                 type="text"
-                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
+                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
                                                 value={formData.cta_text}
                                                 onChange={(e) => setFormData({ ...formData, cta_text: e.target.value })}
                                             />
@@ -503,7 +503,7 @@ const PopupAds = () => {
                                             <div className="relative">
                                                 <input
                                                     type="text"
-                                                    className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 pr-10"
+                                                    className="w-full px-5 py-3 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 pr-10"
                                                     value={formData.cta_link}
                                                     onChange={(e) => setFormData({ ...formData, cta_link: e.target.value })}
                                                     placeholder="/services"
@@ -516,7 +516,7 @@ const PopupAds = () => {
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Display Frequency</label>
                                         <select
-                                            className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 appearance-none"
+                                            className="w-full px-5 py-3 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 appearance-none"
                                             value={formData.display_frequency}
                                             onChange={(e) => setFormData({ ...formData, display_frequency: e.target.value })}
                                         >
@@ -533,7 +533,7 @@ const PopupAds = () => {
 
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Asset Format</label>
-                                        <div className="flex bg-gray-50 p-1 rounded-2xl border-2 border-gray-200">
+                                        <div className="flex bg-gray-50 p-1 rounded-2xl border-2 border-slate-300">
                                             {['image', 'video', 'none'].map(type => (
                                                 <button
                                                     key={type}
@@ -567,7 +567,7 @@ const PopupAds = () => {
                                             <div className="relative group">
                                                 <input
                                                     type="text"
-                                                    className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-mono text-[10px] text-gray-500 pr-12"
+                                                    className="w-full px-5 py-3 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-mono text-[10px] text-gray-500 pr-12"
                                                     value={formData.media_url}
                                                     onChange={(e) => setFormData({ ...formData, media_url: e.target.value })}
                                                     placeholder="Paste URL or upload..."
@@ -586,7 +586,7 @@ const PopupAds = () => {
                                                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Launch At</label>
                                                 <input
                                                     type="datetime-local"
-                                                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 text-sm"
+                                                    className="w-full px-4 py-3 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 text-sm"
                                                     value={formData.start_at}
                                                     onChange={(e) => setFormData({ ...formData, start_at: e.target.value })}
                                                 />
@@ -595,7 +595,7 @@ const PopupAds = () => {
                                                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Terminate At</label>
                                                 <input
                                                     type="datetime-local"
-                                                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 text-sm"
+                                                    className="w-full px-4 py-3 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 text-sm"
                                                     value={formData.end_at}
                                                     onChange={(e) => setFormData({ ...formData, end_at: e.target.value })}
                                                 />
@@ -628,7 +628,7 @@ const PopupAds = () => {
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
                                     variant="outline"
-                                    className="px-8 py-4 border-gray-300 text-gray-400 font-bold rounded-2xl uppercase tracking-widest text-[10px]"
+                                    className="px-8 py-4 border-slate-300 text-gray-400 font-bold rounded-2xl uppercase tracking-widest text-[10px]"
                                 >
                                     Cancel
                                 </Button>

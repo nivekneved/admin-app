@@ -273,7 +273,7 @@ const Reports = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2 border border-gray-200 rounded-3xl bg-white shadow-xl shadow-gray-100">
+        <Card className="lg:col-span-2 border border-slate-300 rounded-3xl bg-white shadow-xl shadow-gray-100">
           <CardHeader className="border-b border-gray-100 p-6">
             <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest flex items-center gap-2">
               <BarChart2 size={16} className="text-brand-red" /> Revenue Trend
@@ -295,7 +295,7 @@ const Reports = () => {
           </CardContent>
         </Card>
 
-        <Card className="border border-gray-200 rounded-3xl bg-white shadow-xl shadow-gray-100">
+        <Card className="border border-slate-300 rounded-3xl bg-white shadow-xl shadow-gray-100">
             <CardHeader className="border-b border-gray-100 p-6">
                 <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest flex items-center gap-2">
                     <PieChart size={16} className="text-brand-red" /> Status Mix
@@ -316,7 +316,7 @@ const Reports = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="border border-gray-200 rounded-3xl bg-white shadow-xl shadow-gray-100">
+        <Card className="border border-slate-300 rounded-3xl bg-white shadow-xl shadow-gray-100">
           <CardHeader className="border-b border-gray-100 p-6 flex justify-between items-center">
             <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest flex items-center gap-2">
               <Star size={16} className="text-brand-red" /> Performance
@@ -342,7 +342,7 @@ const Reports = () => {
           </CardContent>
         </Card>
 
-        <Card className="border border-gray-200 rounded-3xl bg-white shadow-xl shadow-gray-100">
+        <Card className="border border-slate-300 rounded-3xl bg-white shadow-xl shadow-gray-100">
           <CardHeader className="border-b border-gray-100 p-6">
             <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest flex items-center gap-2">
               <Clock size={16} className="text-brand-red" /> Recent Activity
@@ -371,17 +371,17 @@ const Reports = () => {
   );
 
   const renderTableReport = (data, columns, title) => (
-    <Card className="border border-gray-200 rounded-3xl bg-white shadow-xl shadow-gray-200/50 print:shadow-none print:border-none overflow-hidden">
+    <Card className="border border-slate-300 rounded-3xl bg-white shadow-xl shadow-gray-200/50 print:shadow-none print:border-none overflow-hidden">
       <CardHeader className="border-b border-gray-100 p-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-black text-gray-900 tracking-tight">{title}</h2>
           <p className="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mt-1">Found {data.length} records</p>
         </div>
         <div className="flex items-center gap-3 print:hidden">
-          <Button variant="outline" size="sm" onClick={() => handleExportExcel(activeTab)} disabled={exportLoading} className="rounded-xl border-gray-200 text-gray-600 flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={() => handleExportExcel(activeTab)} disabled={exportLoading} className="rounded-xl border-slate-300 text-gray-600 flex items-center gap-2">
             <Download size={14} /> XLSX
           </Button>
-          <Button variant="outline" size="sm" onClick={handlePrint} className="rounded-xl border-gray-200 text-gray-600 flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={handlePrint} className="rounded-xl border-slate-300 text-gray-600 flex items-center gap-2">
             <Printer size={14} /> PDF/Print
           </Button>
         </div>
@@ -436,7 +436,7 @@ const Reports = () => {
           <p className="text-gray-400 text-sm font-medium">Generate, analyze and export operational business reports</p>
         </div>
         <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={fetchAll} disabled={loading} className="rounded-xl border-gray-200 text-gray-500 flex items-center gap-2">
+            <Button variant="outline" onClick={fetchAll} disabled={loading} className="rounded-xl border-slate-300 text-gray-500 flex items-center gap-2">
                 <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
                 Refresh Data
             </Button>

@@ -54,7 +54,7 @@ const Categories = () => {
     const [sortBy, setSortBy] = useState('display_order:asc');
     const [viewMode, setViewMode] = useState('list');
 
-    const selectCls = "bg-gray-50 border border-gray-300 text-gray-900 text-[11px] font-black uppercase tracking-widest rounded-2xl focus:ring-brand-red focus:border-brand-red block w-full p-2.5 appearance-none pr-8 transition-all cursor-pointer hover:bg-white";
+    const selectCls = "bg-gray-50 border border-slate-300 text-gray-900 text-[11px] font-black uppercase tracking-widest rounded-2xl focus:ring-brand-red focus:border-brand-red block w-full p-2.5 appearance-none pr-8 transition-all cursor-pointer hover:bg-white";
 
     // — Modals —
     const [showFormModal, setShowFormModal] = useState(false);
@@ -266,7 +266,7 @@ const Categories = () => {
                         variant="outline"
                         onClick={fetchCategories}
                         disabled={loading}
-                        className="text-gray-500 border-gray-200 flex items-center gap-2"
+                        className="text-gray-500 border-slate-300 flex items-center gap-2"
                     >
                         <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
                         Sync
@@ -281,9 +281,9 @@ const Categories = () => {
                 </div>
             </div>
 
-            <Card className="border border-gray-200 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
+            <Card className="border border-slate-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
                 {/* Toolbar */}
-                <CardHeader className="border-b border-gray-200 pb-4 bg-white px-8 pt-8">
+                <CardHeader className="border-b border-slate-300 pb-4 bg-white px-8 pt-8">
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                             <div className="relative flex-1 min-w-0 max-w-md">
@@ -291,7 +291,7 @@ const Categories = () => {
                                 <input
                                     type="text"
                                     placeholder="Locate node identifiers..."
-                                    className="pl-9 pr-9 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+                                    className="pl-9 pr-9 py-2.5 w-full border border-slate-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
@@ -333,7 +333,7 @@ const Categories = () => {
                                     </button>
                                 )}
 
-                                <div className="flex bg-gray-50 p-1.5 rounded-2xl border border-gray-300 gap-1 ml-2">
+                                <div className="flex bg-gray-50 p-1.5 rounded-2xl border border-slate-300 gap-1 ml-2">
                                     <button
                                         onClick={() => setViewMode('list')}
                                         className={`p-2 rounded-xl transition-all ${viewMode === 'list' ? 'bg-white shadow-sm text-brand-red' : 'text-gray-400 hover:text-gray-600'}`}
@@ -473,7 +473,7 @@ const Categories = () => {
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-8 bg-gray-50/30">
                             {processed.map((cat) => (
-                                <div key={cat.id} className="group relative bg-white border border-gray-200 rounded-3xl p-5 shadow-sm hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 flex flex-col h-full">
+                                <div key={cat.id} className="group relative bg-white border border-slate-300 rounded-3xl p-5 shadow-sm hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 flex flex-col h-full">
                                     {/* Icon/Image & Status */}
                                     <div className="flex items-start justify-between mb-4">
                                         <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center text-brand-red shadow-inner group-hover:scale-110 transition-transform duration-500 overflow-hidden">
@@ -562,7 +562,7 @@ const Categories = () => {
                 {viewingCat && (
                     <div className="space-y-4">
                         {/* Header */}
-                        <div className="flex items-center gap-4 bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <div className="flex items-center gap-4 bg-gray-50 rounded-xl p-4 border border-slate-300">
                             <div className="h-12 w-12 rounded-2xl bg-red-50/50 border border-red-100/50 flex items-center justify-center text-2xl shadow-sm">
                                 {getCategoryIcon(viewingCat.name)}
                             </div>
@@ -577,30 +577,30 @@ const Categories = () => {
 
                         {/* Details grid */}
                         <div className="grid grid-cols-2 gap-3">
-                            <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
+                            <div className="bg-gray-50 rounded-xl p-3 border border-slate-300">
                                 <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1"><Hash size={10} className="mr-1" /> Display Order</div>
                                 <p className="text-lg font-black text-gray-900">{viewingCat.display_order ?? '—'}</p>
                             </div>
-                            <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
+                            <div className="bg-gray-50 rounded-xl p-3 border border-slate-300">
                                 <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1"><Home size={10} className="mr-1" /> Show on Home</div>
                                 <p className="text-lg font-black text-gray-900">{viewingCat.show_on_home ? '✅ Yes' : '—'}</p>
                             </div>
 
                             {viewingCat.description && (
-                                <div className="col-span-2 bg-gray-50 rounded-xl p-3 border border-gray-200">
+                                <div className="col-span-2 bg-gray-50 rounded-xl p-3 border border-slate-300">
                                     <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1"><FileText size={10} className="mr-1" /> Description</div>
                                     <p className="text-sm text-gray-700 leading-relaxed">{viewingCat.description}</p>
                                 </div>
                             )}
 
                             {viewingCat.link && (
-                                <div className="col-span-2 bg-gray-50 rounded-xl p-3 border border-gray-200">
+                                <div className="col-span-2 bg-gray-50 rounded-xl p-3 border border-slate-300">
                                     <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1"><LinkIcon size={10} className="mr-1" /> Link</div>
                                     <p className="text-xs font-mono text-red-600 truncate">{viewingCat.link}</p>
                                 </div>
                             )}
 
-                            <div className="col-span-2 bg-gray-50 rounded-xl p-3 border border-gray-200">
+                            <div className="col-span-2 bg-gray-50 rounded-xl p-3 border border-slate-300">
                                 <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1"><Layers size={10} className="mr-1" /> ID</div>
                                 <p className="text-xs font-mono text-gray-500">{viewingCat.id}</p>
                             </div>
@@ -632,7 +632,7 @@ const Categories = () => {
                             <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Name *</label>
                             <input type="text" name="name" required
                                 placeholder="e.g. Hotels"
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium text-sm"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium text-sm"
                                 value={formData.name} onChange={handleInputChange}
                             />
                         </div>
@@ -650,7 +650,7 @@ const Categories = () => {
                             <span className="px-3 py-2.5 bg-gray-100 border border-r-0 border-gray-100 rounded-l-xl text-sm text-gray-400 font-mono">/</span>
                             <input type="text" name="slug" required
                                 placeholder="hotels"
-                                className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-r-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-mono text-sm"
+                                className="flex-1 px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-r-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-mono text-sm"
                                 value={formData.slug} onChange={handleInputChange}
                             />
                         </div>
@@ -661,7 +661,7 @@ const Categories = () => {
                         <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Description</label>
                         <textarea name="description" rows={2}
                             placeholder="Brief description of this category…"
-                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-sm resize-none"
+                            className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-sm resize-none"
                             value={formData.description} onChange={handleInputChange}
                         />
                     </div>
@@ -671,14 +671,14 @@ const Categories = () => {
                             <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Link (optional)</label>
                             <input type="text" name="link"
                                 placeholder="/categories/hotels"
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-mono text-sm"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-mono text-sm"
                                 value={formData.link} onChange={handleInputChange}
                             />
                         </div>
                         <div>
                             <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Display Order</label>
                             <input type="number" name="display_order" min="1"
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
                                 value={formData.display_order} onChange={handleInputChange}
                             />
                         </div>

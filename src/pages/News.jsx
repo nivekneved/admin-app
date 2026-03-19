@@ -264,7 +264,7 @@ const News = () => {
           ) : (
             <div className="p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredPosts.map((post) => (
-                    <div key={post.id} className="bg-white border border-slate-200 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500 flex flex-col">
+                    <div key={post.id} className="bg-white border border-slate-300 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500 flex flex-col">
                         <div className="aspect-[16/10] bg-slate-50 relative overflow-hidden">
                             {post.featured_image ? (
                                 <img src={post.featured_image} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />

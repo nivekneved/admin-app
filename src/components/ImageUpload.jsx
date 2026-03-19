@@ -85,7 +85,7 @@ const ImageUpload = ({
             
             <div className="flex flex-col gap-4">
                 <div 
-                    className={`relative group/image w-full ${aspectRatio} rounded-2xl bg-gray-50 border border-gray-300 overflow-hidden flex items-center justify-center transition-all hover:border-brand-red/30`}
+                    className={`relative group/image w-full ${aspectRatio} rounded-2xl bg-gray-50 border border-slate-300 overflow-hidden flex items-center justify-center transition-all hover:border-brand-red/30`}
                 >
                     {value ? (
                         <>
@@ -143,7 +143,7 @@ const ImageUpload = ({
                             <input 
                                 type="text"
                                 placeholder="https://..."
-                                className="w-full pl-4 pr-10 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-xs font-mono"
+                                className="w-full pl-4 pr-10 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-xs font-mono"
                                 value={value} 
                                 onChange={(e) => onChange(e.target.value)}
                             />

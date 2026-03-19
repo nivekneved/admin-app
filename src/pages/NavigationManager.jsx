@@ -47,7 +47,7 @@ const SortableNavItem = ({ item, level = 0, onEdit, onDelete, onToggle, onAddSub
     <div
       ref={setNodeRef}
       style={style}
-      className={`group bg-white border ${isDragging ? 'border-brand-red shadow-2xl' : 'border-gray-200'} rounded-2xl mb-3 overflow-hidden transition-all duration-300 hover:border-gray-300`}
+      className={`group bg-white border ${isDragging ? 'border-brand-red shadow-2xl' : 'border-slate-300'} rounded-2xl mb-3 overflow-hidden transition-all duration-300 hover:border-slate-300`}
     >
       <div className="flex items-center p-4 gap-4">
         <button
@@ -62,7 +62,7 @@ const SortableNavItem = ({ item, level = 0, onEdit, onDelete, onToggle, onAddSub
           <div className="flex items-center gap-2 mb-1">
             <h3 className={`text-sm font-black text-gray-900 truncate ${level > 0 ? 'text-gray-600' : ''}`}>{item.label}</h3>
             {!item.is_active && (
-              <span className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-gray-100 text-gray-400 border border-gray-200">Hidden</span>
+              <span className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-gray-100 text-gray-400 border border-slate-300">Hidden</span>
             )}
             {level > 0 && (
               <span className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-red-50 text-red-400 border border-red-100">Submenu</span>
@@ -305,7 +305,7 @@ const NavigationManager = () => {
           <p className="text-gray-400 text-sm font-medium">Control the website&apos;s main menu structure via drag &amp; drop</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button onClick={fetchNavigations} variant="outline" className="text-gray-500 border-gray-200 flex items-center gap-2">
+          <Button onClick={fetchNavigations} variant="outline" className="text-gray-500 border-slate-300 flex items-center gap-2">
             <RefreshCw size={15} className={loading ? 'animate-spin' : ''} /> Sync
           </Button>
           <Button onClick={saveOrder} disabled={saving || loading} className="bg-gray-900 hover:bg-black text-white flex items-center gap-2 shadow-lg shadow-gray-200">
@@ -317,7 +317,7 @@ const NavigationManager = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* — List Section — */}
         <div className="lg:col-span-2 space-y-4">
-          <Card className="border border-gray-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
+          <Card className="border border-slate-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
             <CardHeader className="border-b border-gray-50 p-8">
               <div className="flex items-center justify-between">
                 <h2 className="text-sm font-black text-gray-900 uppercase tracking-widest">Active Menu Structure</h2>
@@ -365,7 +365,7 @@ const NavigationManager = () => {
 
         {/* — Form Section — */}
         <div className="space-y-6">
-          <Card className="border border-gray-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white sticky top-6">
+          <Card className="border border-slate-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white sticky top-6">
             <CardHeader className="border-b border-gray-50 p-8 bg-gray-50/50">
               <h2 className="text-sm font-black text-gray-900 uppercase tracking-widest">
                 {isEditing ? 'Edit Menu Item' : 'Add Strategic Link'}
@@ -379,7 +379,7 @@ const NavigationManager = () => {
                     type="text"
                     required
                     placeholder="e.g. Travel Insurance"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                    className="w-full px-4 py-3 border border-slate-300 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
                     value={formData.label}
                     onChange={(e) => setFormData({ ...formData, label: e.target.value })}
                   />
@@ -391,7 +391,7 @@ const NavigationManager = () => {
                     type="text"
                     required
                     placeholder="e.g. /insurance or https://..."
-                    className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                    className="w-full px-4 py-3 border border-slate-300 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
                     value={formData.link}
                     onChange={(e) => setFormData({ ...formData, link: e.target.value })}
                   />
@@ -402,7 +402,7 @@ const NavigationManager = () => {
                   <input
                     type="text"
                     placeholder="e.g. Shield, Coffee, Map"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                    className="w-full px-4 py-3 border border-slate-300 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
                     value={formData.icon}
                     onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
                   />
@@ -411,7 +411,7 @@ const NavigationManager = () => {
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Parent Item (Optional)</label>
                   <select
-                    className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all appearance-none bg-white"
+                    className="w-full px-4 py-3 border border-slate-300 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all appearance-none bg-white"
                     value={formData.parent_id || ''}
                     onChange={(e) => setFormData({ ...formData, parent_id: e.target.value || null })}
                   >
@@ -449,7 +449,7 @@ const NavigationManager = () => {
                     <Plus size={18} /> {isEditing ? 'Confirm Transformation' : 'Append to Navigation'}
                   </Button>
                   {isEditing && (
-                    <Button type="button" onClick={resetForm} variant="outline" className="w-full border-gray-200 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:bg-gray-50">
+                    <Button type="button" onClick={resetForm} variant="outline" className="w-full border-slate-300 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:bg-gray-50">
                       Abort Editing
                     </Button>
                   )}

@@ -18,7 +18,7 @@ const Orders = () => {
   const [filterMethod, setFilterMethod] = useState('all');
   const [sortBy, setSortBy] = useState('created_at:desc');
 
-  const selectCls = "bg-gray-50 border border-gray-300 text-gray-900 text-[11px] font-black uppercase tracking-widest rounded-2xl focus:ring-brand-red focus:border-brand-red block w-full p-2.5 appearance-none pr-8 transition-all cursor-pointer hover:bg-white";
+  const selectCls = "bg-gray-50 border border-slate-300 text-gray-900 text-[11px] font-black uppercase tracking-widest rounded-2xl focus:ring-brand-red focus:border-brand-red block w-full p-2.5 appearance-none pr-8 transition-all cursor-pointer hover:bg-white";
 
   useEffect(() => {
     fetchOrders();
@@ -169,7 +169,7 @@ const Orders = () => {
           <Button
             variant="outline"
             onClick={fetchOrders}
-            className="text-gray-500 border-gray-200 flex items-center gap-2"
+            className="text-gray-500 border-slate-300 flex items-center gap-2"
             disabled={loading}
           >
             <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
@@ -184,7 +184,7 @@ const Orders = () => {
         </div>
       </div>
 
-      <Card className="border border-gray-200 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
+      <Card className="border border-slate-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
         <CardHeader className="border-b border-gray-50 pb-4 bg-white px-8 pt-8">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -193,7 +193,7 @@ const Orders = () => {
                 <input
                   type="text"
                   placeholder="Intercept order streams…"
-                  className="pl-9 pr-9 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+                  className="pl-9 pr-9 py-2.5 w-full border border-slate-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
                   value={searchTerm}
                   onChange={handleSearchChange}
                 />
@@ -317,7 +317,7 @@ const Orders = () => {
                       {expandedOrderId === order.id && (
                         <tr>
                           <td colSpan="7" className="px-8 py-6 bg-gray-50/50">
-                            <div className="bg-white rounded-2xl p-6 border border-gray-300 shadow-sm">
+                            <div className="bg-white rounded-2xl p-6 border border-slate-300 shadow-sm">
                               <div className="flex items-center justify-between mb-4">
                                 <h4 className="font-black text-gray-400 uppercase text-[10px] tracking-widest flex items-center gap-2">
                                   <Package size={14} /> Itemized Manifest
@@ -346,7 +346,7 @@ const Orders = () => {
                                     </div>
                                   ))
                                 ) : (
-                                  <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest italic py-4 text-center bg-gray-50/50 rounded-xl border border-dashed border-gray-200">
+                                  <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest italic py-4 text-center bg-gray-50/50 rounded-xl border border-dashed border-slate-300">
                                     No itemized data available for this legacy transactional record.
                                   </div>
                                 )}
@@ -391,7 +391,7 @@ const Orders = () => {
 
           {/* Pagination */}
           {processedOrders.length > ordersPerPage && (
-            <div className="flex items-center justify-between px-8 py-6 bg-gray-50/50 border-t border-gray-200">
+            <div className="flex items-center justify-between px-8 py-6 bg-gray-50/50 border-t border-slate-300">
               <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                 Page {currentPage} of {totalPages}
               </span>
@@ -399,14 +399,14 @@ const Orders = () => {
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className="p-3 bg-white border border-gray-300 rounded-xl disabled:opacity-30 shadow-sm hover:border-gray-300 transition-all font-bold text-xs"
+                  className="p-3 bg-white border border-slate-300 rounded-xl disabled:opacity-30 shadow-sm hover:border-slate-300 transition-all font-bold text-xs"
                 >
                   Previous
                 </button>
                 <button
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
-                  className="p-3 bg-white border border-gray-100 rounded-xl disabled:opacity-30 shadow-sm hover:border-gray-300 transition-all font-bold text-xs"
+                  className="p-3 bg-white border border-gray-100 rounded-xl disabled:opacity-30 shadow-sm hover:border-slate-300 transition-all font-bold text-xs"
                 >
                   Next
                 </button>

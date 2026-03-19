@@ -30,7 +30,7 @@ const genDefaultForm = () => ({
   items: [{ id: crypto.randomUUID(), description: '', quantity: 1, unit_price: 0 }]
 });
 
-const selectCls = "bg-gray-50 border border-gray-300 text-gray-900 text-[11px] font-black uppercase tracking-widest rounded-2xl focus:ring-brand-red focus:border-brand-red block w-full p-2.5 appearance-none pr-8 transition-all cursor-pointer hover:bg-white";
+const selectCls = "bg-gray-50 border border-slate-300 text-gray-900 text-[11px] font-black uppercase tracking-widest rounded-2xl focus:ring-brand-red focus:border-brand-red block w-full p-2.5 appearance-none pr-8 transition-all cursor-pointer hover:bg-white";
 
 const Invoices = () => {
   const [invoices, setInvoices] = useState([]);
@@ -404,7 +404,7 @@ Due Date  : ${formatDate(invoice.due_date)}
           <Button
             variant="outline"
             onClick={fetchInvoices}
-            className="text-gray-500 border-gray-200 flex items-center gap-2"
+            className="text-gray-500 border-slate-300 flex items-center gap-2"
             disabled={loading}
           >
             <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
@@ -419,8 +419,8 @@ Due Date  : ${formatDate(invoice.due_date)}
         </div>
       </div>
 
-      <Card className="border border-gray-200 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
-        <CardHeader className="border-b border-gray-200 pb-4 bg-white px-8 pt-8">
+      <Card className="border border-slate-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
+        <CardHeader className="border-b border-slate-300 pb-4 bg-white px-8 pt-8">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="relative flex-1 min-w-0 max-w-md">
@@ -428,7 +428,7 @@ Due Date  : ${formatDate(invoice.due_date)}
                 <input
                   type="text"
                   placeholder="Locate financial records…"
-                  className="pl-9 pr-9 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+                  className="pl-9 pr-9 py-2.5 w-full border border-slate-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -620,7 +620,7 @@ Due Date  : ${formatDate(invoice.due_date)}
 
           {/* Pagination */}
           {processedInvoices.length > invoicesPerPage && (
-            <div className="flex items-center justify-between px-8 py-6 bg-gray-50/50 border-t border-gray-200">
+            <div className="flex items-center justify-between px-8 py-6 bg-gray-50/50 border-t border-slate-300">
               <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                 Page {currentPage} of {totalPages}
               </span>
@@ -628,14 +628,14 @@ Due Date  : ${formatDate(invoice.due_date)}
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className="p-3 bg-white border border-gray-300 rounded-xl disabled:opacity-30 shadow-sm hover:border-gray-300 transition-all font-bold text-xs"
+                  className="p-3 bg-white border border-slate-300 rounded-xl disabled:opacity-30 shadow-sm hover:border-slate-300 transition-all font-bold text-xs"
                 >
                   Previous
                 </button>
                 <button
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
-                  className="p-3 bg-white border border-gray-300 rounded-xl disabled:opacity-30 shadow-sm hover:border-gray-300 transition-all font-bold text-xs"
+                  className="p-3 bg-white border border-slate-300 rounded-xl disabled:opacity-30 shadow-sm hover:border-slate-300 transition-all font-bold text-xs"
                 >
                   Next
                 </button>
@@ -658,7 +658,7 @@ Due Date  : ${formatDate(invoice.due_date)}
           <div className="space-y-4">
 
             {/* Header strip */}
-            <div className="flex items-center justify-between bg-gray-50 rounded-xl p-4 border border-gray-300">
+            <div className="flex items-center justify-between bg-gray-50 rounded-xl p-4 border border-slate-300">
               <div>
                 <p className="text-lg font-black text-gray-900 font-mono">{viewingInvoice.reference}</p>
                 <p className="text-xs text-gray-400 mt-0.5">Issued {formatDate(viewingInvoice.created_at)}</p>
@@ -670,14 +670,14 @@ Due Date  : ${formatDate(invoice.due_date)}
 
             {/* Detail grid */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
+              <div className="bg-gray-50 rounded-xl p-3 border border-slate-300">
                 <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
                   <User size={10} className="mr-1" /> Customer
                 </div>
                 <p className="text-sm font-bold text-gray-800">{viewingInvoice.customer_name || '—'}</p>
               </div>
 
-              <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
+              <div className="bg-gray-50 rounded-xl p-3 border border-slate-300">
                 <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
                   <CreditCard size={10} className="mr-1" /> Total Amount
                 </div>
@@ -687,7 +687,7 @@ Due Date  : ${formatDate(invoice.due_date)}
               </div>
 
               {/* Line Items Breakdown */}
-              <div className="bg-white rounded-2xl p-5 border border-gray-200 col-span-2 shadow-sm">
+              <div className="bg-white rounded-2xl p-5 border border-slate-300 col-span-2 shadow-sm">
                 <div className="flex items-center text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">
                   <Hash size={12} className="mr-2" /> Line Item Specification
                 </div>
@@ -726,14 +726,14 @@ Due Date  : ${formatDate(invoice.due_date)}
                 </div>
               </div>
 
-              <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
+              <div className="bg-gray-50 rounded-xl p-3 border border-slate-300">
                 <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
                   <Calendar size={10} className="mr-1" /> Due Date
                 </div>
                 <p className="text-sm font-semibold text-gray-700">{formatDate(viewingInvoice.due_date)}</p>
               </div>
 
-              <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
+              <div className="bg-gray-50 rounded-xl p-3 border border-slate-300">
                 <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
                   <Clock size={10} className="mr-1" /> Issuance Date
                 </div>
@@ -787,7 +787,7 @@ Due Date  : ${formatDate(invoice.due_date)}
               type="text"
               name="customer_name"
               required
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+              className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
               value={editFormData.customer_name || ''}
               onChange={handleEditChange}
             />
@@ -802,7 +802,7 @@ Due Date  : ${formatDate(invoice.due_date)}
               name="service"
               required
               placeholder="e.g. VIP Lounge Access"
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+              className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
               value={editFormData.service || ''}
               onChange={handleEditChange}
             />
@@ -816,7 +816,7 @@ Due Date  : ${formatDate(invoice.due_date)}
                 name="amount"
                 required
                 step="0.01"
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold"
                 value={editFormData.amount || ''}
                 onChange={handleEditChange}
               />
@@ -825,7 +825,7 @@ Due Date  : ${formatDate(invoice.due_date)}
               <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Status</label>
               <select
                 name="status"
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all appearance-none font-bold text-sm text-gray-700"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all appearance-none font-bold text-sm text-gray-700"
                 value={editFormData.status || 'Pending'}
                 onChange={handleEditChange}
               >
@@ -842,7 +842,7 @@ Due Date  : ${formatDate(invoice.due_date)}
             <input
               type="date"
               name="due_date"
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+              className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
               value={editFormData.due_date || ''}
               onChange={handleEditChange}
             />
@@ -885,7 +885,7 @@ Due Date  : ${formatDate(invoice.due_date)}
                 name="reference"
                 required
                 readOnly
-                className="w-full px-4 py-2.5 bg-gray-100 border border-gray-300 rounded-xl focus:outline-none font-mono text-sm"
+                className="w-full px-4 py-2.5 bg-gray-100 border border-slate-300 rounded-xl focus:outline-none font-mono text-sm"
                 value={formData.reference}
               />
             </div>
@@ -895,7 +895,7 @@ Due Date  : ${formatDate(invoice.due_date)}
                 type="date"
                 name="due_date"
                 required
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
                 value={formData.due_date}
                 onChange={handleInputChange}
               />
@@ -939,7 +939,7 @@ Due Date  : ${formatDate(invoice.due_date)}
                       <input
                         type="text"
                         required
-                        className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-brand-red outline-none"
+                        className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:ring-1 focus:ring-brand-red outline-none"
                         value={item.description}
                         onChange={(e) => handleItemChange(item.id, 'description', e.target.value)}
                         placeholder="e.g. Flight Booking"
@@ -951,7 +951,7 @@ Due Date  : ${formatDate(invoice.due_date)}
                         type="number"
                         required
                         min="1"
-                        className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-brand-red outline-none"
+                        className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:ring-1 focus:ring-brand-red outline-none"
                         value={item.quantity}
                         onChange={(e) => handleItemChange(item.id, 'quantity', e.target.value)}
                       />
@@ -962,7 +962,7 @@ Due Date  : ${formatDate(invoice.due_date)}
                         type="number"
                         required
                         step="0.01"
-                        className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-brand-red outline-none"
+                        className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:ring-1 focus:ring-brand-red outline-none"
                         value={item.unit_price}
                         onChange={(e) => handleItemChange(item.id, 'unit_price', e.target.value)}
                       />

@@ -123,7 +123,7 @@ const CMS = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 {/* Sidebar Navigation */}
-                <Card className="lg:col-span-1 border border-gray-200 shadow-sm rounded-3xl bg-white overflow-hidden h-fit">
+                <Card className="lg:col-span-1 border border-slate-300 shadow-sm rounded-3xl bg-white overflow-hidden h-fit">
                     <CardHeader className="p-6 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Active Pages</span>
                         <Button onClick={fetchContent} variant="ghost" className="p-1 h-auto text-gray-400 hover:text-brand-red">
@@ -263,7 +263,7 @@ const CMS = () => {
                     )}
 
                     {activePage !== 'about-us' && (
-                        <Card className="p-20 text-center flex flex-col items-center gap-4 bg-white border border-gray-200 rounded-[2.5rem]">
+                        <Card className="p-20 text-center flex flex-col items-center gap-4 bg-white border border-slate-300 rounded-[2.5rem]">
                             <Layout size={48} className="text-gray-200" />
                             <h3 className="text-gray-900 font-black">Module Under Development</h3>
                             <p className="text-gray-400 text-sm max-w-xs mx-auto">The CMS integration for {activePage} is being mapped and will be available shortly.</p>
@@ -276,7 +276,7 @@ const CMS = () => {
 };
 
 const SectionEditor = ({ title, icon, children, onSave, isSaving }) => (
-    <Card className="border border-gray-200 shadow-xl shadow-gray-200/20 rounded-[2.5rem] bg-white overflow-hidden">
+    <Card className="border border-slate-300 shadow-xl shadow-gray-200/20 rounded-[2.5rem] bg-white overflow-hidden">
         <CardHeader className="p-6 border-b border-gray-50 flex items-center justify-between">
             <div className="flex items-center gap-3">
                 <div className="p-2.5 bg-gray-50 text-gray-500 rounded-xl">
@@ -304,7 +304,7 @@ const InputField = ({ label, value, onChange }) => (
         <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">{label}</label>
         <input
             type="text"
-            className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 text-sm"
+            className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 text-sm"
             value={value}
             onChange={(e) => onChange(e.target.value)}
         />
@@ -315,7 +315,7 @@ const TextAreaField = ({ label, value, onChange }) => (
     <div className="space-y-1">
         <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">{label}</label>
         <textarea
-            className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 text-sm h-24 resize-none leading-relaxed"
+            className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 text-sm h-24 resize-none leading-relaxed"
             value={value}
             onChange={(e) => onChange(e.target.value)}
         />

@@ -364,7 +364,7 @@ const CreateService = () => {
                     onClick={() => navigate('/services')}
                     className="group flex items-center gap-3 text-gray-400 hover:text-brand-red transition-all font-black uppercase tracking-widest text-[10px]"
                 >
-                    <div className="p-2 border border-gray-300 rounded-xl group-hover:bg-red-50 group-hover:border-red-100 transition-all">
+                    <div className="p-2 border border-slate-300 rounded-xl group-hover:bg-red-50 group-hover:border-red-100 transition-all">
                         <ArrowLeft size={16} />
                     </div>
                     Back to Catalog
@@ -383,7 +383,7 @@ const CreateService = () => {
                 {/* Service Hero Card */}
                 <div className="relative group">
                     <div className="absolute -inset-1 bg-gradient-to-r from-brand-red to-red-400 rounded-3xl blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
-                    <Card className="relative bg-white border border-gray-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
+                    <Card className="relative bg-white border border-slate-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
                         <div className="h-40 bg-brand-charcoal relative overflow-hidden">
                             <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
                             <div className="absolute inset-0 bg-gradient-to-r from-brand-red/20 to-transparent"></div>
@@ -453,7 +453,7 @@ const CreateService = () => {
                     {/* Left Column: Core Details */}
                     <div className="lg:col-span-2 space-y-8">
                         {/* Section: Standard Details */}
-                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-gray-200 space-y-6">
+                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
                             <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em] mb-4">
                                 <Tag size={16} className="text-brand-red" /> Service Identity
                             </h3>
@@ -465,7 +465,7 @@ const CreateService = () => {
                                         type="text"
                                         name="name"
                                         required
-                                        className="w-full px-6 py-4 bg-gray-50 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-black text-lg"
+                                        className="w-full px-6 py-4 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-black text-lg"
                                         value={formData.name}
                                         onChange={handleInputChange}
                                         placeholder="e.g. Premium VIP Lounge Access"
@@ -474,13 +474,13 @@ const CreateService = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Service Categories (Select Multiple)</label>
-                                        <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-4 bg-gray-50 border border-gray-300 rounded-2xl custom-scrollbar">
+                                        <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-4 bg-gray-50 border border-slate-300 rounded-2xl custom-scrollbar">
                                             {categories.map(cat => (
                                                 <label key={cat.id} className="flex items-center gap-2 cursor-pointer group">
                                                     <div className="relative flex items-center">
                                                         <input
                                                             type="checkbox"
-                                                            className="peer h-5 w-5 appearance-none border-2 border-gray-300 rounded-lg checked:bg-brand-red checked:border-brand-red transition-all cursor-pointer"
+                                                            className="peer h-5 w-5 appearance-none border-2 border-slate-300 rounded-lg checked:bg-brand-red checked:border-brand-red transition-all cursor-pointer"
                                                             checked={formData.category_ids.includes(cat.id)}
                                                             onChange={() => handleCategoryToggle(cat.id)}
                                                         />
@@ -515,7 +515,7 @@ const CreateService = () => {
                                         <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Geographic Region</label>
                                         <select
                                             name="region"
-                                            className="w-full px-6 py-4 bg-gray-50 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
+                                            className="w-full px-6 py-4 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
                                             value={formData.region}
                                             onChange={handleInputChange}
                                         >
@@ -530,7 +530,7 @@ const CreateService = () => {
                                         <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Activity Classification</label>
                                         <select
                                             name="service_type"
-                                            className="w-full px-6 py-4 bg-gray-50 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
+                                            className="w-full px-6 py-4 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
                                             value={formData.service_type}
                                             onChange={handleInputChange}
                                         >
@@ -551,7 +551,7 @@ const CreateService = () => {
                                         <input
                                             type="text"
                                             name="location"
-                                            className="w-full px-6 py-4 bg-gray-50 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
+                                            className="w-full px-6 py-4 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
                                             value={formData.location}
                                             onChange={handleInputChange}
                                             placeholder="e.g. Grand Baie, North"
@@ -564,7 +564,7 @@ const CreateService = () => {
                                     <textarea
                                         name="description"
                                         rows={4}
-                                        className="w-full px-6 py-4 bg-gray-50 border border-gray-300 rounded-3xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-sm font-medium resize-none leading-relaxed"
+                                        className="w-full px-6 py-4 bg-gray-50 border border-slate-300 rounded-3xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-sm font-medium resize-none leading-relaxed"
                                         value={formData.description}
                                         onChange={handleInputChange}
                                         placeholder="Describe the inclusions, terms, and luxury standards of this service..."
@@ -591,7 +591,7 @@ const CreateService = () => {
                                             type="text"
                                             id="new_amenity"
                                             placeholder="e.g. Free WiFi, Infinity Pool"
-                                            className="grow px-6 py-3 bg-gray-50 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-xs font-bold"
+                                            className="grow px-6 py-3 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-xs font-bold"
                                             onKeyDown={(e) => {
                                                 if (e.key === 'Enter') {
                                                     e.preventDefault();
@@ -618,7 +618,7 @@ const CreateService = () => {
 
 
                         {/* Section: Promotional Strategy */}
-                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-gray-200 space-y-6">
+                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
                             <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em] mb-4">
                                 <Tag size={16} className="text-brand-red" /> Promotional Strategy
                             </h3>
@@ -643,7 +643,7 @@ const CreateService = () => {
                                     <input
                                         type="text"
                                         name="deal_note"
-                                        className="w-full px-6 py-4 bg-gray-50 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
+                                        className="w-full px-6 py-4 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
                                         value={formData.deal_note}
                                         onChange={handleInputChange}
                                         placeholder="e.g. Limited Time, 20% OFF"
@@ -655,7 +655,7 @@ const CreateService = () => {
 
                         {/* Section: Hotel/Room Type Specifications (Conditional) */}
                         {formData.category_ids.some(id => categories.find(c => c.id === id)?.name === 'Hotels') && (
-                            <section className="bg-white p-8 rounded-3xl shadow-sm border border-gray-200 space-y-6">
+                            <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
                                 <div className="flex items-center justify-between mb-4">
                                     <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
                                         <BedDouble size={16} className="text-brand-red" /> Accommodation & Pricing
@@ -678,7 +678,7 @@ const CreateService = () => {
                                     ) : (
                                         <div className="space-y-6">
                                             {formData.room_types.map((rt, idx) => (
-                                                <div key={idx} className="p-6 bg-gray-50/50 rounded-3xl border border-gray-300 space-y-6 relative group/rt">
+                                                <div key={idx} className="p-6 bg-gray-50/50 rounded-3xl border border-slate-300 space-y-6 relative group/rt">
                                                     <button
                                                         type="button"
                                                         onClick={() => removeRoomType(idx)}
@@ -687,13 +687,13 @@ const CreateService = () => {
                                                         <X size={16} />
                                                     </button>
 
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-gray-300">
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-slate-300">
                                                         <div>
                                                             <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Room Type Name</label>
                                                             <input
                                                                 type="text"
                                                                 placeholder="e.g. Ocean View Suite"
-                                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                                                                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
                                                                 value={rt.type}
                                                                 onChange={e => updateRoomType(idx, 'type', e.target.value)}
                                                             />
@@ -704,7 +704,7 @@ const CreateService = () => {
                                                                 type="number"
                                                                 min="1"
                                                                 placeholder="e.g. 1"
-                                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                                                                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
                                                                 value={rt.min_stay || 1}
                                                                 onChange={e => updateRoomType(idx, 'min_stay', parseInt(e.target.value) || 1)}
                                                             />
@@ -731,7 +731,7 @@ const CreateService = () => {
                                                                                 type="text"
                                                                                 id={`new_room_image_${idx}`}
                                                                                 placeholder="Paste manual image URL..."
-                                                                                className="min-w-0 grow px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl text-xs font-mono focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                                                                                className="min-w-0 grow px-4 py-3 bg-gray-50 border border-slate-300 rounded-xl text-xs font-mono focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
                                                                                 onKeyDown={(e) => {
                                                                                     if (e.key === 'Enter') {
                                                                                         e.preventDefault();
@@ -756,7 +756,7 @@ const CreateService = () => {
                                                                         </div>
                                                                         
                                                                         {/* Hidden ImageUpload for gallery context */}
-                                                                        <div className="border border-gray-200 rounded-xl p-3 bg-gray-50/50 border-dashed">
+                                                                        <div className="border border-slate-300 rounded-xl p-3 bg-gray-50/50 border-dashed">
                                                                             <ImageUpload
                                                                                 value="" // Always empty as we push to array
                                                                                 onChange={url => addRoomImage(idx, url)}
@@ -773,7 +773,7 @@ const CreateService = () => {
                                                             {/* Room Image Gallery Preview */}
                                                             <div className="flex flex-wrap gap-3 mt-2">
                                                                 {(rt.images || []).map((imgUrl, imgIdx) => (
-                                                                    <div key={imgIdx} className="relative group/img w-20 h-20 rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+                                                                    <div key={imgIdx} className="relative group/img w-20 h-20 rounded-xl overflow-hidden border border-slate-300 shadow-sm">
                                                                         <img src={imgUrl} alt={`Room ${idx} image ${imgIdx}`} className="w-full h-full object-cover" />
                                                                         <button
                                                                             type="button"
@@ -797,7 +797,7 @@ const CreateService = () => {
                                                                 onClick={() => updateRoomType(idx, 'available', !rt.available)}
                                                                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all w-full md:w-auto ${rt.available
                                                                     ? 'bg-green-50 border-green-100 text-green-600'
-                                                                    : 'bg-gray-100 border-gray-200 text-gray-400'
+                                                                    : 'bg-gray-100 border-slate-300 text-gray-400'
                                                                     }`}
                                                             >
                                                                 {rt.available ? <ToggleRight size={20} /> : <ToggleLeft size={20} />}
@@ -806,7 +806,7 @@ const CreateService = () => {
                                                         </div>
                                                     </div>
 
-                                                    <div className="space-y-4 pb-6 border-b border-gray-300">
+                                                    <div className="space-y-4 pb-6 border-b border-slate-300">
                                                         <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Room Amenities (e.g. Ocean View, Mini Bar)</label>
                                                         <div className="flex flex-wrap gap-2 mb-2">
                                                             {(rt.features || []).map(feature => (
@@ -823,7 +823,7 @@ const CreateService = () => {
                                                                 type="text"
                                                                 id={`new_feature_${idx}`}
                                                                 placeholder="Add feature..."
-                                                                className="grow px-4 py-2 bg-white border border-gray-300 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-1 focus:ring-brand-red"
+                                                                className="grow px-4 py-2 bg-white border border-slate-300 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-1 focus:ring-brand-red"
                                                                 onKeyDown={(e) => {
                                                                     if (e.key === 'Enter') {
                                                                         e.preventDefault();
@@ -856,7 +856,7 @@ const CreateService = () => {
                                                                 <input
                                                                     type="number"
                                                                     placeholder="Quick set"
-                                                                    className="w-20 px-2 py-1 bg-white border border-gray-300 rounded text-[10px] font-bold focus:outline-none focus:ring-1 focus:ring-brand-red"
+                                                                    className="w-20 px-2 py-1 bg-white border border-slate-300 rounded text-[10px] font-bold focus:outline-none focus:ring-1 focus:ring-brand-red"
                                                                     onChange={e => syncAllPrices(idx, e.target.value)}
                                                                 />
                                                             </div>
@@ -869,7 +869,7 @@ const CreateService = () => {
                                                                         type="number"
                                                                         value={rt.prices?.[day] || ''}
                                                                         onChange={e => updateRoomPrice(idx, day, e.target.value)}
-                                                                        className="w-full px-1 py-3 bg-white border border-gray-300 rounded-xl text-[11px] font-black text-gray-900 text-center focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                                                                        className="w-full px-1 py-3 bg-white border border-slate-300 rounded-xl text-[11px] font-black text-gray-900 text-center focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
                                                                         placeholder="-"
                                                                     />
                                                                 </div>
@@ -889,7 +889,7 @@ const CreateService = () => {
                             const cat = categories.find(c => c.id === id);
                             return cat && (cat.name === 'Activities' || cat.name === 'Cruises' || cat.name === 'Group Tours');
                         }) && (
-                                <section className="bg-white p-8 rounded-3xl shadow-sm border border-gray-200 space-y-6">
+                                <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
                                     <div className="flex items-center justify-between mb-4">
                                         <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
                                             <Calendar size={16} className="text-brand-red" /> Itinerary & Schedule
@@ -912,7 +912,7 @@ const CreateService = () => {
                                         ) : (
                                             <div className="space-y-4">
                                                 {formData.itinerary.map((it, idx) => (
-                                                    <div key={idx} className="p-6 bg-gray-50/50 rounded-2xl border border-gray-300 flex gap-6 relative group/it">
+                                                    <div key={idx} className="p-6 bg-gray-50/50 rounded-2xl border border-slate-300 flex gap-6 relative group/it">
                                                         <button
                                                             type="button"
                                                             onClick={() => removeItineraryDay(idx)}
@@ -926,7 +926,7 @@ const CreateService = () => {
                                                             <input
                                                                 type="text"
                                                                 placeholder="Day 1"
-                                                                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-[10px] font-black uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-brand-red"
+                                                                className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-[10px] font-black uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-brand-red"
                                                                 value={it.day}
                                                                 onChange={e => updateItineraryDay(idx, 'day', e.target.value)}
                                                             />
@@ -939,7 +939,7 @@ const CreateService = () => {
                                                                     <input
                                                                         type="text"
                                                                         placeholder="e.g. Arrival at Blue Bay Marine Park"
-                                                                        className="w-full px-4 py-2 bg-white border border-gray-300 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-brand-red"
+                                                                        className="w-full px-4 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-brand-red"
                                                                         value={it.title}
                                                                         onChange={e => updateItineraryDay(idx, 'title', e.target.value)}
                                                                     />
@@ -961,7 +961,7 @@ const CreateService = () => {
                                                                 <textarea
                                                                     rows={2}
                                                                     placeholder="Details about the stop, highlights, or inclusions..."
-                                                                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-[11px] font-medium leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-brand-red"
+                                                                    className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl text-[11px] font-medium leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-brand-red"
                                                                     value={it.description}
                                                                     onChange={e => updateItineraryDay(idx, 'description', e.target.value)}
                                                                 />
@@ -1092,7 +1092,7 @@ const CreateService = () => {
                     </div>
                 </div>
 
-                <div className="flex justify-end gap-4 p-8 bg-gray-50/50 rounded-3xl border border-gray-300 border-dashed">
+                <div className="flex justify-end gap-4 p-8 bg-gray-50/50 rounded-3xl border border-slate-300 border-dashed">
                     <button
                         type="button"
                         onClick={() => navigate('/services')}

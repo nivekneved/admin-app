@@ -87,7 +87,7 @@ const ExcelImport = ({ isOpen, onClose, onImport, title = "Import Services from 
     <Modal isOpen={isOpen} onClose={onClose} title={title} size="xl">
       <div className="space-y-6">
         {!preview ? (
-          <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-3xl p-12 transition-colors hover:border-brand-red/30">
+          <div className="flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-3xl p-12 transition-colors hover:border-brand-red/30">
             <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center text-brand-red mb-4">
               <FileSpreadsheet size={32} />
             </div>
@@ -168,7 +168,7 @@ const ExcelImport = ({ isOpen, onClose, onImport, title = "Import Services from 
               <Button 
                 variant="outline" 
                 onClick={reset}
-                className="px-6 py-4 border-gray-200 text-gray-500 font-bold rounded-2xl hover:bg-gray-50"
+                className="px-6 py-4 border-slate-300 text-gray-500 font-bold rounded-2xl hover:bg-gray-50"
               >
                 Cancel
               </Button>

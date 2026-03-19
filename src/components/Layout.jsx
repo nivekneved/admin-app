@@ -13,7 +13,7 @@ const Layout = ({ children }) => {
       </div>
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-14 bg-white text-gray-900 flex items-center justify-between px-6 sticky top-0 z-10 border-b border-gray-200 no-print">
+        <header className="h-14 bg-white text-gray-900 flex items-center justify-between px-6 sticky top-0 z-10 border-b border-slate-300 no-print">
           <div className="flex items-center gap-4">
             {!isSidebarOpen && (
               <button

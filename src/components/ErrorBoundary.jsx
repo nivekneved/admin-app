@@ -44,7 +44,7 @@ class ErrorBoundary extends React.Component {
               <Button 
                 variant="outline"
                 onClick={() => window.location.href = '/'}
-                className="w-full border-2 border-slate-200 text-slate-400 py-4 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 hover:bg-slate-50"
+                className="w-full border-2 border-slate-300 text-slate-400 py-4 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 hover:bg-slate-50"
               >
                 <Home size={16} />
                 Return to Command Center

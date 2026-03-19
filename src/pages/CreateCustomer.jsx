@@ -59,7 +59,7 @@ const CreateCustomer = () => {
                 <div className="flex items-center gap-6">
                     <Link
                         to="/customers"
-                        className="p-3 bg-white hover:bg-gray-50 border border-gray-300 rounded-2xl transition-all text-gray-400 hover:text-brand-red shadow-sm"
+                        className="p-3 bg-white hover:bg-gray-50 border border-slate-300 rounded-2xl transition-all text-gray-400 hover:text-brand-red shadow-sm"
                     >
                         <ArrowLeft size={20} />
                     </Link>
@@ -72,7 +72,7 @@ const CreateCustomer = () => {
 
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
                 <div className="xl:col-span-8">
-                    <Card className="border border-gray-300 shadow-2xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
+                    <Card className="border border-slate-300 shadow-2xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
                         <div className="h-2 bg-gradient-to-r from-brand-red to-red-600 w-full"></div>
                         <CardHeader className="pt-10 px-10">
                             <div className="flex items-center gap-4">
@@ -91,7 +91,7 @@ const CreateCustomer = () => {
                                             type="text"
                                             name="first_name"
                                             required
-                                            className="w-full px-6 py-4 bg-gray-50/50 border-2 border-gray-300 focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 placeholder:text-gray-300"
+                                            className="w-full px-6 py-4 bg-gray-50/50 border-2 border-slate-300 focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 placeholder:text-gray-300"
                                             value={formData.first_name}
                                             onChange={handleInputChange}
                                             placeholder="e.g. Emma"
@@ -103,7 +103,7 @@ const CreateCustomer = () => {
                                             type="text"
                                             name="last_name"
                                             required
-                                            className="w-full px-6 py-4 bg-gray-50/50 border-2 border-gray-300 focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 placeholder:text-gray-300"
+                                            className="w-full px-6 py-4 bg-gray-50/50 border-2 border-slate-300 focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 placeholder:text-gray-300"
                                             value={formData.last_name}
                                             onChange={handleInputChange}
                                             placeholder="e.g. Johnson"
@@ -121,7 +121,7 @@ const CreateCustomer = () => {
                                             type="email"
                                             name="email"
                                             required
-                                            className="w-full pl-14 pr-6 py-4 bg-gray-50/50 border-2 border-gray-300 focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 placeholder:text-gray-300"
+                                            className="w-full pl-14 pr-6 py-4 bg-gray-50/50 border-2 border-slate-300 focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 placeholder:text-gray-300"
                                             value={formData.email}
                                             onChange={handleInputChange}
                                             placeholder="customer@travellounge.mu"
@@ -139,7 +139,7 @@ const CreateCustomer = () => {
                                             <input
                                                 type="text"
                                                 name="phone"
-                                                className="w-full pl-14 pr-6 py-4 bg-gray-50/50 border-2 border-gray-300 focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 placeholder:text-gray-300"
+                                                className="w-full pl-14 pr-6 py-4 bg-gray-50/50 border-2 border-slate-300 focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 placeholder:text-gray-300"
                                                 value={formData.phone}
                                                 onChange={handleInputChange}
                                                 placeholder="+230 5..."
@@ -156,7 +156,7 @@ const CreateCustomer = () => {
                                             <input
                                                 type="text"
                                                 name="country"
-                                                className="w-full pl-14 pr-6 py-4 bg-gray-50/50 border-2 border-gray-300 focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 placeholder:text-gray-300"
+                                                className="w-full pl-14 pr-6 py-4 bg-gray-50/50 border-2 border-slate-300 focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 placeholder:text-gray-300"
                                                 value={formData.country}
                                                 onChange={handleInputChange}
                                                 placeholder="Mauritius"
@@ -183,7 +183,7 @@ const CreateCustomer = () => {
                                             checked={formData.is_subscriber}
                                             onChange={handleInputChange}
                                         />
-                                        <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-7 peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                                        <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-7 peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
                                     </label>
                                 </div>
 
@@ -193,7 +193,7 @@ const CreateCustomer = () => {
                                             <Button
                                                 type="button"
                                                 variant="outline"
-                                                className="w-full px-8 py-4 border-gray-300 text-gray-400 font-bold rounded-3xl hover:bg-gray-50 transition-all uppercase tracking-widest text-[10px]"
+                                                className="w-full px-8 py-4 border-slate-300 text-gray-400 font-bold rounded-3xl hover:bg-gray-50 transition-all uppercase tracking-widest text-[10px]"
                                             >
                                                 Cancel
                                             </Button>
@@ -223,7 +223,7 @@ const CreateCustomer = () => {
                 </div>
 
                 <div className="xl:col-span-4 space-y-8">
-                    <Card className="border border-gray-300 shadow-xl shadow-gray-100 rounded-3xl overflow-hidden bg-brand-charcoal text-white">
+                    <Card className="border border-slate-300 shadow-xl shadow-gray-100 rounded-3xl overflow-hidden bg-brand-charcoal text-white">
                         <CardHeader className="pt-8 px-8">
                             <CardTitle className="text-sm font-black uppercase tracking-[0.2em] text-gray-400 flex items-center gap-2">
                                 <Shield size={16} className="text-brand-red" /> Lead Management

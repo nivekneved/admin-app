@@ -118,7 +118,7 @@ const Dashboard = () => {
         <div className="flex flex-col items-end">
           <button
             onClick={fetchDashboardData}
-            className="bg-white border border-gray-200 text-gray-600 px-4 py-2 rounded-xl text-sm font-bold hover:bg-gray-50 transition-all flex items-center shadow-sm"
+            className="bg-white border border-slate-300 text-gray-600 px-4 py-2 rounded-xl text-sm font-bold hover:bg-gray-50 transition-all flex items-center shadow-sm"
           >
             <span className="mr-2">↻</span> Sync Data
           </button>
@@ -139,7 +139,7 @@ const Dashboard = () => {
         <>
           {/* Dashboard Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all h-full">
+            <Card className="bg-white border border-slate-300 shadow-sm hover:shadow-md transition-all h-full">
               <CardContent className="p-6">
                 <div className="flex justify-between items-center mb-4">
                   <div className="p-3 bg-red-50 text-brand-red rounded-2xl">
@@ -152,7 +152,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all h-full">
+            <Card className="bg-white border border-slate-300 shadow-sm hover:shadow-md transition-all h-full">
               <CardContent className="p-6">
                 <div className="flex justify-between items-center mb-4">
                   <div className="p-3 bg-red-50 text-brand-red rounded-2xl">
@@ -165,7 +165,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all h-full">
+            <Card className="bg-white border border-slate-300 shadow-sm hover:shadow-md transition-all h-full">
               <CardContent className="p-6">
                 <div className="flex justify-between items-center mb-4">
                   <div className="p-3 bg-green-50 text-green-600 rounded-2xl">
@@ -181,7 +181,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all h-full">
+            <Card className="bg-white border border-slate-300 shadow-sm hover:shadow-md transition-all h-full">
               <CardContent className="p-6">
                 <div className="flex justify-between items-center mb-4">
                   <div className="p-3 bg-red-50 text-brand-red rounded-2xl">
@@ -202,7 +202,7 @@ const Dashboard = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Recent Admins Card */}
-            <Card className="border border-gray-200 shadow-sm overflow-hidden">
+            <Card className="border border-slate-300 shadow-sm overflow-hidden">
               <CardHeader className="bg-gray-50/50 border-b border-gray-100 px-6 py-4">
                 <CardTitle className="text-sm font-black uppercase tracking-widest text-gray-500 flex items-center">
                   <Users size={16} className="mr-2" /> Recent Staff Activity
@@ -249,7 +249,7 @@ const Dashboard = () => {
             </Card>
 
             {/* Recent Bookings Card */}
-            <Card className="border border-gray-200 shadow-sm overflow-hidden">
+            <Card className="border border-slate-300 shadow-sm overflow-hidden">
               <CardHeader className="bg-gray-50/50 border-b border-gray-100 px-6 py-4">
                 <CardTitle className="text-sm font-black uppercase tracking-widest text-gray-500 flex items-center">
                   <Calendar size={16} className="mr-2" /> Recent Bookings

@@ -124,10 +124,10 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         />
       )}
 
-      <div className={`fixed inset-y-0 left-0 w-64 bg-white text-gray-900 z-30 border-r border-gray-100 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'
+      <div className={`fixed inset-y-0 left-0 w-64 bg-white text-gray-900 z-30 border-r border-slate-300 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'
         } shadow-2xl lg:shadow-[20px_0_50px_-20px_rgba(0,0,0,0.05)] flex flex-col`}>
 
-        <div className="flex flex-col items-center justify-center py-6 px-4 border-b border-gray-50 bg-white relative shrink-0">
+        <div className="flex flex-col items-center justify-center py-6 px-4 border-b border-slate-300 bg-white relative shrink-0">
           <button
             onClick={() => setIsOpen(false)}
             className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-all duration-300 lg:hidden"
@@ -195,7 +195,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           ))}
         </nav>
 
-        <div className="absolute bottom-0 w-full p-4 border-t border-gray-50 bg-white">
+        <div className="absolute bottom-0 w-full p-4 border-t border-slate-300 bg-white">
           <button
             onClick={handleLogout}
             className="flex items-center text-gray-500 hover:text-brand-red w-full px-4 py-3 rounded-xl hover:bg-red-50 transition-all duration-300 group"

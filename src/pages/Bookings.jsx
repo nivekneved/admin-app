@@ -12,7 +12,7 @@ import { supabase } from '../lib/supabase';
 import Modal from '../components/Modal';
 import { showAlert, showConfirm } from '../utils/swal';
 
-const selectCls = "bg-gray-50 border border-gray-300 text-gray-900 text-[11px] font-black uppercase tracking-widest rounded-2xl focus:ring-brand-red focus:border-brand-red block w-full p-2.5 appearance-none pr-8 transition-all cursor-pointer hover:bg-white";
+const selectCls = "bg-gray-50 border border-slate-300 text-gray-900 text-[11px] font-black uppercase tracking-widest rounded-2xl focus:ring-brand-red focus:border-brand-red block w-full p-2.5 appearance-none pr-8 transition-all cursor-pointer hover:bg-white";
 
 const Bookings = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -294,7 +294,7 @@ const Bookings = () => {
           <Button
             variant="outline"
             onClick={() => refetchBookings()}
-            className="text-gray-500 border-gray-200 flex items-center gap-2"
+            className="text-gray-500 border-slate-300 flex items-center gap-2"
             disabled={loading}
           >
             <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
@@ -309,15 +309,15 @@ const Bookings = () => {
         </div>
       </div>
 
-      <Card className="border border-gray-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
-        <CardHeader className="border-b border-gray-200 pb-4 bg-white px-8 pt-8">
+      <Card className="border border-slate-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
+        <CardHeader className="border-b border-slate-300 pb-4 bg-white px-8 pt-8">
           <div className="flex flex-col gap-4">
             <div className="relative flex-1 min-w-0 max-w-md">
               <Search className="absolute left-3 top-2.5 text-gray-300" size={16} />
               <input
                 type="text"
                 placeholder="Query global reservations…"
-                className="pl-9 pr-9 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+                className="pl-9 pr-9 py-2.5 w-full border border-slate-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -413,7 +413,7 @@ const Bookings = () => {
                       </td>
                       <td className="px-8 py-5">
                         <div className="flex items-center text-left gap-3">
-                          <div className="h-8 w-8 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center text-[10px] font-black text-gray-400 shrink-0">
+                          <div className="h-8 w-8 rounded-xl bg-gray-50 border border-slate-300 flex items-center justify-center text-[10px] font-black text-gray-400 shrink-0">
                             {booking.customers?.first_name?.charAt(0) || 'G'}
                           </div>
                           <div className="text-left">
@@ -503,7 +503,7 @@ const Bookings = () => {
                 </p>
                 <Button
                   variant="outline"
-                  className="mt-6 border-gray-200 hover:bg-gray-50"
+                  className="mt-6 border-slate-300 hover:bg-gray-50"
                   onClick={() => refetchBookings()}
                 >
                   Refresh Database
@@ -514,7 +514,7 @@ const Bookings = () => {
 
           {/* Pagination */}
           {filteredBookings.length > bookingsPerPage && (
-            <div className="flex items-center justify-between px-8 py-6 bg-gray-50/50 border-t border-gray-200">
+            <div className="flex items-center justify-between px-8 py-6 bg-gray-50/50 border-t border-slate-300">
               <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                 Page {currentPage} of {totalPages}
               </span>
@@ -522,14 +522,14 @@ const Bookings = () => {
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className="p-3 bg-white border border-gray-300 rounded-xl disabled:opacity-30 shadow-sm hover:border-gray-300 transition-all font-bold text-xs"
+                  className="p-3 bg-white border border-slate-300 rounded-xl disabled:opacity-30 shadow-sm hover:border-slate-300 transition-all font-bold text-xs"
                 >
                   Previous
                 </button>
                 <button
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
-                  className="p-3 bg-white border border-gray-300 rounded-xl disabled:opacity-30 shadow-sm hover:border-gray-300 transition-all font-bold text-xs"
+                  className="p-3 bg-white border border-slate-300 rounded-xl disabled:opacity-30 shadow-sm hover:border-slate-300 transition-all font-bold text-xs"
                 >
                   Next
                 </button>
@@ -551,9 +551,9 @@ const Bookings = () => {
         {viewingBooking && (
           <div className="space-y-5">
             {/* Header strip */}
-            <div className="flex items-center justify-between bg-gray-50 rounded-xl p-4 border border-gray-200">
+            <div className="flex items-center justify-between bg-gray-50 rounded-xl p-4 border border-slate-300">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-sm font-black text-gray-500 shadow-sm">
+                <div className="h-10 w-10 rounded-full bg-white border border-slate-300 flex items-center justify-center text-sm font-black text-gray-500 shadow-sm">
                   {viewingBooking.customers?.first_name?.charAt(0) || 'G'}
                 </div>
                 <div>
@@ -573,14 +573,14 @@ const Bookings = () => {
             {/* Detail grid */}
             <div className="grid grid-cols-2 gap-3">
 
-              <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
+              <div className="bg-gray-50 rounded-xl p-3 border border-slate-300">
                 <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
                   <Hash size={10} className="mr-1" /> Booking ID
                 </div>
                 <p className="text-xs font-mono text-gray-700">{viewingBooking.id?.toString().slice(0, 8) || '—'}</p>
               </div>
 
-              <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
+              <div className="bg-gray-50 rounded-xl p-3 border border-slate-300">
                 <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
                   <Tag size={10} className="mr-1" /> Activity Type
                 </div>
@@ -590,7 +590,7 @@ const Bookings = () => {
                 </div>
               </div>
 
-              <div className="bg-gray-50 rounded-xl p-3 border border-gray-200 col-span-2">
+              <div className="bg-gray-50 rounded-xl p-3 border border-slate-300 col-span-2">
                 <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
                   <Sun size={10} className="mr-1" /> Activity / Service
                 </div>
@@ -599,7 +599,7 @@ const Bookings = () => {
                 </p>
               </div>
 
-              <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
+              <div className="bg-gray-50 rounded-xl p-3 border border-slate-300">
                 <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
                   <Calendar size={10} className="mr-1" /> Booking Date
                 </div>
@@ -608,7 +608,7 @@ const Bookings = () => {
                 </p>
               </div>
 
-              <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
+              <div className="bg-gray-50 rounded-xl p-3 border border-slate-300">
                 <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
                   <CreditCard size={10} className="mr-1" /> Amount
                 </div>
@@ -618,7 +618,7 @@ const Bookings = () => {
               </div>
 
               {viewingBooking.booking_items && viewingBooking.booking_items.length > 0 && (
-                <div className="bg-white rounded-2xl p-6 border border-gray-200 col-span-2 shadow-sm">
+                <div className="bg-white rounded-2xl p-6 border border-slate-300 col-span-2 shadow-sm">
                   <div className="flex items-center text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">
                     <Tag size={12} className="mr-2" /> Detailed Booking Items
                   </div>
@@ -646,7 +646,7 @@ const Bookings = () => {
               )}
 
               {viewingBooking.start_time && (
-                <div className="bg-gray-50 rounded-xl p-3 border border-gray-200 col-span-2">
+                <div className="bg-gray-50 rounded-xl p-3 border border-slate-300 col-span-2">
                   <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
                     <Clock size={10} className="mr-1" /> Time Slot
                   </div>
@@ -656,7 +656,7 @@ const Bookings = () => {
                 </div>
               )}
 
-              <div className="bg-gray-50 rounded-xl p-3 border border-gray-200 col-span-2">
+              <div className="bg-gray-50 rounded-xl p-3 border border-slate-300 col-span-2">
                 <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
                   <Clock size={10} className="mr-1" /> Created
                 </div>
@@ -701,7 +701,7 @@ const Bookings = () => {
               <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Activity Type</label>
               <select
                 name="activity_type"
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all appearance-none font-medium text-sm text-gray-800"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all appearance-none font-medium text-sm text-gray-800"
                 value={editFormData.activity_type}
                 onChange={handleEditChange}
               >
@@ -716,7 +716,7 @@ const Bookings = () => {
               <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Status</label>
               <select
                 name="status"
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all appearance-none font-medium text-sm text-gray-800"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all appearance-none font-medium text-sm text-gray-800"
                 value={editFormData.status}
                 onChange={handleEditChange}
               >
@@ -736,7 +736,7 @@ const Bookings = () => {
               name="activity_name"
               required
               placeholder="e.g. Premium Executive Lounge"
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+              className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
               value={editFormData.activity_name}
               onChange={handleEditChange}
             />
@@ -750,7 +750,7 @@ const Bookings = () => {
               <input
                 type="date"
                 name="start_date"
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
                 value={editFormData.start_date}
                 onChange={handleEditChange}
               />
@@ -765,7 +765,7 @@ const Bookings = () => {
                 required
                 placeholder="0.00"
                 step="0.01"
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
                 value={editFormData.amount}
                 onChange={handleEditChange}
               />

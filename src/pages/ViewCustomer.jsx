@@ -11,7 +11,7 @@ import {
 import { showAlert, showConfirm } from '../utils/swal';
 import logo from '../assets/logo.png';
 
-const selectCls = "bg-gray-50 border border-gray-300 text-gray-900 text-[11px] font-black uppercase tracking-widest rounded-2xl focus:ring-brand-red focus:border-brand-red block w-full p-2.5 appearance-none pr-8 transition-all cursor-pointer hover:bg-white";
+const selectCls = "bg-gray-50 border border-slate-300 text-gray-900 text-[11px] font-black uppercase tracking-widest rounded-2xl focus:ring-brand-red focus:border-brand-red block w-full p-2.5 appearance-none pr-8 transition-all cursor-pointer hover:bg-white";
 
 const ViewCustomer = () => {
     const { id } = useParams();
@@ -180,7 +180,7 @@ const ViewCustomer = () => {
                 <div className="flex items-center">
                     <button
                         onClick={() => navigate('/customers')}
-                        className="mr-4 p-2 z-10 bg-white border border-gray-200 text-gray-600 rounded-full hover:bg-gray-50 transition-colors shadow-sm"
+                        className="mr-4 p-2 z-10 bg-white border border-slate-300 text-gray-600 rounded-full hover:bg-gray-50 transition-colors shadow-sm"
                     >
                         <ArrowLeft size={20} />
                     </button>
@@ -193,14 +193,14 @@ const ViewCustomer = () => {
                     <Button 
                         variant="outline" 
                         onClick={() => window.print()}
-                        className="text-gray-500 border-gray-200 flex items-center gap-2 h-10 px-4 rounded-xl font-bold text-xs uppercase tracking-widest shadow-sm"
+                        className="text-gray-500 border-slate-300 flex items-center gap-2 h-10 px-4 rounded-xl font-bold text-xs uppercase tracking-widest shadow-sm"
                     >
                         <Printer size={16} /> Print
                     </Button>
                     <Button 
                         variant="outline"
                         onClick={openEditModal}
-                        className="text-gray-500 border-gray-200 flex items-center gap-2 h-10 px-4 rounded-xl font-bold text-xs uppercase tracking-widest shadow-sm"
+                        className="text-gray-500 border-slate-300 flex items-center gap-2 h-10 px-4 rounded-xl font-bold text-xs uppercase tracking-widest shadow-sm"
                         title="Modify Registry"
                     >
                         <Edit size={16} /> Edit
@@ -229,7 +229,7 @@ const ViewCustomer = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
 
                 {/* Profile Card */}
-                <div className="lg:col-span-1 border border-gray-200 shadow-sm rounded-xl overflow-hidden bg-white">
+                <div className="lg:col-span-1 border border-slate-300 shadow-sm rounded-xl overflow-hidden bg-white">
                     <div className="h-24 bg-gradient-to-r from-red-600 to-red-400"></div>
                     <div className="relative px-6 pb-6">
                         <div className="absolute -top-12 left-6 bg-white p-1 rounded-full shadow-md">
@@ -277,7 +277,7 @@ const ViewCustomer = () => {
                 <div className="lg:col-span-2 space-y-6">
 
                     <Card>
-                        <CardHeader className="bg-gray-50/50 border-b border-gray-200">
+                        <CardHeader className="bg-gray-50/50 border-b border-slate-300">
                             <div className="flex justify-between items-center">
                                 <CardTitle className="text-lg flex items-center">
                                     <Calendar className="mr-2 text-brand-red" size={20} />
@@ -324,7 +324,7 @@ const ViewCustomer = () => {
                     </Card>
 
                     <Card>
-                        <CardHeader className="bg-gray-50/50 border-b border-gray-200">
+                        <CardHeader className="bg-gray-50/50 border-b border-slate-300">
                             <div className="flex justify-between items-center">
                                 <CardTitle className="text-lg flex items-center">
                                     <ShoppingBag className="mr-2 text-brand-red" size={20} />
@@ -385,7 +385,7 @@ const ViewCustomer = () => {
                                 type="text"
                                 name="first_name"
                                 required
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red/20 focus:border-brand-red transition-all font-bold text-sm"
+                                className="w-full px-4 py-3 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red/20 focus:border-brand-red transition-all font-bold text-sm"
                                 value={formData.first_name}
                                 onChange={handleInputChange}
                             />
@@ -396,7 +396,7 @@ const ViewCustomer = () => {
                                 type="text"
                                 name="last_name"
                                 required
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red/20 focus:border-brand-red transition-all font-bold text-sm"
+                                className="w-full px-4 py-3 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red/20 focus:border-brand-red transition-all font-bold text-sm"
                                 value={formData.last_name}
                                 onChange={handleInputChange}
                             />
@@ -409,7 +409,7 @@ const ViewCustomer = () => {
                             <input
                                 type="text"
                                 name="phone"
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red/20 focus:border-brand-red transition-all font-bold text-sm"
+                                className="w-full px-4 py-3 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red/20 focus:border-brand-red transition-all font-bold text-sm"
                                 value={formData.phone}
                                 onChange={handleInputChange}
                             />
@@ -419,7 +419,7 @@ const ViewCustomer = () => {
                             <input
                                 type="text"
                                 name="country"
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red/20 focus:border-brand-red transition-all font-bold text-sm"
+                                className="w-full px-4 py-3 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red/20 focus:border-brand-red transition-all font-bold text-sm"
                                 value={formData.country}
                                 onChange={handleInputChange}
                             />
@@ -439,7 +439,7 @@ const ViewCustomer = () => {
                                 checked={formData.is_subscriber}
                                 onChange={handleInputChange}
                             />
-                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-red"></div>
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-red"></div>
                         </label>
                     </div>
 

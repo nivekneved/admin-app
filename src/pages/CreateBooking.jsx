@@ -163,11 +163,11 @@ const CreateBooking = () => {
 
     return (
         <div className="w-full h-full min-h-[calc(100vh-64px)] animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="flex items-center justify-between mb-8 border-b border-gray-200 pb-6">
+            <div className="flex items-center justify-between mb-8 border-b border-slate-300 pb-6">
                 <div className="flex items-center gap-6">
                     <Link
                         to="/bookings"
-                        className="p-3 bg-white hover:bg-gray-50 border border-gray-300 rounded-2xl transition-all text-gray-400 hover:text-brand-red shadow-sm"
+                        className="p-3 bg-white hover:bg-gray-50 border border-slate-300 rounded-2xl transition-all text-gray-400 hover:text-brand-red shadow-sm"
                     >
                         <ArrowLeft size={20} />
                     </Link>
@@ -180,7 +180,7 @@ const CreateBooking = () => {
 
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
                 <div className="xl:col-span-8">
-                    <Card className="border border-gray-300 shadow-2xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
+                    <Card className="border border-slate-300 shadow-2xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
                         <div className="h-2 bg-gradient-to-r from-brand-red to-red-600 w-full"></div>
                         <CardHeader className="pt-10 px-10">
                             <div className="flex items-center gap-4">
@@ -201,7 +201,7 @@ const CreateBooking = () => {
                                         <select
                                             name="customer_id"
                                             required
-                                            className="w-full pl-14 pr-10 py-4 bg-gray-50/50 border-2 border-gray-300 focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 appearance-none"
+                                            className="w-full pl-14 pr-10 py-4 bg-gray-50/50 border-2 border-slate-300 focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 appearance-none"
                                             value={formData.customer_id}
                                             onChange={handleInputChange}
                                         >
@@ -226,7 +226,7 @@ const CreateBooking = () => {
                                                 type="date"
                                                 name="start_date"
                                                 required
-                                                className="w-full pl-14 pr-6 py-4 bg-gray-50/50 border-2 border-gray-300 focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700"
+                                                className="w-full pl-14 pr-6 py-4 bg-gray-50/50 border-2 border-slate-300 focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700"
                                                 value={formData.start_date}
                                                 onChange={handleInputChange}
                                             />
@@ -239,7 +239,7 @@ const CreateBooking = () => {
                                             type="number"
                                             name="pax_adults"
                                             min="1"
-                                            className="w-full px-6 py-4 bg-gray-50/50 border-2 border-gray-300 focus:border-brand-red/10 rounded-3xl focus:outline-none transition-all font-bold text-gray-700"
+                                            className="w-full px-6 py-4 bg-gray-50/50 border-2 border-slate-300 focus:border-brand-red/10 rounded-3xl focus:outline-none transition-all font-bold text-gray-700"
                                             value={formData.pax_adults}
                                             onChange={handleInputChange}
                                         />
@@ -251,14 +251,14 @@ const CreateBooking = () => {
                                             type="number"
                                             name="pax_children"
                                             min="0"
-                                            className="w-full px-6 py-4 bg-gray-50/50 border-2 border-gray-300 focus:border-brand-red/10 rounded-3xl focus:outline-none transition-all font-bold text-gray-700"
+                                            className="w-full px-6 py-4 bg-gray-50/50 border-2 border-slate-300 focus:border-brand-red/10 rounded-3xl focus:outline-none transition-all font-bold text-gray-700"
                                             value={formData.pax_children}
                                             onChange={handleInputChange}
                                         />
                                     </div>
                                 </div>
 
-                                <div className="pt-8 border-t border-gray-200">
+                                <div className="pt-8 border-t border-slate-300">
                                     <div className="flex items-center justify-between mb-6">
                                         <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">Reserved Services</h3>
                                         <Button
@@ -272,8 +272,8 @@ const CreateBooking = () => {
 
                                     <div className="space-y-6">
                                         {items.map((item, index) => (
-                                            <div key={item.id} className="p-8 bg-gray-50/50 rounded-[2.5rem] border border-gray-300 relative group/item hover:bg-white hover:shadow-xl transition-all duration-500">
-                                                <div className="absolute -top-3 -left-3 w-8 h-8 bg-white border border-gray-300 rounded-full flex items-center justify-center text-[10px] font-black text-gray-400">
+                                            <div key={item.id} className="p-8 bg-gray-50/50 rounded-[2.5rem] border border-slate-300 relative group/item hover:bg-white hover:shadow-xl transition-all duration-500">
+                                                <div className="absolute -top-3 -left-3 w-8 h-8 bg-white border border-slate-300 rounded-full flex items-center justify-center text-[10px] font-black text-gray-400">
                                                     {index + 1}
                                                 </div>
 
@@ -291,7 +291,7 @@ const CreateBooking = () => {
                                                     <div className="space-y-3">
                                                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Category</label>
                                                         <select
-                                                            className="w-full px-6 py-3 bg-white border-2 border-gray-300 focus:border-brand-red/20 rounded-2xl focus:outline-none transition-all font-bold text-gray-700 appearance-none"
+                                                            className="w-full px-6 py-3 bg-white border-2 border-slate-300 focus:border-brand-red/20 rounded-2xl focus:outline-none transition-all font-bold text-gray-700 appearance-none"
                                                             value={item.type}
                                                             onChange={(e) => handleItemChange(item.id, 'type', e.target.value)}
                                                         >
@@ -310,7 +310,7 @@ const CreateBooking = () => {
                                                                 <input
                                                                     type="text"
                                                                     required
-                                                                    className="w-full px-6 py-3 bg-white border-2 border-gray-300 focus:border-brand-red/20 rounded-2xl focus:outline-none transition-all font-bold text-gray-700"
+                                                                    className="w-full px-6 py-3 bg-white border-2 border-slate-300 focus:border-brand-red/20 rounded-2xl focus:outline-none transition-all font-bold text-gray-700"
                                                                     value={item.name}
                                                                     onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
                                                                     placeholder="Custom destination..."
@@ -318,7 +318,7 @@ const CreateBooking = () => {
                                                             ) : (
                                                                 <select
                                                                     required
-                                                                    className="w-full px-6 py-3 bg-white border-2 border-gray-300 focus:border-brand-red/20 rounded-2xl focus:outline-none transition-all font-bold text-gray-700 appearance-none"
+                                                                    className="w-full px-6 py-3 bg-white border-2 border-slate-300 focus:border-brand-red/20 rounded-2xl focus:outline-none transition-all font-bold text-gray-700 appearance-none"
                                                                     value={item.name}
                                                                     onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
                                                                 >
@@ -352,7 +352,7 @@ const CreateBooking = () => {
                                                             <input
                                                                 type="number"
                                                                 required
-                                                                className="w-full pl-14 pr-6 py-3 bg-white border-2 border-gray-300 focus:border-brand-red/20 rounded-2xl focus:outline-none transition-all font-bold text-gray-700"
+                                                                className="w-full pl-14 pr-6 py-3 bg-white border-2 border-slate-300 focus:border-brand-red/20 rounded-2xl focus:outline-none transition-all font-bold text-gray-700"
                                                                 value={item.amount}
                                                                 onChange={(e) => handleItemChange(item.id, 'amount', e.target.value)}
                                                             />
@@ -360,7 +360,7 @@ const CreateBooking = () => {
                                                     </div>
 
                                                     <div className="flex items-end pb-1">
-                                                        <div className="w-full p-4 bg-gray-50 rounded-2xl border border-gray-300 flex items-center justify-between">
+                                                        <div className="w-full p-4 bg-gray-50 rounded-2xl border border-slate-300 flex items-center justify-between">
                                                             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Service Item Total</span>
                                                             <span className="text-sm font-black text-gray-900">MUR {Number(item.amount || 0).toLocaleString()}</span>
                                                         </div>
@@ -385,7 +385,7 @@ const CreateBooking = () => {
                                     <label className="block text-[11px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">Itinerary Status</label>
                                     <select
                                         name="status"
-                                        className="w-full px-6 py-4 bg-gray-50/50 border-2 border-gray-300 focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 appearance-none"
+                                        className="w-full px-6 py-4 bg-gray-50/50 border-2 border-slate-300 focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700 appearance-none"
                                         value={formData.status}
                                         onChange={handleInputChange}
                                     >
@@ -395,13 +395,13 @@ const CreateBooking = () => {
                                     </select>
                                 </div>
 
-                                <div className="pt-10 flex items-center justify-between border-t border-gray-200">
+                                <div className="pt-10 flex items-center justify-between border-t border-slate-300">
                                     <div className="flex gap-4 w-full md:w-auto">
                                         <Link to="/bookings" className="flex-1 md:flex-none">
                                             <Button
                                                 type="button"
                                                 variant="outline"
-                                                className="w-full px-8 py-4 border-gray-300 text-gray-400 font-bold rounded-3xl hover:bg-gray-50 transition-all uppercase tracking-widest text-[10px]"
+                                                className="w-full px-8 py-4 border-slate-300 text-gray-400 font-bold rounded-3xl hover:bg-gray-50 transition-all uppercase tracking-widest text-[10px]"
                                             >
                                                 Abort
                                             </Button>
@@ -431,7 +431,7 @@ const CreateBooking = () => {
                 </div>
 
                 <div className="xl:col-span-4 space-y-8">
-                    <Card className="border border-gray-300 shadow-xl shadow-gray-100 rounded-3xl overflow-hidden bg-brand-charcoal text-white">
+                    <Card className="border border-slate-300 shadow-xl shadow-gray-100 rounded-3xl overflow-hidden bg-brand-charcoal text-white">
                         <CardHeader className="pt-8 px-8">
                                 <CardTitle className="text-sm font-black uppercase tracking-[0.2em] text-gray-400 flex items-center gap-2">
                                     <Info size={16} className="text-brand-red" /> Travel Guide

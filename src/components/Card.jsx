@@ -2,7 +2,7 @@ import React from 'react';
 
 const Card = ({ children, className = '' }) => {
   return (
-    <div className={`bg-white rounded-lg shadow ${className}`}>
+    <div className={`bg-white rounded-[2rem] shadow-xl shadow-slate-200/40 border border-slate-300 overflow-hidden ${className}`}>
       {children}
     </div>
   );
@@ -10,7 +10,7 @@ const Card = ({ children, className = '' }) => {
 
 const CardHeader = ({ children, className = '' }) => {
   return (
-    <div className={`p-6 pb-4 border-b border-gray-200 ${className}`}>
+    <div className={`p-8 pb-6 border-b border-slate-300 bg-slate-50/50 ${className}`}>
       {children}
     </div>
   );

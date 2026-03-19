@@ -151,7 +151,7 @@ const FAQs = () => {
                     <Button
                         onClick={fetchFaqs}
                         variant="outline"
-                        className="text-gray-500 border-gray-200 flex items-center gap-2"
+                        className="text-gray-500 border-slate-300 flex items-center gap-2"
                     >
                         <RefreshCw size={15} className={loading ? 'animate-spin' : ''} /> Sync
                     </Button>
@@ -164,14 +164,14 @@ const FAQs = () => {
                 </div>
             </div>
 
-            <Card className="border border-gray-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
+            <Card className="border border-slate-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
                 <CardHeader className="border-b border-gray-50 pb-4 px-8 pt-8">
                     <div className="relative max-w-md">
                         <Search className="absolute left-3 top-2.5 text-gray-300" size={16} />
                         <input
                             type="text"
                             placeholder="Search questions or categories..."
-                            className="pl-9 pr-4 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+                            className="pl-9 pr-4 py-2.5 w-full border border-slate-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -207,7 +207,7 @@ const FAQs = () => {
                                     {processedFaqs.map((faq) => (
                                         <tr key={faq.id} className="hover:bg-gray-50/80 transition-colors group">
                                             <td className="px-8 py-4">
-                                                <div className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 text-xs font-black text-gray-600">
+                                                <div className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-50 border border-slate-300 text-xs font-black text-gray-600">
                                                     {faq.order_index}
                                                 </div>
                                             </td>
@@ -228,7 +228,7 @@ const FAQs = () => {
                                                         <Eye size={10} /> Published
                                                     </span>
                                                 ) : (
-                                                    <span className="flex items-center gap-1.5 text-gray-400 font-black text-[9px] uppercase tracking-widest bg-gray-50 px-2 py-1 rounded-lg border border-gray-200">
+                                                    <span className="flex items-center gap-1.5 text-gray-400 font-black text-[9px] uppercase tracking-widest bg-gray-50 px-2 py-1 rounded-lg border border-slate-300">
                                                         <EyeOff size={10} /> Draft
                                                     </span>
                                                 )}
@@ -263,7 +263,7 @@ const FAQs = () => {
             {/* Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-charcoal/40 backdrop-blur-sm animate-in fade-in duration-300">
-                    <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-gray-200 flex flex-col">
+                    <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-slate-300 flex flex-col">
                         <div className="sticky top-0 bg-white border-b border-gray-100 p-6 flex items-center justify-between z-10">
                             <div className="flex items-center gap-3">
                                 <div className="p-3 bg-red-50 text-brand-red rounded-2xl">
@@ -288,7 +288,7 @@ const FAQs = () => {
                                             required
                                             list="faq-categories"
                                             type="text"
-                                            className="w-full px-5 py-3.5 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
+                                            className="w-full px-5 py-3.5 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
                                             value={formData.category}
                                             onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                                             placeholder="e.g. Booking, Payment, General"
@@ -308,7 +308,7 @@ const FAQs = () => {
                                     <input
                                         required
                                         type="text"
-                                        className="w-full px-5 py-3.5 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
+                                        className="w-full px-5 py-3.5 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
                                         value={formData.question}
                                         onChange={(e) => setFormData({ ...formData, question: e.target.value })}
                                     />
@@ -318,7 +318,7 @@ const FAQs = () => {
                                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Detailed Answer</label>
                                     <textarea
                                         required
-                                        className="w-full px-5 py-3.5 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 h-32 resize-none"
+                                        className="w-full px-5 py-3.5 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 h-32 resize-none"
                                         value={formData.answer}
                                         onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
                                     />
@@ -329,7 +329,7 @@ const FAQs = () => {
                                         <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Display Order</label>
                                         <input
                                             type="number"
-                                            className="w-full px-5 py-3.5 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
+                                            className="w-full px-5 py-3.5 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
                                             value={formData.order_index}
                                             onChange={(e) => setFormData({ ...formData, order_index: parseInt(e.target.value) })}
                                         />
@@ -340,7 +340,7 @@ const FAQs = () => {
                                             onClick={() => setFormData({ ...formData, is_published: !formData.is_published })}
                                             className={`flex items-center gap-3 w-full p-3.5 rounded-2xl border-2 transition-all ${formData.is_published
                                                 ? 'bg-green-50/50 border-green-200 text-green-700'
-                                                : 'bg-gray-50 border-gray-200 text-gray-400'
+                                                : 'bg-gray-50 border-slate-300 text-gray-400'
                                                 }`}
                                         >
                                             <div className={`w-8 h-4 rounded-full relative transition-colors ${formData.is_published ? 'bg-green-500' : 'bg-gray-300'}`}>
@@ -359,7 +359,7 @@ const FAQs = () => {
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
                                     variant="outline"
-                                    className="px-6 py-3 border-gray-300 text-gray-400 font-bold rounded-2xl uppercase tracking-widest text-[10px]"
+                                    className="px-6 py-3 border-slate-300 text-gray-400 font-bold rounded-2xl uppercase tracking-widest text-[10px]"
                                 >
                                     Cancel
                                 </Button>

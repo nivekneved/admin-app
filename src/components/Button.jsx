@@ -1,20 +1,19 @@
 import React from 'react';
 
 const Button = ({ children, className = '', variant = 'primary', size = 'md', ...props }) => {
-  const baseClasses = 'inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none';
+  const baseClasses = 'inline-flex items-center justify-center rounded-2xl font-black uppercase tracking-widest transition-all focus:outline-none focus:ring-4 focus:ring-red-600/10 disabled:opacity-50 disabled:pointer-events-none active:scale-95';
 
   const variants = {
-    primary: 'bg-brand-red text-white hover:opacity-90 focus:ring-red-500',
-    secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-gray-500',
-    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
-    outline: 'border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-gray-500',
+    primary: 'bg-red-600 text-white hover:bg-slate-900 shadow-lg shadow-red-600/10',
+    secondary: 'bg-slate-100 text-slate-600 hover:bg-slate-200',
+    danger: 'bg-red-600 text-white hover:bg-red-700',
+    outline: 'border border-slate-300 bg-transparent text-slate-600 hover:bg-slate-50',
   };
 
-
   const sizes = {
-    sm: 'text-xs py-1.5 px-3',
-    md: 'text-sm py-2 px-4',
-    lg: 'text-base py-2.5 px-5',
+    sm: 'text-[10px] py-2 px-4',
+    md: 'text-xs py-3 px-6',
+    lg: 'text-sm py-4 px-8',
   };
 
   const classes = `${baseClasses} ${variants[variant]} ${sizes[size]} ${className}`;

@@ -116,7 +116,7 @@ const Inquiries = () => {
                     <Button
                         onClick={fetchInquiries}
                         variant="outline"
-                        className="text-gray-500 border-gray-200 flex items-center gap-2"
+                        className="text-gray-500 border-slate-300 flex items-center gap-2"
                     >
                         <RefreshCw size={15} className={loading ? 'animate-spin' : ''} /> Sync
                     </Button>
@@ -125,14 +125,14 @@ const Inquiries = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Inquiry List */}
-                <Card className="lg:col-span-1 border border-gray-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white flex flex-col h-[700px]">
+                <Card className="lg:col-span-1 border border-slate-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white flex flex-col h-[700px]">
                     <CardHeader className="border-b border-gray-50 p-6 space-y-4">
                         <div className="relative">
                             <Search className="absolute left-3 top-2.5 text-gray-300" size={16} />
                             <input
                                 type="text"
                                 placeholder="Search inbox..."
-                                className="pl-9 pr-4 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+                                className="pl-9 pr-4 py-2.5 w-full border border-slate-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -195,7 +195,7 @@ const Inquiries = () => {
                 </Card>
 
                 {/* Inquiry Details */}
-                <Card className="lg:col-span-2 border border-gray-300 shadow-xl shadow-gray-200/50 rounded-[2.5rem] bg-white overflow-hidden flex flex-col h-[700px]">
+                <Card className="lg:col-span-2 border border-slate-300 shadow-xl shadow-gray-200/50 rounded-[2.5rem] bg-white overflow-hidden flex flex-col h-[700px]">
                     {viewingInquiry ? (
                         <>
                             <CardHeader className="p-8 border-b border-gray-50 bg-gray-50/30">
@@ -216,7 +216,7 @@ const Inquiries = () => {
                                         <Button
                                             onClick={() => deleteInquiry(viewingInquiry.id)}
                                             variant="outline"
-                                            className="text-gray-400 hover:text-brand-red border-gray-200 p-3 h-auto rounded-xl"
+                                            className="text-gray-400 hover:text-brand-red border-slate-300 p-3 h-auto rounded-xl"
                                         >
                                             <Trash2 size={18} />
                                         </Button>

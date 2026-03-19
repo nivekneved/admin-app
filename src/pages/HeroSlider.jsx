@@ -62,7 +62,7 @@ const SortableTableRow = ({ slide, handleOpenModal, deleteSlide }) => {
                     >
                         <GripVertical size={16} />
                     </div>
-                    <div className="h-16 w-28 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 relative shrink-0">
+                    <div className="h-16 w-28 rounded-xl overflow-hidden bg-gray-100 border border-slate-300 relative shrink-0">
                         {slide.media_type === 'video' ? (
                             <div className="absolute inset-0 flex items-center justify-center bg-brand-charcoal">
                                 <Video size={16} className="text-white opacity-50" />
@@ -83,7 +83,7 @@ const SortableTableRow = ({ slide, handleOpenModal, deleteSlide }) => {
                 </div>
             </td>
             <td className="px-8 py-4">
-                <div className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 text-xs font-black text-gray-600">
+                <div className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-50 border border-slate-300 text-xs font-black text-gray-600">
                     {slide.order_index}
                 </div>
             </td>
@@ -135,7 +135,7 @@ const SortableGridItem = ({ slide, handleOpenModal, deleteSlide }) => {
         <div 
             ref={setNodeRef} 
             style={style} 
-            className="bg-white border border-gray-300 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500 flex flex-col relative"
+            className="bg-white border border-slate-300 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500 flex flex-col relative"
         >
             <div 
                 {...attributes} 
@@ -170,7 +170,7 @@ const SortableGridItem = ({ slide, handleOpenModal, deleteSlide }) => {
             </div>
             <div className="p-6 flex flex-col flex-1">
                 <div className="flex items-center gap-2 mb-3">
-                    <span className="bg-gray-100 text-gray-400 text-[8px] font-black px-1.5 py-0.5 rounded uppercase border border-gray-200">
+                    <span className="bg-gray-100 text-gray-400 text-[8px] font-black px-1.5 py-0.5 rounded uppercase border border-slate-300">
                         {slide.alignment}
                     </span>
                     {slide.media_type === 'video' && (
@@ -408,7 +408,7 @@ const HeroSlider = () => {
                     <Button
                         onClick={fetchSlides}
                         variant="outline"
-                        className="text-gray-500 border-gray-200 flex items-center gap-2"
+                        className="text-gray-500 border-slate-300 flex items-center gap-2"
                     >
                         <RefreshCw size={15} className={loading ? 'animate-spin' : ''} /> Sync
                     </Button>
@@ -421,7 +421,7 @@ const HeroSlider = () => {
                 </div>
             </div>
 
-            <Card className="border border-gray-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
+            <Card className="border border-slate-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden bg-white">
                 <CardHeader className="border-b border-gray-50 pb-4 px-8 pt-8">
                     <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
                         <div className="relative w-full max-w-md">
@@ -429,7 +429,7 @@ const HeroSlider = () => {
                             <input
                                 type="text"
                                 placeholder="Search slides..."
-                                className="pl-9 pr-4 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+                                className="pl-9 pr-4 py-2.5 w-full border border-slate-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -513,7 +513,7 @@ const HeroSlider = () => {
             {/* Modal / Overlay Implementation (Simplified for brevity but functional) */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-charcoal/40 backdrop-blur-sm animate-in fade-in duration-300">
-                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-gray-200 flex flex-col">
+                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-slate-300 flex flex-col">
                         <div className="sticky top-0 bg-white border-b border-gray-100 p-6 flex items-center justify-between z-10">
                             <div className="flex items-center gap-3">
                                 <div className="p-3 bg-red-50 text-brand-red rounded-2xl">
@@ -543,7 +543,7 @@ const HeroSlider = () => {
                                         <input
                                             required
                                             type="text"
-                                            className="w-full px-5 py-3.5 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
+                                            className="w-full px-5 py-3.5 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
                                             value={formData.title}
                                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                             placeholder="e.g. Elevate Your Journey"
@@ -555,7 +555,7 @@ const HeroSlider = () => {
                                         <input
                                             required
                                             type="text"
-                                            className="w-full px-5 py-3.5 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
+                                            className="w-full px-5 py-3.5 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
                                             value={formData.subtitle}
                                             onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
                                             placeholder="e.g. Luxury travel redefined"
@@ -565,7 +565,7 @@ const HeroSlider = () => {
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Description (Internal Meta)</label>
                                         <textarea
-                                            className="w-full px-5 py-3.5 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 h-24 resize-none"
+                                            className="w-full px-5 py-3.5 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 h-24 resize-none"
                                             value={formData.description}
                                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                         />
@@ -576,7 +576,7 @@ const HeroSlider = () => {
                                             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">CTA Action Text</label>
                                             <input
                                                 type="text"
-                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
+                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
                                                 value={formData.cta_text}
                                                 onChange={(e) => setFormData({ ...formData, cta_text: e.target.value })}
                                             />
@@ -585,7 +585,7 @@ const HeroSlider = () => {
                                             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Redirect Vector (Link)</label>
                                             <input
                                                 type="text"
-                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
+                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
                                                 value={formData.cta_link}
                                                 onChange={(e) => setFormData({ ...formData, cta_link: e.target.value })}
                                             />
@@ -599,7 +599,7 @@ const HeroSlider = () => {
                                             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Start Projection (Date)</label>
                                             <input
                                                 type="datetime-local"
-                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
+                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
                                                 value={formData.start_date ? new Date(formData.start_date).toISOString().slice(0, 16) : ''}
                                                 onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
                                             />
@@ -608,7 +608,7 @@ const HeroSlider = () => {
                                             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">End Duration (Date)</label>
                                             <input
                                                 type="datetime-local"
-                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
+                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
                                                 value={formData.end_date ? new Date(formData.end_date).toISOString().slice(0, 16) : ''}
                                                 onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
                                             />
@@ -621,7 +621,7 @@ const HeroSlider = () => {
                                             <input
                                                 type="text"
                                                 placeholder="e.g. SUMMER SALE"
-                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
+                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
                                                 value={formData.badge_text}
                                                 onChange={(e) => setFormData({ ...formData, badge_text: e.target.value })}
                                             />
@@ -631,13 +631,13 @@ const HeroSlider = () => {
                                             <div className="flex gap-2">
                                                 <input
                                                     type="color"
-                                                    className="w-12 h-12 p-1 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none cursor-pointer"
+                                                    className="w-12 h-12 p-1 bg-gray-50 border-2 border-slate-300 rounded-xl focus:outline-none cursor-pointer"
                                                     value={formData.badge_color}
                                                     onChange={(e) => setFormData({ ...formData, badge_color: e.target.value })}
                                                 />
                                                 <input
                                                     type="text"
-                                                    className="flex-1 px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 uppercase"
+                                                    className="flex-1 px-4 py-3 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 uppercase"
                                                     value={formData.badge_color}
                                                     onChange={(e) => setFormData({ ...formData, badge_color: e.target.value })}
                                                 />
@@ -654,7 +654,7 @@ const HeroSlider = () => {
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Media Type</label>
                                             <select
-                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 appearance-none"
+                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 appearance-none"
                                                 value={formData.media_type}
                                                 onChange={(e) => setFormData({ ...formData, media_type: e.target.value })}
                                             >
@@ -664,7 +664,7 @@ const HeroSlider = () => {
                                         </div>
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Text Alignment</label>
-                                            <div className="flex bg-gray-50 p-1 rounded-2xl border-2 border-gray-200">
+                                            <div className="flex bg-gray-50 p-1 rounded-2xl border-2 border-slate-300">
                                                 {['left', 'center', 'right'].map(align => (
                                                     <button
                                                         key={align}
@@ -686,7 +686,7 @@ const HeroSlider = () => {
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Motion preset</label>
                                             <select
-                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 appearance-none"
+                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 appearance-none"
                                                 value={formData.animation_type}
                                                 onChange={(e) => setFormData({ ...formData, animation_type: e.target.value })}
                                             >
@@ -703,7 +703,7 @@ const HeroSlider = () => {
                                                 type="number"
                                                 step="500"
                                                 min="1000"
-                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
+                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
                                                 value={formData.duration}
                                                 onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) })}
                                             />
@@ -758,7 +758,7 @@ const HeroSlider = () => {
                                                 step="0.1"
                                                 min="0"
                                                 max="1"
-                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
+                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
                                                 value={formData.overlay_opacity}
                                                 onChange={(e) => setFormData({ ...formData, overlay_opacity: parseFloat(e.target.value) })}
                                             />
@@ -767,7 +767,7 @@ const HeroSlider = () => {
                                             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Sequence Index (Order)</label>
                                             <input
                                                 type="number"
-                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
+                                                className="w-full px-5 py-3 bg-gray-50 border-2 border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800"
                                                 value={formData.order_index}
                                                 onChange={(e) => setFormData({ ...formData, order_index: parseInt(e.target.value) })}
                                             />
@@ -799,7 +799,7 @@ const HeroSlider = () => {
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
                                     variant="outline"
-                                    className="px-8 py-4 border-gray-300 text-gray-400 font-bold rounded-2xl uppercase tracking-widest text-[10px]"
+                                    className="px-8 py-4 border-slate-300 text-gray-400 font-bold rounded-2xl uppercase tracking-widest text-[10px]"
                                 >
                                     Cancel
                                 </Button>

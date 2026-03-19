@@ -32,7 +32,7 @@ const Modal = ({ isOpen, onClose, title, children, size = 'md' }) => {
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-gray-200">
+          <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-slate-300">
             <h3 className="text-base font-bold text-gray-900">{title}</h3>
             <button
               type="button"

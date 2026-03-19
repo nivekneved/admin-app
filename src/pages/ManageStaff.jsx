@@ -169,7 +169,7 @@ const ManageStaff = () => {
                     onClick={() => navigate('/team')}
                     className="group flex items-center gap-3 text-gray-400 hover:text-brand-red transition-all font-black uppercase tracking-widest text-[10px]"
                 >
-                    <div className="p-2 border border-gray-300 rounded-xl group-hover:bg-red-50 group-hover:border-red-100 transition-all">
+                    <div className="p-2 border border-slate-300 rounded-xl group-hover:bg-red-50 group-hover:border-red-100 transition-all">
                         <ArrowLeft size={16} />
                     </div>
                     Back to Team Portal
@@ -188,7 +188,7 @@ const ManageStaff = () => {
                 {/* Profile Hero Card */}
                 <div className="relative group">
                     <div className="absolute -inset-1 bg-gradient-to-r from-brand-red to-red-400 rounded-3xl blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
-                    <Card className="relative bg-white border border-gray-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
+                    <Card className="relative bg-white border border-slate-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
                         <div className="h-32 bg-brand-charcoal relative overflow-hidden">
                             <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
                             <div className="absolute inset-0 bg-gradient-to-r from-brand-red/20 to-transparent"></div>
@@ -241,7 +241,7 @@ const ManageStaff = () => {
                                 <div className="flex-1 pb-2">
                                     <div className="flex items-center gap-3 mb-1">
                                         <h2 className="text-3xl font-black text-gray-900 tracking-tight">{formData.name || "Untitled Identity"}</h2>
-                                        <span className={`px-2.5 py-1 text-[10px] font-black uppercase tracking-widest rounded-lg border ${formData.role === 'admin' ? 'bg-red-50 text-brand-red border-red-100' : 'bg-gray-50 text-gray-500 border-gray-300'}`}>
+                                        <span className={`px-2.5 py-1 text-[10px] font-black uppercase tracking-widest rounded-lg border ${formData.role === 'admin' ? 'bg-red-50 text-brand-red border-red-100' : 'bg-gray-50 text-gray-500 border-slate-300'}`}>
                                             {formData.role}
                                         </span>
                                     </div>
@@ -266,7 +266,7 @@ const ManageStaff = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Left Panel: System Access */}
                     <div className="lg:col-span-1 space-y-8">
-                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-gray-200 space-y-6">
+                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
                             <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em] mb-4">
                                 <Shield size={16} className="text-brand-red" /> System Access
                             </h3>
@@ -276,7 +276,7 @@ const ManageStaff = () => {
                                     <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">System Username</label>
                                     <input
                                         type="text" required
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
+                                        className="w-full px-4 py-3 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
                                         value={formData.username} onChange={e => setFormData({ ...formData, username: e.target.value })}
                                     />
                                 </div>
@@ -284,7 +284,7 @@ const ManageStaff = () => {
                                     <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Work Email</label>
                                     <input
                                         type="email" required
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
+                                        className="w-full px-4 py-3 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
                                         value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })}
                                     />
                                 </div>
@@ -296,7 +296,7 @@ const ManageStaff = () => {
                                     <div className="relative">
                                         <input
                                             type="password" required={!isEdit}
-                                            className="w-full pl-4 pr-10 py-3 bg-gray-50 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm text-gray-900"
+                                            className="w-full pl-4 pr-10 py-3 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm text-gray-900"
                                             value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })}
                                             placeholder="••••••••"
                                         />
@@ -369,7 +369,7 @@ const ManageStaff = () => {
 
                     {/* Right Panel: Identity Narrative */}
                     <div className="lg:col-span-2 space-y-8">
-                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-gray-200 space-y-6">
+                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
                             <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em] mb-4">
                                 <User size={16} className="text-brand-red" /> Professional Narrative
                             </h3>
@@ -378,7 +378,7 @@ const ManageStaff = () => {
                                     <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Full Legal Name</label>
                                     <input
                                         type="text" required
-                                        className="w-full px-6 py-4 bg-gray-50 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-black text-xl text-gray-900"
+                                        className="w-full px-6 py-4 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-black text-xl text-gray-900"
                                         value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })}
                                         placeholder="Full Name"
                                     />
@@ -389,7 +389,7 @@ const ManageStaff = () => {
                                         <div className="relative">
                                             <input
                                                 type="text"
-                                                className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm text-gray-900"
+                                                className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm text-gray-900"
                                                 value={formData.linkedin_url} onChange={e => setFormData({ ...formData, linkedin_url: e.target.value })}
                                                 placeholder="linkedin.com/in/..."
                                             />
@@ -401,7 +401,7 @@ const ManageStaff = () => {
                                         <div className="relative">
                                             <input
                                                 type="text"
-                                                className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm text-gray-900"
+                                                className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm text-gray-900"
                                                 value={formData.photo_url} onChange={e => setFormData({ ...formData, photo_url: e.target.value })}
                                                 placeholder="https://..."
                                             />
@@ -413,7 +413,7 @@ const ManageStaff = () => {
                                     <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Professional Bio / Mission</label>
                                     <textarea
                                         rows={6}
-                                        className="w-full px-6 py-4 bg-gray-50 border border-gray-300 rounded-3xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-sm font-medium resize-none leading-relaxed text-gray-900"
+                                        className="w-full px-6 py-4 bg-gray-50 border border-slate-300 rounded-3xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-sm font-medium resize-none leading-relaxed text-gray-900"
                                         value={formData.bio} onChange={e => setFormData({ ...formData, bio: e.target.value })}
                                         placeholder="A detailed narrative about the employee's role and contributions..."
                                     />
@@ -435,7 +435,7 @@ const ManageStaff = () => {
                     </div>
                 </div>
 
-                <div className="flex justify-end gap-4 p-8 bg-gray-50/50 rounded-3xl border border-gray-300 border-dashed">
+                <div className="flex justify-end gap-4 p-8 bg-gray-50/50 rounded-3xl border border-slate-300 border-dashed">
                     <button
                         type="button"
                         onClick={() => navigate('/team')}

@@ -8,7 +8,7 @@ import logo from '../assets/logo.png';
 import Modal from '../components/Modal';
 import { showAlert, showConfirm } from '../utils/swal';
 
-const selectCls = "bg-gray-50 border border-gray-300 text-gray-900 text-[11px] font-black uppercase tracking-widest rounded-2xl focus:ring-brand-red focus:border-brand-red block w-full p-2.5 appearance-none pr-8 transition-all cursor-pointer hover:bg-white";
+const selectCls = "bg-gray-50 border border-slate-300 text-gray-900 text-[11px] font-black uppercase tracking-widest rounded-2xl focus:ring-brand-red focus:border-brand-red block w-full p-2.5 appearance-none pr-8 transition-all cursor-pointer hover:bg-white";
 
 const Customers = () => {
     const [customers, setCustomers] = useState([]);
@@ -258,7 +258,7 @@ const Customers = () => {
                     <Button
                         variant="outline"
                         onClick={fetchCustomers}
-                        className="text-gray-500 border-gray-200 flex items-center gap-2"
+                        className="text-gray-500 border-slate-300 flex items-center gap-2"
                         disabled={loading}
                     >
                         <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
@@ -267,7 +267,7 @@ const Customers = () => {
                     <Button
                         variant="outline"
                         onClick={() => window.print()}
-                        className="text-gray-500 border-gray-200 flex items-center gap-2"
+                        className="text-gray-500 border-slate-300 flex items-center gap-2"
                     >
                         <Printer size={15} />
                         Print List
@@ -281,7 +281,7 @@ const Customers = () => {
                 </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 no-print">
-                <Card className="border border-gray-200 shadow-lg shadow-gray-100 rounded-3xl overflow-hidden bg-white">
+                <Card className="border border-slate-300 shadow-lg shadow-gray-100 rounded-3xl overflow-hidden bg-white">
                     <CardContent className="flex items-center p-6">
                         <div className="p-4 bg-red-50 text-brand-red rounded-2xl mr-4">
                             <UserCheck size={28} />
@@ -292,7 +292,7 @@ const Customers = () => {
                         </div>
                     </CardContent>
                 </Card>
-                <Card className="border border-gray-200 shadow-lg shadow-gray-100 rounded-3xl overflow-hidden bg-white">
+                <Card className="border border-slate-300 shadow-lg shadow-gray-100 rounded-3xl overflow-hidden bg-white">
                     <CardContent className="flex items-center p-6">
                         <div className="p-4 bg-gray-50 text-gray-400 rounded-2xl mr-4">
                             <UserPlus size={28} />
@@ -303,7 +303,7 @@ const Customers = () => {
                         </div>
                     </CardContent>
                 </Card>
-                <Card className="border border-gray-200 shadow-lg shadow-gray-100 rounded-3xl overflow-hidden bg-white">
+                <Card className="border border-slate-300 shadow-lg shadow-gray-100 rounded-3xl overflow-hidden bg-white">
                     <CardContent className="flex items-center p-6">
                         <div className="p-4 bg-red-50 text-brand-red rounded-2xl mr-4">
                             <Mail size={28} />
@@ -316,8 +316,8 @@ const Customers = () => {
                 </Card>
             </div>
 
-            <Card className="border border-gray-200 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
-                <CardHeader className="border-b border-gray-200 pb-4 bg-white px-4 pt-8">
+            <Card className="border border-slate-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
+                <CardHeader className="border-b border-slate-300 pb-4 bg-white px-4 pt-8">
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                             <div className="relative flex-1 min-w-0 max-w-xs">
@@ -325,7 +325,7 @@ const Customers = () => {
                                 <input
                                     type="text"
                                     placeholder="Search registers..."
-                                    className="pl-9 pr-9 py-2.5 w-full border border-gray-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
+                                    className="pl-9 pr-9 py-2.5 w-full border border-slate-300 bg-gray-50 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-medium"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
@@ -410,7 +410,7 @@ const Customers = () => {
                                         <tr key={customer.id} className="even:bg-gray-100/40 hover:bg-gray-100/60 transition-colors">
                                             <td className="px-4 py-5 whitespace-nowrap">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="h-10 w-10 rounded-2xl bg-gray-50 border border-gray-200 flex items-center justify-center text-sm font-black text-gray-400 shrink-0">
+                                                    <div className="h-10 w-10 rounded-2xl bg-gray-50 border border-slate-300 flex items-center justify-center text-sm font-black text-gray-400 shrink-0">
                                                         {customer.first_name?.charAt(0)}{customer.last_name?.charAt(0)}
                                                     </div>
                                                     <div>
@@ -503,7 +503,7 @@ const Customers = () => {
 
                     {/* Pagination */}
                     {processedCustomers.length > customersPerPage && (
-                        <div className="flex items-center justify-between px-4 py-6 bg-gray-50/50 border-t border-gray-200">
+                        <div className="flex items-center justify-between px-4 py-6 bg-gray-50/50 border-t border-slate-300">
                             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                                 Page {currentPage} of {totalPages}
                             </span>
@@ -511,14 +511,14 @@ const Customers = () => {
                                 <button
                                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                                     disabled={currentPage === 1}
-                                    className="p-3 bg-white border border-gray-300 rounded-xl disabled:opacity-30 shadow-sm hover:border-gray-300 transition-all font-bold text-xs"
+                                    className="p-3 bg-white border border-slate-300 rounded-xl disabled:opacity-30 shadow-sm hover:border-slate-300 transition-all font-bold text-xs"
                                 >
                                     Previous
                                 </button>
                                 <button
                                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                                     disabled={currentPage === totalPages}
-                                    className="p-3 bg-white border border-gray-300 rounded-xl disabled:opacity-30 shadow-sm hover:border-gray-300 transition-all font-bold text-xs"
+                                    className="p-3 bg-white border border-slate-300 rounded-xl disabled:opacity-30 shadow-sm hover:border-slate-300 transition-all font-bold text-xs"
                                 >
                                     Next
                                 </button>
@@ -541,7 +541,7 @@ const Customers = () => {
                                 type="text"
                                 name="first_name"
                                 required
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition-all"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition-all"
                                 value={formData.first_name}
                                 onChange={handleInputChange}
                                 placeholder="Emma"
@@ -553,7 +553,7 @@ const Customers = () => {
                                 type="text"
                                 name="last_name"
                                 required
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition-all"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition-all"
                                 value={formData.last_name}
                                 onChange={handleInputChange}
                                 placeholder="Johnson"
@@ -568,7 +568,7 @@ const Customers = () => {
                             name="email"
                             required
                             disabled={editingCustomer}
-                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red disabled:opacity-50 transition-all font-medium"
+                            className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red disabled:opacity-50 transition-all font-medium"
                             value={formData.email}
                             onChange={handleInputChange}
                             placeholder="customer@example.com"
@@ -581,7 +581,7 @@ const Customers = () => {
                             <input
                                 type="text"
                                 name="phone"
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
                                 value={formData.phone}
                                 onChange={handleInputChange}
                                 placeholder="+230 ..."
@@ -592,7 +592,7 @@ const Customers = () => {
                             <input
                                 type="text"
                                 name="country"
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
                                 value={formData.country}
                                 onChange={handleInputChange}
                                 placeholder="Mauritius"
@@ -600,7 +600,7 @@ const Customers = () => {
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-between bg-gray-50 p-4 rounded-xl border border-gray-300">
+                    <div className="flex items-center justify-between bg-gray-50 p-4 rounded-xl border border-slate-300">
                         <div>
                             <h4 className="text-sm font-bold text-gray-900">Newsletter Subscription</h4>
                             <p className="text-[10px] text-gray-500">Send marketing and seasonal offers</p>
@@ -613,7 +613,7 @@ const Customers = () => {
                                 checked={formData.is_subscriber}
                                 onChange={handleInputChange}
                             />
-                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-red"></div>
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-red"></div>
                         </label>
                     </div>
 
@@ -621,7 +621,7 @@ const Customers = () => {
                         <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Global Status</label>
                         <select
                             name="status"
-                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all appearance-none font-bold text-sm text-gray-700"
+                            className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all appearance-none font-bold text-sm text-gray-700"
                             value={formData.status}
                             onChange={handleInputChange}
                         >
