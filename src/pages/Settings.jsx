@@ -23,7 +23,8 @@ const Settings = () => {
     facebookUrl: '',
     instagramUrl: '',
     linkedinUrl: '',
-    showFooter: true,
+    showFooterWeb: true,
+    showFooterMobile: true,
     timezone: '',
     currency: '',
     dateFormat: '',
@@ -134,7 +135,8 @@ const Settings = () => {
           facebookUrl: formData.facebookUrl,
           instagramUrl: formData.instagramUrl,
           linkedinUrl: formData.linkedinUrl,
-          showFooter: formData.showFooter,
+          showFooterWeb: formData.showFooterWeb,
+          showFooterMobile: formData.showFooterMobile,
           timezone: formData.timezone,
           currency: formData.currency,
           dateFormat: formData.dateFormat,
@@ -296,21 +298,40 @@ const Settings = () => {
                   </div>
                 </div>
 
-                <div className="p-6 bg-red-50/30 rounded-2xl border border-red-100 flex items-center justify-between">
-                  <div>
-                    <h4 className="font-black text-gray-900 text-sm italic uppercase tracking-widest">Global Footer Visibility</h4>
-                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-1">Hide or Show the company footer across Web and Mobile apps</p>
+                <div className="p-6 bg-red-50/30 rounded-2xl border border-red-100 space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-black text-gray-900 text-sm italic uppercase tracking-widest">Web Footer Visibility</h4>
+                      <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-1">Hide or Show the footer on the main website</p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        name="showFooterWeb"
+                        className="sr-only peer"
+                        checked={formData.showFooterWeb}
+                        onChange={handleChange}
+                      />
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-red"></div>
+                    </label>
                   </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      name="showFooter"
-                      className="sr-only peer"
-                      checked={formData.showFooter}
-                      onChange={handleChange}
-                    />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-red"></div>
-                  </label>
+
+                  <div className="flex items-center justify-between pt-6 border-t border-red-100/50">
+                    <div>
+                      <h4 className="font-black text-gray-900 text-sm italic uppercase tracking-widest">Mobile Footer Visibility</h4>
+                      <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-1">Hide or Show the footer on the iOS/Android app</p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        name="showFooterMobile"
+                        className="sr-only peer"
+                        checked={formData.showFooterMobile}
+                        onChange={handleChange}
+                      />
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-red"></div>
+                    </label>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
