@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { cn } from '../lib/utils';
 import { 
   Users, 
   UserCheck, 
@@ -167,7 +166,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 className="w-full flex items-center justify-between px-3.5 py-2.5 text-slate-500 hover:text-slate-900 transition-colors group outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-offset-2 rounded-xl"
               >
                 <div className="flex items-center gap-3">
-                  <span className={cn("transition-colors", openGroups[group.id] ? "text-brand-red" : "text-slate-400 group-hover:text-brand-red")}>{group.icon}</span>
+                  <span className={`transition-colors ${openGroups[group.id] ? "text-brand-red" : "text-slate-400 group-hover:text-brand-red"}`}>{group.icon}</span>
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 group-hover:text-slate-900">{group.title}</span>
                 </div>
                 <ChevronDown 
