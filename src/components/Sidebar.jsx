@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { cn } from '../lib/utils';
 import { 
   Users, 
   UserCheck, 
@@ -161,30 +162,35 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             <div key={group.id} className="mb-2">
               <button
                 onClick={() => toggleGroup(group.id)}
-                className="w-full flex items-center justify-between px-3.5 py-2 text-gray-400 hover:text-gray-900 transition-colors group"
+                aria-expanded={openGroups[group.id]}
+                aria-controls={`group-content-${group.id}`}
+                className="w-full flex items-center justify-between px-3.5 py-2.5 text-slate-500 hover:text-slate-900 transition-colors group outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-offset-2 rounded-xl"
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-gray-300 group-hover:text-brand-red transition-colors">{group.icon}</span>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-gray-600">{group.title}</span>
+                  <span className={cn("transition-colors", openGroups[group.id] ? "text-brand-red" : "text-slate-400 group-hover:text-brand-red")}>{group.icon}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 group-hover:text-slate-900">{group.title}</span>
                 </div>
                 <ChevronDown 
                   size={14} 
-                  className={`transition-transform duration-300 ${openGroups[group.id] ? 'rotate-180 text-brand-red' : 'text-gray-300'}`} 
+                  className={`transition-transform duration-300 ${openGroups[group.id] ? 'rotate-180 text-brand-red' : 'text-slate-400'}`} 
                 />
               </button>
 
-              <div className={`overflow-hidden transition-all duration-300 ease-in-out ${openGroups[group.id] ? 'max-h-[500px] mt-1 opacity-100' : 'max-h-0 opacity-0'}`}>
+              <div 
+                id={`group-content-${group.id}`}
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${openGroups[group.id] ? 'max-h-[500px] mt-1 opacity-100' : 'max-h-0 opacity-0'}`}
+              >
                 <ul className="pl-4 space-y-1">
                   {group.items.map((item, idx) => (
                     <li key={idx}>
                       <Link
                         to={item.path}
-                        className={`flex items-center px-4 py-2.5 rounded-xl transition-all duration-200 ${location.pathname === item.path
-                          ? 'bg-red-50 text-brand-red'
-                          : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
+                        className={`flex items-center px-4 py-2.5 rounded-xl transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-brand-red ${location.pathname === item.path
+                          ? 'bg-red-50 text-brand-red shadow-sm border border-red-100'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                           }`}
                       >
-                        <span className="mr-3 shrink-0 opacity-50 group-hover:opacity-100 transition-opacity">{item.icon}</span>
+                        <span className="mr-3 shrink-0 opacity-70 group-hover:opacity-100 transition-opacity">{item.icon}</span>
                         <span className="font-bold text-[11px] uppercase tracking-tight">{item.title}</span>
                       </Link>
                     </li>
