@@ -434,7 +434,7 @@ const Services = () => {
                             <p className="text-sm font-black text-gray-900 leading-tight mb-1">{s.name}</p>
                             <div className="flex flex-wrap items-center gap-2">
                               <p className="text-xs font-black text-brand-red leading-none">MUR {Number(s.base_price).toLocaleString()}</p>
-                              <div className="flex flex-wrap gap-1">
+                              <div className="flex flex-wrap gap-1 mt-1">
                                 {s.is_seasonal_deal && (
                                   <span className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-amber-50 text-amber-600 border border-amber-100 flex items-center gap-1">
                                     <Sparkles size={8} /> {s.deal_note || 'Seasonal'}
@@ -447,7 +447,12 @@ const Services = () => {
                                     </span>
                                   ))
                                 ) : (
-                                  <span className="text-[9px] font-bold text-gray-400">Unassigned</span>
+                                  <span className="text-[9px] font-bold text-gray-400 border border-gray-100 px-1.5 py-0.5 rounded">Unassigned</span>
+                                )}
+                                {Array.isArray(s.room_types) && s.room_types.length > 0 && (
+                                  <span className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-blue-50 text-blue-600 border border-blue-100 flex items-center gap-1">
+                                    {s.room_types.length} Room Types
+                                  </span>
                                 )}
                               </div>
                             </div>
@@ -460,6 +465,9 @@ const Services = () => {
                           <div className="flex flex-col gap-1">
                             <span className={`w-fit px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border ${statusBadge(s.status)}`}>{s.status}</span>
                             <p className="hidden sm:block text-[10px] font-bold text-gray-400 pl-1">{s.stock} units available</p>
+                            {Array.isArray(s.room_types) && s.room_types.some(rt => rt.available) && (
+                                <span className="w-fit px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-emerald-50 text-emerald-600 border border-emerald-100">Rentable</span>
+                            )}
                           </div>
                         </div>
                       </td>
@@ -496,11 +504,21 @@ const Services = () => {
                               </span>
                             ))
                           ) : (
-                            <span className="text-[9px] font-bold text-gray-400">Unassigned</span>
+                            <span className="text-[9px] font-bold text-gray-400 border border-gray-100 px-1.5 py-0.5 rounded">Unassigned</span>
                           )}
                           {s.is_seasonal_deal && (
                             <span className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-amber-50 text-amber-600 border border-amber-100 flex items-center gap-1">
                               <Sparkles size={8} /> {s.deal_note || 'Deal'}
+                            </span>
+                          )}
+                          {Array.isArray(s.room_types) && s.room_types.length > 0 && (
+                            <span className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-blue-50 text-blue-600 border border-blue-100">
+                              {s.room_types.length} RMs
+                            </span>
+                          )}
+                          {Array.isArray(s.room_types) && s.room_types.some(rt => rt.available) && (
+                            <span className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded bg-emerald-50 text-emerald-600 border border-emerald-100">
+                              Rentable
                             </span>
                           )}
                         </div>
