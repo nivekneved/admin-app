@@ -124,9 +124,9 @@ const ViewCustomer = () => {
             // Fetch Related Bookings
             const { data: bookingsData, error: bookingsError } = await supabase
                 .from('bookings')
-                .select('id, activity_type, activity_name, amount, start_date, status')
+                .select('id, service_type, service_name, amount, check_in_date, status')
                 .eq('customer_id', id)
-                .order('start_date', { ascending: false });
+                .order('check_in_date', { ascending: false });
 
             if (bookingsError && !bookingsError.message.includes('relation "public.bookings" does not exist')) {
                 console.error("Error fetching bookings:", bookingsError);
@@ -293,8 +293,8 @@ const ViewCustomer = () => {
                                         <div key={booking.id} className="p-4 hover:bg-gray-50/50 transition-colors">
                                             <div className="flex justify-between items-start mb-2">
                                                 <div>
-                                                    <span className="text-xs font-bold text-gray-400 tracking-wider uppercase">{booking.activity_type}</span>
-                                                    <h3 className="text-sm font-bold text-gray-900">{booking.activity_name}</h3>
+                                                    <span className="text-xs font-bold text-gray-400 tracking-wider uppercase">{booking.service_type}</span>
+                                                    <h3 className="text-sm font-bold text-gray-900">{booking.service_name}</h3>
                                                 </div>
                                                 <div className="text-right">
                                                     <span className="text-sm font-black text-gray-900 font-mono">${booking.amount}</span>
@@ -303,7 +303,7 @@ const ViewCustomer = () => {
                                             <div className="flex items-center text-xs text-gray-500 justify-between">
                                                 <div className="flex items-center">
                                                     <Clock size={12} className="mr-1" />
-                                                    {new Date(booking.start_date).toLocaleDateString()}
+                                                    {new Date(booking.check_in_date).toLocaleDateString()}
                                                 </div>
                                                 <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${booking.status === 'Confirmed' ? 'bg-green-50 text-green-600' :
                                                     booking.status === 'Pending' ? 'bg-orange-50 text-orange-600' :

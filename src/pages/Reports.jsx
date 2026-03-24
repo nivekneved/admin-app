@@ -137,7 +137,7 @@ const Reports = () => {
   };
 
   const fetchBookingStats = async () => {
-    const { data } = await supabase.from('bookings').select('status, amount, total_amount, booking_items(price, quantity)');
+    const { data } = await supabase.from('bookings').select('status, amount, total_price, booking_items(price, quantity)');
     if (!data) return;
     
     const confirmedStatuses = ['confirmed', 'completed', 'paid'];
@@ -149,7 +149,7 @@ const Reports = () => {
       .filter(b => confirmedStatuses.includes(b.status?.toLowerCase()))
       .reduce((sum, b) => {
         if (b.booking_items?.length) return sum + b.booking_items.reduce((is, it) => is + (Number(it.price) * Number(it.quantity || 1)), 0);
-        return sum + Number(b.total_amount || b.amount || 0);
+        return sum + Number(b.total_price || b.amount || 0);
       }, 0);
 
     setStats(prev => ({ ...prev, totalBookings: data.length, confirmedBookings: confirmed, pendingBookings: pending, cancelledBookings: cancelled, totalRevenue: revenue }));
@@ -179,7 +179,7 @@ const Reports = () => {
 
   const fetchMonthlyBookings = async () => {
     const sixMonthsAgo = new Date(); sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5); sixMonthsAgo.setDate(1);
-    const { data } = await supabase.from('bookings').select('created_at, total_amount, amount').gte('created_at', sixMonthsAgo.toISOString());
+    const { data } = await supabase.from('bookings').select('created_at, total_price, amount').gte('created_at', sixMonthsAgo.toISOString());
     if (!data) return;
     const map = {};
     data.forEach(b => {
@@ -187,7 +187,7 @@ const Reports = () => {
       const key = `${d.getFullYear()}-${d.getMonth()}`;
       if (!map[key]) map[key] = { month: MONTH_NAMES[d.getMonth()], year: d.getFullYear(), count: 0, revenue: 0 };
       map[key].count += 1;
-      map[key].revenue += Number(b.total_amount || b.amount || 0);
+      map[key].revenue += Number(b.total_price || b.amount || 0);
     });
     const rows = [];
     for (let i = 5; i >= 0; i--) {
@@ -199,14 +199,14 @@ const Reports = () => {
   };
 
   const fetchTopActivities = async () => {
-    const { data } = await supabase.from('bookings').select('activity_name, activity_type, total_amount, amount');
+    const { data } = await supabase.from('bookings').select('service_name, service_type, total_price, amount');
     if (!data) return;
     const map = {};
     data.forEach(b => {
-      const key = b.activity_name || 'Unknown';
-      if (!map[key]) map[key] = { name: key, type: b.activity_type, count: 0, revenue: 0 };
+      const key = b.service_name || 'Unknown';
+      if (!map[key]) map[key] = { name: key, type: b.service_type, count: 0, revenue: 0 };
       map[key].count += 1;
-      map[key].revenue += Number(b.total_amount || b.amount || 0);
+      map[key].revenue += Number(b.total_price || b.amount || 0);
     });
     setTopActivities(Object.values(map).sort((a, b) => b.count - a.count).slice(0, 7));
   };
@@ -226,9 +226,9 @@ const Reports = () => {
       data = bookings.map(b => ({
         Date: new Date(b.created_at).toLocaleDateString(),
         Customer: `${b.customers?.first_name} ${b.customers?.last_name}`,
-        Activity: b.activity_name,
-        Type: b.activity_type,
-        Amount: b.total_amount,
+        Activity: b.service_name,
+        Type: b.service_type,
+        Amount: b.total_price,
         Status: b.status
       }));
       name = "Booking_Ledger";
@@ -355,7 +355,7 @@ const Reports = () => {
                   <tr key={b.id} className="hover:bg-gray-50 transition-colors">
                     <td className="p-4">
                       <p className="text-xs font-black text-gray-900">{b.customers?.first_name} {b.customers?.last_name}</p>
-                      <p className="text-[10px] text-gray-400 font-bold">{b.activity_name}</p>
+                      <p className="text-[10px] text-gray-400 font-bold">{b.service_name}</p>
                     </td>
                     <td className="p-4 text-right">
                       <span className={`px-2 py-0.5 rounded-full text-[9px] font-black border ${statusColor(b.status)}`}>{b.status}</span>
@@ -482,13 +482,13 @@ const Reports = () => {
                   <p className="text-[10px] text-gray-400 font-bold">{r.customers?.email}</p>
                 </div>
               )},
-              { key: 'activity_name', label: 'Activity', render: (r) => (
+              { key: 'service_name', label: 'Activity', render: (r) => (
                 <div className="flex items-center gap-2">
-                  <ActivityIcon type={r.activity_type} />
-                  <span className="text-xs font-black text-gray-900">{r.activity_name}</span>
+                  <ActivityIcon type={r.service_type} />
+                  <span className="text-xs font-black text-gray-900">{r.service_name}</span>
                 </div>
               )},
-              { key: 'total_amount', label: 'Revenue', render: (r) => <span className="text-xs font-black text-brand-red">{fmtRs(r.total_amount || r.amount)}</span> },
+              { key: 'total_price', label: 'Revenue', render: (r) => <span className="text-xs font-black text-brand-red">{fmtRs(r.total_price || r.amount)}</span> },
               { key: 'status', label: 'Status', render: (r) => <span className={`px-2 py-0.5 rounded-lg text-[9px] font-black border ${statusColor(r.status)}`}>{r.status}</span> },
             ],
             'Booking Transaction Ledger'

@@ -43,10 +43,10 @@ const Dashboard = () => {
         .from('bookings')
         .select(`
           id,
-          total_amount,
+          total_price,
           amount,
           status,
-          activity_type,
+          service_type,
           created_at,
           customers (
             first_name,
@@ -60,7 +60,7 @@ const Dashboard = () => {
       // Fetch more rows to ensure accurate calculation for revenue (limit to 10k for safety)
       const { data: allBookingsData } = await supabase
         .from('bookings')
-        .select('total_amount, amount, status, created_at')
+        .select('total_price, amount, status, created_at')
         .range(0, 9999);
 
       const allBookings = allBookingsData || [];
@@ -70,14 +70,14 @@ const Dashboard = () => {
       
       const revenue = allBookings
         .filter(b => confirmedStatuses.includes(b.status?.toLowerCase()))
-        .reduce((sum, b) => sum + (Number(b.total_amount || b.amount) || 0), 0);
+        .reduce((sum, b) => sum + (Number(b.total_price || b.amount) || 0), 0);
 
       // Today's Stats
       const todayBookings = allBookings.filter(b => new Date(b.created_at) >= startOfToday);
       const todayTotal = todayBookings.length;
       const todayRevenue = todayBookings
         .filter(b => confirmedStatuses.includes(b.status?.toLowerCase()))
-        .reduce((sum, b) => sum + (Number(b.total_amount || b.amount) || 0), 0);
+        .reduce((sum, b) => sum + (Number(b.total_price || b.amount) || 0), 0);
 
       setStats({
         totalAdmins: adminCount || 0,
@@ -268,11 +268,11 @@ const Dashboard = () => {
                                   ? `${booking.customers.first_name} ${booking.customers.last_name}`
                                   : 'Guest Traveler'}
                               </div>
-                              <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{booking.activity_type}</div>
+                              <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{booking.service_type}</div>
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right">
-                            <div className="text-sm font-black text-gray-900">Rs {(booking.total_amount || booking.amount || 0).toFixed(2)}</div>
+                            <div className="text-sm font-black text-gray-900">Rs {(booking.total_price || booking.amount || 0).toFixed(2)}</div>
                             <span className={`px-2 py-0.5 text-[9px] font-black uppercase tracking-tighter rounded-full border ${
                               booking.status?.toLowerCase() === 'confirmed' || booking.status?.toLowerCase() === 'completed' ? 'bg-green-50 text-green-700 border-green-100' :
                               booking.status?.toLowerCase() === 'pending' ? 'bg-yellow-50 text-yellow-700 border-yellow-100' :

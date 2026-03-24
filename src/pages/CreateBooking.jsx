@@ -13,7 +13,7 @@ const CreateBooking = () => {
     const [services, setServices] = useState([]);
     const [formData, setFormData] = useState({
         customer_id: '',
-        start_date: '',
+        check_in_date: '',
         status: 'Pending',
         pax_adults: 1,
         pax_children: 0
@@ -125,14 +125,14 @@ const CreateBooking = () => {
         try {
             const bookingData = {
                 customer_id: formData.customer_id,
-                start_date: formData.start_date,
+                check_in_date: formData.check_in_date,
                 status: formData.status,
                 pax_adults: parseInt(formData.pax_adults),
                 pax_children: parseInt(formData.pax_children),
                 amount: totalAmount,
-                total_amount: totalAmount,
-                activity_type: items[0].type,
-                activity_name: items.length > 1 ? `${items[0].name} (+${items.length - 1} more)` : items[0].name,
+                total_price: totalAmount,
+                service_type: items[0].type,
+                service_name: items.length > 1 ? `${items[0].name} (+${items.length - 1} more)` : items[0].name,
                 created_at: new Date().toISOString()
             };
 
@@ -224,10 +224,10 @@ const CreateBooking = () => {
                                             </span>
                                             <input
                                                 type="date"
-                                                name="start_date"
+                                                name="check_in_date"
                                                 required
                                                 className="w-full pl-14 pr-6 py-4 bg-gray-50/50 border-2 border-slate-300 focus:border-brand-red/10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all font-bold text-gray-700"
-                                                value={formData.start_date}
+                                                value={formData.check_in_date}
                                                 onChange={handleInputChange}
                                             />
                                         </div>

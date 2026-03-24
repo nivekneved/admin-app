@@ -66,9 +66,9 @@ const Bookings = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingBooking, setEditingBooking] = useState(null);
   const [editFormData, setEditFormData] = useState({
-    activity_type: '',
-    activity_name: '',
-    start_date: '',
+    service_type: '',
+    service_name: '',
+    check_in_date: '',
     amount: '',
     status: ''
   });
@@ -110,10 +110,10 @@ const Bookings = () => {
   const openEditModal = (booking) => {
     setEditingBooking(booking);
     setEditFormData({
-      activity_type: booking.activity_type || 'Lounge',
-      activity_name: booking.activity_name || booking.lounge_name || '',
-      start_date: booking.start_date || '',
-      amount: booking.total_amount || booking.amount || '',
+      service_type: booking.service_type || 'Lounge',
+      service_name: booking.service_name || booking.lounge_name || '',
+      check_in_date: booking.check_in_date || '',
+      amount: booking.total_price || booking.amount || '',
       status: booking.status || 'Pending'
     });
     setShowEditModal(true);
@@ -131,11 +131,11 @@ const Bookings = () => {
       const { error } = await supabase
         .from('bookings')
         .update({
-          activity_type: editFormData.activity_type,
-          activity_name: editFormData.activity_name,
-          start_date: editFormData.start_date,
+          service_type: editFormData.service_type,
+          service_name: editFormData.service_name,
+          check_in_date: editFormData.check_in_date,
           amount: parseFloat(editFormData.amount) || 0,
-          total_amount: parseFloat(editFormData.amount) || 0, // Ensure both are synced
+          total_price: parseFloat(editFormData.amount) || 0, // Ensure both are synced
           status: editFormData.status,
           updated_at: new Date().toISOString()
         })
@@ -223,7 +223,7 @@ const Bookings = () => {
           ? `${b.customers.first_name} ${b.customers.last_name}`.toLowerCase()
           : (b.customer?.toLowerCase() || 'guest');
         return customerName.includes(term) ||
-          (b.activity_name?.toLowerCase() || '').includes(term) ||
+          (b.service_name?.toLowerCase() || '').includes(term) ||
           (b.id?.toString() || '').includes(term);
       });
     }
@@ -235,7 +235,7 @@ const Bookings = () => {
 
     // 3. Activity Type filter
     if (filterType !== 'All') {
-      list = list.filter(b => b.activity_type === filterType);
+      list = list.filter(b => b.service_type === filterType);
     }
 
     // 4. Sorting
@@ -244,11 +244,11 @@ const Bookings = () => {
       let vA, vB;
 
       if (field === 'amount') {
-        vA = Number(a.total_amount || a.amount || 0);
-        vB = Number(b.total_amount || b.amount || 0);
-      } else if (field === 'start_date') {
-        vA = new Date(a.start_date || a.date || a.created_at);
-        vB = new Date(b.start_date || b.date || b.created_at);
+        vA = Number(a.total_price || a.amount || 0);
+        vB = Number(b.total_price || b.amount || 0);
+      } else if (field === 'check_in_date') {
+        vA = new Date(a.check_in_date || a.date || a.created_at);
+        vB = new Date(b.check_in_date || b.date || b.created_at);
       } else {
         vA = a[field] || '';
         vB = b[field] || '';
@@ -360,7 +360,7 @@ const Bookings = () => {
                 >
                   <option value="created_at:desc">Newest First</option>
                   <option value="created_at:asc">Oldest First</option>
-                  <option value="start_date:asc">Upcoming</option>
+                  <option value="check_in_date:asc">Upcoming</option>
                   <option value="amount:desc">Highest Rate</option>
                   <option value="amount:asc">Lowest Rate</option>
                 </select>
@@ -408,7 +408,7 @@ const Bookings = () => {
                         <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">#{booking.id?.toString().slice(0, 8)}</div>
                         <div className="flex items-center text-[10px] font-semibold text-gray-500">
                           <Clock className="text-gray-300 mr-1" size={12} />
-                          {formatDate(booking.start_date || booking.date || booking.created_at)}
+                          {formatDate(booking.check_in_date || booking.date || booking.created_at)}
                         </div>
                       </td>
                       <td className="px-8 py-5">
@@ -428,19 +428,19 @@ const Bookings = () => {
                       </td>
                       <td className="px-8 py-5 whitespace-nowrap text-left">
                         <div className="flex items-center text-sm font-black text-gray-900 leading-tight mb-1">
-                          <span className="mr-1.5 shrink-0">{getActivityIcon(booking.activity_type)}</span>
+                          <span className="mr-1.5 shrink-0">{getActivityIcon(booking.service_type)}</span>
                           <span className="truncate max-w-[150px]">
                             {booking.booking_items && booking.booking_items.length > 1
                               ? `${booking.booking_items[0].service_name} (+${booking.booking_items.length - 1})`
-                              : (booking.activity_name || booking.lounge_name || 'Generic')}
+                              : (booking.service_name || booking.lounge_name || 'Generic')}
                           </span>
                         </div>
                         <div className="text-[9px] text-gray-400 font-black uppercase tracking-widest">
-                          {booking.activity_type || 'Unknown'}
+                          {booking.service_type || 'Unknown'}
                         </div>
                       </td>
                       <td className="px-8 py-5 whitespace-nowrap text-left">
-                        <div className="text-sm font-black text-brand-red mb-1.5">Rs {(booking.total_amount || booking.amount || 0).toLocaleString()}</div>
+                        <div className="text-sm font-black text-brand-red mb-1.5">Rs {(booking.total_price || booking.amount || 0).toLocaleString()}</div>
                         <span className={`px-2 py-0.5 inline-flex text-[8px] font-black uppercase tracking-widest rounded-lg border ${getStatusBadge(booking.status)}`}>
                           {booking.status || 'Pending'}
                         </span>
@@ -585,8 +585,8 @@ const Bookings = () => {
                   <Tag size={10} className="mr-1" /> Activity Type
                 </div>
                 <div className="flex items-center gap-1.5 text-xs font-semibold text-gray-700">
-                  {getActivityIcon(viewingBooking.activity_type)}
-                  {viewingBooking.activity_type || 'Unknown'}
+                  {getActivityIcon(viewingBooking.service_type)}
+                  {viewingBooking.service_type || 'Unknown'}
                 </div>
               </div>
 
@@ -595,7 +595,7 @@ const Bookings = () => {
                   <Sun size={10} className="mr-1" /> Activity / Service
                 </div>
                 <p className="text-sm font-bold text-gray-800">
-                  {viewingBooking.activity_name || viewingBooking.lounge_name || 'Generic Booking'}
+                  {viewingBooking.service_name || viewingBooking.lounge_name || 'Generic Booking'}
                 </p>
               </div>
 
@@ -604,7 +604,7 @@ const Bookings = () => {
                   <Calendar size={10} className="mr-1" /> Booking Date
                 </div>
                 <p className="text-xs font-semibold text-gray-700">
-                  {formatDate(viewingBooking.start_date || viewingBooking.date || viewingBooking.created_at)}
+                  {formatDate(viewingBooking.check_in_date || viewingBooking.date || viewingBooking.created_at)}
                 </p>
               </div>
 
@@ -613,7 +613,7 @@ const Bookings = () => {
                   <CreditCard size={10} className="mr-1" /> Amount
                 </div>
                 <p className="text-sm font-black text-gray-900">
-                  Rs {(viewingBooking.total_amount || viewingBooking.amount || 0).toFixed(2)}
+                  Rs {(viewingBooking.total_price || viewingBooking.amount || 0).toFixed(2)}
                 </p>
               </div>
 
@@ -700,9 +700,9 @@ const Bookings = () => {
             <div>
               <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Activity Type</label>
               <select
-                name="activity_type"
+                name="service_type"
                 className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all appearance-none font-medium text-sm text-gray-800"
-                value={editFormData.activity_type}
+                value={editFormData.service_type}
                 onChange={handleEditChange}
               >
                 <option value="Lounge">Lounge Access</option>
@@ -733,11 +733,11 @@ const Bookings = () => {
             </label>
             <input
               type="text"
-              name="activity_name"
+              name="service_name"
               required
               placeholder="e.g. Premium Executive Lounge"
               className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
-              value={editFormData.activity_name}
+              value={editFormData.service_name}
               onChange={handleEditChange}
             />
           </div>
@@ -749,9 +749,9 @@ const Bookings = () => {
               </label>
               <input
                 type="date"
-                name="start_date"
+                name="check_in_date"
                 className="w-full px-4 py-2.5 bg-gray-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
-                value={editFormData.start_date}
+                value={editFormData.check_in_date}
                 onChange={handleEditChange}
               />
             </div>
