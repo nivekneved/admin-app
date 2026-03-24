@@ -25,6 +25,7 @@ const Settings = () => {
     linkedinUrl: '',
     showFooterWeb: true,
     showFooterMobile: true,
+    experienceSectionImage: '/assets/placeholders/hero-hotel.png',
     timezone: '',
     currency: '',
     dateFormat: '',
@@ -137,6 +138,7 @@ const Settings = () => {
           linkedinUrl: formData.linkedinUrl,
           showFooterWeb: formData.showFooterWeb,
           showFooterMobile: formData.showFooterMobile,
+          experienceSectionImage: formData.experienceSectionImage,
           timezone: formData.timezone,
           currency: formData.currency,
           dateFormat: formData.dateFormat,
@@ -331,6 +333,19 @@ const Settings = () => {
                       />
                       <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-red"></div>
                     </label>
+                  </div>
+
+                  <div className="pt-6 border-t border-red-100/50">
+                    <h4 className="font-black text-gray-900 text-sm italic uppercase tracking-widest text-brand-red">Experience Section Image</h4>
+                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-1 mb-4">Background image for the homepage inspiration section</p>
+                    <input
+                      type="text"
+                      name="experienceSectionImage"
+                      className="mt-2 block w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-brand-red focus:border-brand-red font-mono"
+                      value={formData.experienceSectionImage}
+                      onChange={handleChange}
+                      placeholder="/assets/placeholders/hero-hotel.png"
+                    />
                   </div>
                 </div>
 
