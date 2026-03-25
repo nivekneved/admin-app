@@ -8,6 +8,7 @@ import { supabase } from '../lib/supabase';
 import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
 import { showAlert } from '../utils/swal';
+import ImageUpload from '../components/ImageUpload';
 
 const CMS = () => {
     const [loading, setLoading] = useState(true);
@@ -100,7 +101,12 @@ const CMS = () => {
     const pages = [
         { id: 'about-us', name: 'About Us page', icon: <Info size={18} /> },
         { id: 'contact', name: 'Contact page', icon: <Globe size={18} /> },
-        { id: 'home', name: 'Home sectors', icon: <Layout size={18} /> }
+        { id: 'home', name: 'Home sectors', icon: <Layout size={18} /> },
+        { id: 'tailormade', name: 'Tailormade Page', icon: <Layout size={18} strokeWidth={2.5} /> },
+        { id: 'news', name: 'News Page', icon: <Info size={18} /> },
+        { id: 'flights', name: 'Flights Page', icon: <Globe size={18} /> },
+        { id: 'destinations', name: 'Destinations', icon: <Layout size={18} /> },
+        { id: 'activities', name: 'Activities', icon: <Layout size={18} /> }
     ];
 
     if (loading) {
@@ -262,7 +268,48 @@ const CMS = () => {
                         </>
                     )}
 
-                    {activePage !== 'about-us' && (
+                    {['tailormade', 'news', 'flights', 'destinations', 'activities', 'contact', 'home'].includes(activePage) && (
+                        <SectionEditor 
+                            title={`${activePage.charAt(0).toUpperCase() + activePage.slice(1)} Hero Section`}
+                            icon={<Layout size={20} />}
+                            onSave={() => handleSaveSection('hero')}
+                            isSaving={saving === 'hero'}
+                        >
+                            <div className="space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <InputField 
+                                        label="Hero Title" 
+                                        value={content.hero?.title || ''} 
+                                        onChange={(val) => handleContentChange('hero', 'title', val)}
+                                    />
+                                    <InputField 
+                                        label="Hero Subtitle" 
+                                        value={content.hero?.subtitle || ''} 
+                                        onChange={(val) => handleContentChange('hero', 'subtitle', val)}
+                                    />
+                                </div>
+                                <ImageUpload
+                                    label="Hero Background Image"
+                                    value={content.hero?.image_url || ''}
+                                    onChange={(url) => handleContentChange('hero', 'image_url', url)}
+                                    folder="hero"
+                                    aspectRatio="aspect-[21/9]"
+                                />
+                                {activePage === 'home' && (
+                                    <div className="pt-4 border-t border-gray-100">
+                                        <InputField 
+                                            label="Experience Section Image" 
+                                            value={content.identity?.experience_image || ''} 
+                                            onChange={(val) => handleContentChange('identity', 'experience_image', val)}
+                                        />
+                                        <p className="text-[10px] text-gray-400 mt-1">Global asset used for the homepage &quot;Our Experience&quot; block.</p>
+                                    </div>
+                                )}
+                            </div>
+                        </SectionEditor>
+                    )}
+
+                    {!pages.find(p => p.id === activePage) && (
                         <Card className="p-20 text-center flex flex-col items-center gap-4 bg-white border border-slate-300 rounded-[2.5rem]">
                             <Layout size={48} className="text-gray-200" />
                             <h3 className="text-gray-900 font-black">Module Under Development</h3>
