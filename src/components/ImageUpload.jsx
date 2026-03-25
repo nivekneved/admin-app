@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Upload, Camera, X, Link as LinkIcon, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { resolveImageUrl } from '../utils/image';
 import { showAlert } from '../utils/swal';
 
 /**
@@ -60,11 +61,8 @@ const ImageUpload = ({
 
             if (uploadError) throw uploadError;
 
-            const { data } = supabase.storage
-                .from(bucket)
-                .getPublicUrl(filePath);
-
-            onChange(data.publicUrl);
+            // We return the storage path (including bucket) for consistency with our resolution utility
+            onChange(filePath);
             showAlert('Success', 'Image uploaded successfully', 'success');
         } catch (error) {
             console.error('Upload error:', error);
@@ -90,7 +88,7 @@ const ImageUpload = ({
                     {value ? (
                         <>
                             <img 
-                                src={value} 
+                                src={resolveImageUrl(value)} 
                                 alt="Preview" 
                                 className="w-full h-full object-cover transition-transform duration-500 group-hover/image:scale-105" 
                                 onError={(e) => {

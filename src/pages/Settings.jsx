@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/Card';
 import { Button } from '../components/Button';
 import { showAlert } from '../utils/swal';
 import { supabase } from '../lib/supabase';
-import { Loader2, Save } from 'lucide-react';
+import { Loader2, Save, Image as ImageIcon, Ruler } from 'lucide-react';
+import ImageUpload from '../components/ImageUpload';
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState('general');
@@ -11,6 +12,9 @@ const Settings = () => {
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
     siteTitle: '',
+    logoUrl: '',
+    logoHeight: '40',
+    logoWidth: 'auto',
     contactEmail: '',
     contactPhone: '',
     whatsappNumber1: '',
@@ -124,6 +128,9 @@ const Settings = () => {
         category = 'general';
         value = {
           siteTitle: formData.siteTitle,
+          logoUrl: formData.logoUrl,
+          logoHeight: formData.logoHeight,
+          logoWidth: formData.logoWidth,
           contactPhone: formData.contactPhone,
           contactEmail: formData.contactEmail,
           whatsappNumber1: formData.whatsappNumber1,
@@ -238,6 +245,64 @@ const Settings = () => {
                       onChange={handleChange}
                       required
                     />
+                  </div>
+
+                  <div className="md:col-span-2 p-6 bg-slate-50/50 rounded-3xl border border-slate-200 space-y-6">
+                    <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
+                      <div className="p-2 bg-red-50 text-brand-red rounded-lg">
+                        <ImageIcon size={18} />
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-black uppercase tracking-widest text-gray-900">Site Branding</h4>
+                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Configure the main identity for Web & Mobile platforms</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                      <ImageUpload
+                        label="Platform Logo"
+                        value={formData.logoUrl}
+                        onChange={(url) => setFormData(prev => ({ ...prev, logoUrl: url }))}
+                        folder="branding"
+                        aspectRatio="aspect-auto min-h-[100px]"
+                        placeholder="Upload logo (transparent PNG recommended)"
+                      />
+
+                      <div className="space-y-6">
+                        <div className="flex items-center gap-2 text-brand-red mb-2">
+                          <Ruler size={14} />
+                          <span className="text-[10px] font-black uppercase tracking-widest">Logo Display Constraints</span>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Height (px)</label>
+                            <input
+                              type="text"
+                              name="logoHeight"
+                              placeholder="40"
+                              className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                              value={formData.logoHeight}
+                              onChange={handleChange}
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Width (px)</label>
+                            <input
+                              type="text"
+                              name="logoWidth"
+                              placeholder="auto"
+                              className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-brand-red transition-all font-bold text-gray-900"
+                              value={formData.logoWidth}
+                              onChange={handleChange}
+                            />
+                          </div>
+                        </div>
+                        <p className="text-[9px] text-gray-400 font-medium leading-relaxed italic">
+                          Recommended height: 35px - 50px. Use &quot;auto&quot; for width to maintain aspect ratio perfectly.
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="space-y-1">

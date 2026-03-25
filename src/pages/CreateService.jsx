@@ -41,7 +41,15 @@ const CreateService = () => {
         priority: 0,
         max_group_size: '',
         is_seasonal_deal: false,
-        deal_note: 'Limited Time'
+        deal_note: 'Limited Time',
+        is_active: true,
+        is_coming_soon: false,
+        gallery_images: [],
+        highlights: [],
+        included: [],
+        not_included: [],
+        cancellation_policy: '',
+        terms_and_conditions: ''
     });
 
     const isEdit = !!id;
@@ -102,7 +110,15 @@ const CreateService = () => {
                     priority: data.priority || 0,
                     max_group_size: data.max_group_size || '',
                     is_seasonal_deal: data.is_seasonal_deal || false,
-                    deal_note: data.deal_note || 'Limited Time'
+                    deal_note: data.deal_note || 'Limited Time',
+                    is_active: data.is_active ?? true,
+                    is_coming_soon: data.is_coming_soon ?? false,
+                    gallery_images: data.gallery_images || [],
+                    highlights: data.highlights || [],
+                    included: data.included || [],
+                    not_included: data.not_included || [],
+                    cancellation_policy: data.cancellation_policy || '',
+                    terms_and_conditions: data.terms_and_conditions || ''
                 });
             }
         } catch (e) {
@@ -272,6 +288,33 @@ const CreateService = () => {
         });
     };
 
+    const addGalleryImage = (url) => {
+        if (!url) return;
+        setFormData(prev => ({
+            ...prev,
+            gallery_images: [...(prev.gallery_images || []), url].slice(0, 10)
+        }));
+    };
+
+    const removeGalleryImage = (url) => {
+        setFormData(prev => ({
+            ...prev,
+            gallery_images: (prev.gallery_images || []).filter(img => img !== url)
+        }));
+    };
+
+    const toggleListValue = (field, value) => {
+        if (!value) return;
+        setFormData(prev => {
+            const current = [...(prev[field] || [])];
+            if (current.includes(value)) {
+                return { ...prev, [field]: current.filter(v => v !== value) };
+            } else {
+                return { ...prev, [field]: [...current, value] };
+            }
+        });
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setFormLoading(true);
@@ -296,6 +339,14 @@ const CreateService = () => {
                 max_group_size: parseInt(formData.max_group_size) || null,
                 is_seasonal_deal: formData.is_seasonal_deal,
                 deal_note: formData.deal_note,
+                is_active: formData.is_active,
+                is_coming_soon: formData.is_coming_soon,
+                gallery_images: formData.gallery_images,
+                highlights: formData.highlights,
+                included: formData.included,
+                not_included: formData.not_included,
+                cancellation_policy: formData.cancellation_policy,
+                terms_and_conditions: formData.terms_and_conditions,
                 updated_at: new Date().toISOString()
             };
 
@@ -651,6 +702,133 @@ const CreateService = () => {
                                     />
                                 </div>
                             </div>
+                        </section>
+
+                        {/* Section: Visual Gallery */}
+                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
+                                    <Camera size={16} className="text-brand-red" /> Multi-Image Experience Gallery
+                                </h3>
+                                <div className="text-[10px] text-gray-300 font-black uppercase tracking-widest">{formData.gallery_images?.length || 0} / 10 ASSETS</div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="space-y-4">
+                                    <ImageUpload
+                                        label="Push to Gallery"
+                                        value=""
+                                        onChange={addGalleryImage}
+                                        folder="services"
+                                        aspectRatio="aspect-video"
+                                        placeholder="Click or Drop to Add Gallery Photo"
+                                        showUrlInput={false}
+                                    />
+                                    <div className="p-4 bg-gray-50 border border-slate-300 border-dashed rounded-2xl">
+                                        <p className="text-[9px] text-gray-400 font-bold leading-relaxed uppercase tracking-widest text-center">
+                                            Images will be used in the premium carousel for this service.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="overflow-y-auto max-h-[250px] pr-2 custom-scrollbar">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        {(formData.gallery_images || []).map((img, i) => (
+                                            <div key={i} className="relative group/gal aspect-video rounded-2xl overflow-hidden border border-slate-300 shadow-sm">
+                                                <img src={img} alt={`Gallery ${i}`} className="w-full h-full object-cover" />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeGalleryImage(img)}
+                                                    className="absolute inset-0 bg-red-600/80 text-white opacity-0 group-hover/gal:opacity-100 transition-opacity flex items-center justify-center"
+                                                >
+                                                    <X size={20} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                        {(!formData.gallery_images || formData.gallery_images.length === 0) && (
+                                            <div className="col-span-2 py-10 flex flex-col items-center justify-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100 text-gray-300">
+                                                <Camera size={32} className="opacity-20 mb-2" />
+                                                <p className="text-[9px] font-black uppercase tracking-widest text-gray-400">Empty Portfolio</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        {/* Section: Narrative Highlights & Terms */}
+                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-8">
+                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+                                <div>
+                                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Key Experience Highlights</label>
+                                    <div className="flex flex-wrap gap-2 mb-3">
+                                        {(formData.highlights || []).map(h => (
+                                            <span key={h} className="px-3 py-1.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                                                {h}
+                                                <button type="button" onClick={() => toggleListValue('highlights', h)} className="hover:text-red-400"><X size={12} /></button>
+                                            </span>
+                                        ))}
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            id="new_highlight"
+                                            placeholder="e.g. VIP Concierge"
+                                            className="grow px-4 py-3 bg-gray-50 border border-slate-300 rounded-xl text-xs font-bold"
+                                            onKeyDown={e => { if(e.key === 'Enter') { e.preventDefault(); toggleListValue('highlights', e.target.value); e.target.value = ''; } }}
+                                        />
+                                        <Button type="button" onClick={() => { const i = document.getElementById('new_highlight'); toggleListValue('highlights', i.value); i.value = ''; }} className="bg-brand-charcoal text-white px-6 rounded-xl text-[10px] font-black uppercase">Add</Button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Included in Package</label>
+                                    <div className="flex flex-wrap gap-2 mb-3">
+                                        {(formData.included || []).map(i => (
+                                            <span key={i} className="px-3 py-1.5 bg-green-50 text-green-600 border border-green-100 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                                                {i}
+                                                <button type="button" onClick={() => toggleListValue('included', i)} className="hover:text-red-400"><X size={12} /></button>
+                                            </span>
+                                        ))}
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            id="new_included"
+                                            placeholder="e.g. Flight + Transfers"
+                                            className="grow px-4 py-3 bg-gray-50 border border-slate-300 rounded-xl text-xs font-bold"
+                                            onKeyDown={e => { if(e.key === 'Enter') { e.preventDefault(); toggleListValue('included', e.target.value); e.target.value = ''; } }}
+                                        />
+                                        <Button type="button" onClick={() => { const i = document.getElementById('new_included'); toggleListValue('included', i.value); i.value = ''; }} className="bg-brand-charcoal text-white px-6 rounded-xl text-[10px] font-black uppercase">Add</Button>
+                                    </div>
+                                </div>
+                             </div>
+
+                             <div className="space-y-6 pt-4 border-t border-slate-100">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Cancellation Policy</label>
+                                        <textarea
+                                            rows={2}
+                                            name="cancellation_policy"
+                                            className="w-full px-4 py-3 bg-gray-50 border border-slate-300 rounded-2xl text-xs font-medium resize-none focus:outline-none focus:ring-2 focus:ring-brand-red"
+                                            value={formData.cancellation_policy}
+                                            onChange={handleInputChange}
+                                            placeholder="Standard 48-hour cancellation policy..."
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Terms & Conditions</label>
+                                        <textarea
+                                            rows={2}
+                                            name="terms_and_conditions"
+                                            className="w-full px-4 py-3 bg-gray-50 border border-slate-300 rounded-2xl text-xs font-medium resize-none focus:outline-none focus:ring-2 focus:ring-brand-red"
+                                            value={formData.terms_and_conditions}
+                                            onChange={handleInputChange}
+                                            placeholder="Booking terms, insurance requirements..."
+                                        />
+                                    </div>
+                                </div>
+                             </div>
                         </section>
 
                         {/* Section: Hotel/Room Type Specifications (Conditional) */}
@@ -1042,6 +1220,26 @@ const CreateService = () => {
                                             className={`p-1.5 rounded-xl transition-all ${formData.featured ? 'bg-brand-red text-white' : 'bg-white/10 text-gray-500 hover:bg-white/20'}`}
                                         >
                                             {formData.featured ? <ToggleRight size={24} /> : <ToggleLeft size={24} />}
+                                        </button>
+                                    </div>
+                                    <div className="flex items-center justify-between px-2">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Active Listing</label>
+                                        <button
+                                            type="button"
+                                            onClick={() => setFormData(prev => ({ ...prev, is_active: !prev.is_active }))}
+                                            className={`p-1.5 rounded-xl transition-all ${formData.is_active ? 'bg-green-500 text-white' : 'bg-white/10 text-gray-500 hover:bg-white/20'}`}
+                                        >
+                                            {formData.is_active ? <ToggleRight size={24} /> : <ToggleLeft size={24} />}
+                                        </button>
+                                    </div>
+                                    <div className="flex items-center justify-between px-2 mt-4">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Coming Soon Label</label>
+                                        <button
+                                            type="button"
+                                            onClick={() => setFormData(prev => ({ ...prev, is_coming_soon: !prev.is_coming_soon }))}
+                                            className={`p-1.5 rounded-xl transition-all ${formData.is_coming_soon ? 'bg-amber-500 text-white' : 'bg-white/10 text-gray-500 hover:bg-white/20'}`}
+                                        >
+                                            {formData.is_coming_soon ? <ToggleRight size={24} /> : <ToggleLeft size={24} />}
                                         </button>
                                     </div>
                                     <div className="mt-4">

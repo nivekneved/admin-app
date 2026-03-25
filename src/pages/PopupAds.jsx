@@ -5,6 +5,7 @@ import {
     AlignLeft, Check, Upload, Image as ImageIcon,
     ExternalLink, Calendar, Bell, Clock, Eye
 } from 'lucide-react';
+import { resolveImageUrl } from '../utils/image';
 import { supabase } from '../lib/supabase';
 import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
@@ -296,7 +297,7 @@ const PopupAds = () => {
                                                             </div>
                                                         ) : ad.media_type === 'image' ? (
                                                             <img
-                                                                src={ad.media_url}
+                                                                src={resolveImageUrl(ad.media_url)}
                                                                 alt=""
                                                                 className="h-full w-full object-cover"
                                                             />
@@ -378,9 +379,9 @@ const PopupAds = () => {
                                     <div key={ad.id} className="bg-white border border-slate-300 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500 flex flex-col">
                                         <div className="h-48 bg-gray-50 relative overflow-hidden">
                                             {ad.media_type === 'video' ? (
-                                                <video src={ad.media_url} className="w-full h-full object-cover" muted loop />
+                                                <video src={resolveImageUrl(ad.media_url)} className="w-full h-full object-cover" muted loop />
                                             ) : ad.media_type === 'image' ? (
-                                                <img src={ad.media_url} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                                <img src={resolveImageUrl(ad.media_url)} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center text-gray-200 border-b border-gray-100">
                                                     <AlignLeft size={48} />
@@ -660,9 +661,9 @@ const PopupAds = () => {
                         {currentAd.media_type !== 'none' && currentAd.media_url && (
                             <div className="relative aspect-video w-full bg-slate-100">
                                 {currentAd.media_type === 'video' ? (
-                                    <video src={currentAd.media_url} autoPlay loop muted className="w-full h-full object-cover" />
+                                    <video src={resolveImageUrl(currentAd.media_url)} autoPlay loop muted className="w-full h-full object-cover" />
                                 ) : (
-                                    <img src={currentAd.media_url} alt="" className="w-full h-full object-cover" />
+                                    <img src={resolveImageUrl(currentAd.media_url)} alt="" className="w-full h-full object-cover" />
                                 )}
                             </div>
                         )}

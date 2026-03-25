@@ -8,6 +8,7 @@ import {
 import { supabase } from '../lib/supabase';
 import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
+import { resolveImageUrl } from '../utils/image';
 import { showAlert, showConfirm } from '../utils/swal';
 
 const Team = () => {
@@ -245,7 +246,7 @@ const Team = () => {
                                                 <div className="flex items-center gap-4">
                                                     <div className="w-10 h-10 rounded-xl overflow-hidden bg-gray-100 border border-slate-300 shrink-0">
                                                         {member.photo_url ? (
-                                                            <img src={member.photo_url} alt={member.name} className="w-full h-full object-cover" />
+                                                            <img src={resolveImageUrl(member.photo_url)} alt={member.name} className="w-full h-full object-cover" />
                                                         ) : (
                                                             <div className="w-full h-full flex items-center justify-center text-gray-300">
                                                                 <Globe size={16} />
@@ -302,7 +303,7 @@ const Team = () => {
                                 <div key={member.id} className="bg-white border border-slate-300 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500 flex flex-col">
                                     <div className="relative h-48 overflow-hidden bg-gray-50">
                                         {member.photo_url ? (
-                                            <img src={member.photo_url} alt={member.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                            <img src={resolveImageUrl(member.photo_url)} alt={member.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center text-gray-200">
                                                 <Users size={48} />

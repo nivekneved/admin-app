@@ -11,6 +11,7 @@ import { supabase } from '../lib/supabase';
 import Modal from '../components/Modal';
 import { showAlert, showConfirm } from '../utils/swal';
 import ImageUpload from '../components/ImageUpload';
+import { resolveImageUrl } from '../utils/image';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const slugify = (str) =>
@@ -388,7 +389,7 @@ const Categories = () => {
                                                 <div className="flex items-center">
                                                     <div className="w-10 h-10 rounded-2xl bg-red-50/50 border border-red-100/50 flex items-center justify-center text-brand-red mr-4 shrink-0 shadow-sm overflow-hidden">
                                                         {cat.image_url ? (
-                                                            <img src={cat.image_url} alt="" className="w-full h-full object-cover" />
+                                                            <img src={resolveImageUrl(cat.image_url)} alt="" className="w-full h-full object-cover" />
                                                         ) : (
                                                             getCategoryIcon(cat.name)
                                                         )}
@@ -478,7 +479,7 @@ const Categories = () => {
                                     <div className="flex items-start justify-between mb-4">
                                         <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center text-brand-red shadow-inner group-hover:scale-110 transition-transform duration-500 overflow-hidden">
                                             {cat.image_url ? (
-                                                <img src={cat.image_url} alt="" className="w-full h-full object-cover" />
+                                                <img src={resolveImageUrl(cat.image_url)} alt="" className="w-full h-full object-cover" />
                                             ) : (
                                                 getCategoryIcon(cat.name)
                                             )}

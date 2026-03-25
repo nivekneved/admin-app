@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { resolveImageUrl } from '../utils/image';
 import { useNavigate } from 'react-router-dom';
 import { 
   Search, 
@@ -267,7 +268,7 @@ const News = () => {
                     <div key={post.id} className="bg-white border border-slate-300 rounded-[2rem] overflow-hidden group hover:shadow-2xl hover:border-transparent transition-all duration-500 flex flex-col">
                         <div className="aspect-[16/10] bg-slate-50 relative overflow-hidden">
                             {post.featured_image ? (
-                                <img src={post.featured_image} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                <img src={resolveImageUrl(post.featured_image)} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center text-slate-200">
                                     <ImageIcon size={48} />

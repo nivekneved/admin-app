@@ -6,6 +6,7 @@ import {
   LayoutGrid, List, ArrowUpDown, Package,
   ChevronDown, FileSpreadsheet, Sparkles
 } from 'lucide-react';
+import { resolveImageUrl } from '../utils/image';
 import { supabase } from '../lib/supabase';
 import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
@@ -31,7 +32,7 @@ const Thumb = ({ src, size = 'sm' }) => {
 
   if (src && !error) return (
     <img
-      src={src}
+      src={resolveImageUrl(src)}
       alt=""
       className={`${dim} rounded-xl object-cover border border-gray-100 shrink-0`}
       onError={() => setError(true)}
@@ -51,7 +52,7 @@ const ServiceCardImage = ({ src }) => {
 
   if (src && !error) return (
     <img
-      src={src}
+      src={resolveImageUrl(src)}
       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
       alt=""
       onError={() => setError(true)}

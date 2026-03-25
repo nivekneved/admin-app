@@ -26,6 +26,7 @@ import { supabase } from '../lib/supabase';
 import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
 import { showAlert, showConfirm } from '../utils/swal';
+import { resolveImageUrl } from '../utils/image';
 import ImageUpload from '../components/ImageUpload';
 
 // --- Sortable Item Components ---
@@ -69,7 +70,7 @@ const SortableTableRow = ({ slide, handleOpenModal, deleteSlide }) => {
                             </div>
                         ) : (
                             <img
-                                src={slide.image_url}
+                                src={resolveImageUrl(slide.image_url)}
                                 alt=""
                                 className="h-full w-full object-cover"
                                 onError={(e) => e.target.src = 'https://images.unsplash.com/photo-1544084471-507c8cc38662?q=80&w=300'}
@@ -147,9 +148,9 @@ const SortableGridItem = ({ slide, handleOpenModal, deleteSlide }) => {
             
             <div className="aspect-video bg-gray-50 relative overflow-hidden">
                 {slide.media_type === 'video' ? (
-                    <video src={slide.video_url || slide.image_url} className="w-full h-full object-cover" muted loop />
+                    <video src={resolveImageUrl(slide.video_url || slide.image_url)} className="w-full h-full object-cover" muted loop />
                 ) : (
-                    <img src={slide.image_url} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                    <img src={resolveImageUrl(slide.image_url)} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                 )}
                 <div className="absolute top-4 right-4 flex flex-col gap-2 transition-all">
                     <button onClick={() => handleOpenModal(slide)} className="bg-white shadow-xl p-3 rounded-2xl text-gray-400 hover:text-brand-red transition-all hover:scale-110 active:scale-95">
