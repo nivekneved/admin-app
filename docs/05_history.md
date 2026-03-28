@@ -1,10 +1,10 @@
 # 05 History & Agent Progress
 
-## 2026-03-28 - Unified Transaction Record (The Booking Move)
-- **Transaction Migration**: Fully decommissioned the legacy `orders` table. Migrated `Orders.jsx`, `ViewCustomer.jsx`, and `Reports.jsx` to query the live `bookings` table as the single source of truth for transactions.
-- **Database Hardening**: Applied SQL migration to drop the redundant `admins.password` column and implement a unified RLS write policy for `popular_destinations`.
-- **Performance Optimization**: Created 18 covering indexes on foreign key columns (e.g., `bookings.customer_id`) to optimize cross-app reporting.
-- **Dynamic Assets**: Refactored `image.js` to support configurable buckets via `VITE_SUPABASE_STORAGE_BUCKET`.
+## 2026-03-28 - Final Production Hardening & Admin Security
+- **Authentication Resilience**: Hardened `ProtectedRoute.jsx` to verify active admin roles, preventing any unauthorized client-side access. (C-06)
+- **Database Immobilization**: Secured core booking and customer RPC functions by setting an immutable `search_path` to prevent SQL injection resolution. (C-03)
+- **RLS Consolidation**: Removed overlapping policies and optimized `auth.uid()` calls to enhance row-level security performance. (M-02, M-03)
+- **Data Privacy**: Restricted public access to PII tables (`inquiries`, `subscribers`) to admins only while maintaining public form availability. (H-04, H-05)
 
 ---
 
