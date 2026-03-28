@@ -1,10 +1,10 @@
 # 05 History & Agent Progress
 
-## 2026-03-28 - Final Production Hardening & Admin Security
-- **Authentication Resilience**: Hardened `ProtectedRoute.jsx` to verify active admin roles, preventing any unauthorized client-side access. (C-06)
-- **Database Immobilization**: Secured core booking and customer RPC functions by setting an immutable `search_path` to prevent SQL injection resolution. (C-03)
-- **RLS Consolidation**: Removed overlapping policies and optimized `auth.uid()` calls to enhance row-level security performance. (M-02, M-03)
-- **Data Privacy**: Restricted public access to PII tables (`inquiries`, `subscribers`) to admins only while maintaining public form availability. (H-04, H-05)
+## 2026-03-28 - Final Production Hardening & Content Visibility Hotfix
+- **Navigation Visibility**: Restored frontend navigation by adding missing public `SELECT` RLS policy to the `navigations` table.
+- **Content Visibility**: Added public `SELECT` policies to `categories` and `popular_destinations` to ensure admin updates reflect on the site.
+- **Authentication resilience**: Hardened `ProtectedRoute.jsx` for role verification.
+- **Database Immobilization**: Secured core RPC functions with an immutable `search_path`.
 
 ---
 
