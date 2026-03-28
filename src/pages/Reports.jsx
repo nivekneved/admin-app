@@ -90,8 +90,7 @@ const Reports = () => {
   // KPIs
   const [stats, setStats] = useState({
     totalBookings: 0, confirmedBookings: 0, pendingBookings: 0, cancelledBookings: 0,
-    totalRevenue: 0, totalCustomers: 0, totalSubscribers: 0, totalInvoices: 0,
-    totalInvoiceRevenue: 0, paidInvoices: 0
+    totalRevenue: 0, totalCustomers: 0, totalSubscribers: 0
   });
 
   // Data Arrays for Reports
@@ -112,7 +111,6 @@ const Reports = () => {
       await Promise.all([
         fetchBookingStats(),
         fetchCustomerStats(),
-        fetchInvoiceStats(),
         fetchMonthlyBookings(),
         fetchTopActivities(),
         fetchRecentBookings(),
@@ -166,17 +164,7 @@ const Reports = () => {
     setStats(prev => ({ ...prev, totalCustomers: data.length, totalSubscribers: data.filter(c => c.is_subscriber).length }));
   };
 
-  const fetchInvoiceStats = async () => {
-    const { data } = await supabase.from('invoices').select('amount, status');
-    if (!data) return;
-    setStats(prev => ({ 
-      ...prev, 
-      totalInvoices: data.length, 
-      totalInvoiceRevenue: data.reduce((s, i) => s + Number(i.amount || 0), 0), 
-      paidInvoices: data.filter(i => i.status?.toLowerCase() === 'paid').length 
-    }));
-  };
-
+    // Invoices are currently inactive/dead as per audit
   const fetchMonthlyBookings = async () => {
     const sixMonthsAgo = new Date(); sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5); sixMonthsAgo.setDate(1);
     const { data } = await supabase.from('bookings').select('created_at, total_price, amount').gte('created_at', sixMonthsAgo.toISOString());

@@ -28,27 +28,32 @@ const Orders = () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from('orders')
+        .from('bookings')
         .select(`
           *,
-          order_items (
+          customers (
+            first_name,
+            last_name
+          ),
+          booking_items (
             id,
             service_name,
-            quantity,
-            unit_price,
-            total_price
+            amount
           )
         `)
         .order('created_at', { ascending: false });
 
       if (error) {
-        if (error.message.includes('relation "public.orders" does not exist')) {
-          setOrders([]);
-        } else {
-          throw error;
-        }
+        throw error;
       } else {
-        setOrders(data || []);
+        // Map data to match existing UI expectations if possible
+        const mappedData = (data || []).map(b => ({
+            ...b,
+            customer_name: b.customers ? `${b.customers.first_name} ${b.customers.last_name}` : 'Unknown Customer',
+            total_items: b.booking_items?.length || 1,
+            amount: b.total_price || b.amount || 0
+        }));
+        setOrders(mappedData);
       }
     } catch (error) {
       console.error('Error fetching orders:', error);
@@ -68,7 +73,7 @@ const Orders = () => {
 
     try {
       const { error } = await supabase
-        .from('orders')
+        .from('bookings')
         .delete()
         .eq('id', id);
 
@@ -328,8 +333,8 @@ const Orders = () => {
                               </div>
 
                               <div className="space-y-3">
-                                {order.order_items && order.order_items.length > 0 ? (
-                                  order.order_items.map((item, idx) => (
+                                {order.booking_items && order.booking_items.length > 0 ? (
+                                  order.booking_items.map((item, idx) => (
                                     <div key={item.id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0 border-dashed">
                                       <div className="flex items-center gap-3">
                                         <div className="w-6 h-6 rounded-lg bg-gray-50 flex items-center justify-center text-[10px] font-black text-gray-400">
@@ -337,11 +342,11 @@ const Orders = () => {
                                         </div>
                                         <div>
                                           <p className="text-sm font-black text-gray-900 leading-none mb-1">{item.service_name}</p>
-                                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Qty: {item.quantity} × Rs {Number(item.unit_price).toLocaleString()}</p>
+                                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Luxury Provisioning</p>
                                         </div>
                                       </div>
                                       <div className="text-sm font-black text-gray-900">
-                                        Rs {Number(item.total_price).toLocaleString()}
+                                        Rs {Number(item.amount).toLocaleString()}
                                       </div>
                                     </div>
                                   ))

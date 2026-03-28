@@ -4,7 +4,8 @@
  */
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const STORAGE_URL = `${SUPABASE_URL}/storage/v1/object/public/bucket`;
+const STORAGE_BUCKET = import.meta.env.VITE_SUPABASE_STORAGE_BUCKET || 'bucket';
+const STORAGE_URL = `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}`;
 
 // Eagerly import all assets in src/assets/ to get their bundled URLs
 // This allows resolveImageUrl('/assets/...') to work even if the public/ folder is empty
@@ -33,9 +34,11 @@ export const resolveImageUrl = (path, fallback = "https://placehold.co/600x400/f
 
   // 3. Handle Supabase storage paths (e.g., "services/image.png")
   if (path.includes('/') && !path.startsWith('/')) {
-    if (path.startsWith('bucket/')) {
+    // If it already starts with the bucket name, just return the full public URL
+    if (path.startsWith(`${STORAGE_BUCKET}/`)) {
        return `${SUPABASE_URL}/storage/v1/object/public/${path}`;
     }
+    // Otherwise, append the bucket name
     return `${STORAGE_URL}/${path}`;
   }
 

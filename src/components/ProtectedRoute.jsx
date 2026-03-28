@@ -12,7 +12,18 @@ const ProtectedRoute = ({ children }) => {
         const checkAuth = async () => {
             try {
                 const { data: { session } } = await supabase.auth.getSession();
-                setAuthenticated(!!session);
+                if (!session) {
+                    setAuthenticated(false);
+                    return;
+                }
+                // C-06 FIX: Verify user is an active admin, not just authenticated
+                const { data: adminRecord } = await supabase
+                    .from('admins')
+                    .select('id, is_active')
+                    .eq('user_id', session.user.id)
+                    .eq('is_active', true)
+                    .single();
+                setAuthenticated(!!adminRecord);
             } catch {
                 setAuthenticated(false);
             } finally {
@@ -22,8 +33,20 @@ const ProtectedRoute = ({ children }) => {
 
         checkAuth();
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setAuthenticated(!!session);
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+            if (!session) {
+                setAuthenticated(false);
+                setLoading(false);
+                return;
+            }
+            // Re-verify admin role on auth state change
+            const { data: adminRecord } = await supabase
+                .from('admins')
+                .select('id, is_active')
+                .eq('user_id', session.user.id)
+                .eq('is_active', true)
+                .single();
+            setAuthenticated(!!adminRecord);
             setLoading(false);
         });
 

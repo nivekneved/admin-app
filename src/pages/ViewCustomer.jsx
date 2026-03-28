@@ -6,7 +6,7 @@ import { Button } from '../components/Button';
 import Modal from '../components/Modal';
 import {
     ArrowLeft, Mail, Phone, MapPin, Calendar, Activity,
-    CreditCard, ShoppingBag, Clock, Loader2, Edit, Trash2, Printer, ChevronDown
+    Clock, Loader2, Edit, Trash2, Printer, ChevronDown
 } from 'lucide-react';
 import { showAlert, showConfirm } from '../utils/swal';
 import logo from '../assets/logo.png';
@@ -18,7 +18,6 @@ const ViewCustomer = () => {
     const navigate = useNavigate();
     const [customer, setCustomer] = useState(null);
     const [bookings, setBookings] = useState([]);
-    const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [deleting, setDeleting] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
@@ -126,25 +125,10 @@ const ViewCustomer = () => {
                 .from('bookings')
                 .select('id, service_type, service_name, amount, check_in_date, status')
                 .eq('customer_id', id)
-                .order('check_in_date', { ascending: false });
-
-            if (bookingsError && !bookingsError.message.includes('relation "public.bookings" does not exist')) {
+            if (bookingsError) {
                 console.error("Error fetching bookings:", bookingsError);
             } else {
                 setBookings(bookingsData || []);
-            }
-
-            // Fetch Related Orders
-            const { data: ordersData, error: ordersError } = await supabase
-                .from('orders')
-                .select('id, total_items, amount, payment_method, status, created_at')
-                .eq('customer_id', id)
-                .order('created_at', { ascending: false });
-
-            if (ordersError && !ordersError.message.includes('relation "public.orders" does not exist')) {
-                console.error("Error fetching orders:", ordersError);
-            } else {
-                setOrders(ordersData || []);
             }
 
         } catch (error) {
@@ -323,52 +307,7 @@ const ViewCustomer = () => {
                         </CardContent>
                     </Card>
 
-                    <Card>
-                        <CardHeader className="bg-gray-50/50 border-b border-slate-300">
-                            <div className="flex justify-between items-center">
-                                <CardTitle className="text-lg flex items-center">
-                                    <ShoppingBag className="mr-2 text-brand-red" size={20} />
-                                    Order History
-                                </CardTitle>
-                                <span className="bg-red-100 text-brand-red text-xs px-2 py-1 rounded-full font-bold">{orders.length} Orders</span>
-                            </div>
-                        </CardHeader>
-                        <CardContent className="p-0">
-                            {orders.length > 0 ? (
-                                <div className="divide-y divide-gray-200">
-                                    {orders.map((order) => (
-                                        <div key={order.id} className="p-4 hover:bg-gray-50/50 transition-colors">
-                                            <div className="flex justify-between items-start mb-2">
-                                                <div>
-                                                    <span className="text-xs font-bold text-gray-400 tracking-wider uppercase font-mono">ORDER #{order.id.slice(0, 8)}</span>
-                                                    <div className="text-sm text-gray-600 mt-1">{order.total_items} items purchased</div>
-                                                </div>
-                                                <div className="text-right">
-                                                    <span className="text-sm font-black text-gray-900 font-mono">${order.amount}</span>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-center text-xs text-gray-500 justify-between">
-                                                <div className="flex items-center">
-                                                    <CreditCard size={12} className="mr-1" />
-                                                    {order.payment_method || 'Unknown'}
-                                                </div>
-                                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${order.status === 'Completed' ? 'bg-green-50 text-green-600' :
-                                                    order.status === 'Pending' ? 'bg-orange-50 text-orange-600' :
-                                                        'bg-gray-100 text-gray-500'
-                                                    }`}>
-                                                    {order.status}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="p-8 text-center text-sm text-gray-500">
-                                    No orders found for this customer.
-                                </div>
-                            )}
-                        </CardContent>
-                    </Card>
+                    {/* Bookings are now the primary transaction record */}
 
                 </div>
             </div>
