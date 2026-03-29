@@ -12,17 +12,23 @@ const ProtectedRoute = ({ children }) => {
         const checkAuth = async () => {
             try {
                 const { data: { session } } = await supabase.auth.getSession();
+                console.log('AUTH_CHECK: Current Session User ID:', session?.user?.id);
+
                 if (!session) {
                     setAuthenticated(false);
                     return;
                 }
                 // C-06 FIX: Verify user is an active admin, not just authenticated
-                const { data: adminRecord } = await supabase
+                const { data: adminRecord, error: adminError } = await supabase
                     .from('admins')
                     .select('id, is_active')
                     .eq('user_id', session.user.id)
                     .eq('is_active', true)
                     .single();
+                
+                console.log('AUTH_CHECK: Admin Record Found:', adminRecord);
+                if (adminError) console.error('AUTH_CHECK: Admin Verify Error:', adminError);
+
                 setAuthenticated(!!adminRecord);
             } catch {
                 setAuthenticated(false);
