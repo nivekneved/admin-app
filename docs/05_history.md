@@ -1,9 +1,10 @@
 # 05 History & Agent Progress
 
-## 2026-03-29 - Authentication Redirect Fix
-- **Admin Visibility**: Added a public `SELECT` policy to the `admins` table to allow the `web-app` to display staff.
-- **Authentication Resilience**: Added a specific `SELECT` policy for `authenticated` users, allowing them to read their own administrative record using `auth.uid() = user_id`.
-- **Management Access**: Configured a `super_admin` policy to allow full staff management within the portal.
+## 2026-03-29 - Authentication & RLS Stability Fix
+- **RLS Recursion Fix**: Resolved a critical "infinite recursion detected" error in the `admins` table by migrating policies to use `SECURITY DEFINER` functions (`is_admin_v2`, `is_super_admin`). This allows for safe role verification without circular policy calls.
+- **ProtectedRoute Stabilization**: Refactored the authentication guard to use a consolidated `onAuthStateChange` pattern, resolving "Lock not released" warnings and race conditions in `React.StrictMode`.
+- **Diagnostic Logging**: Implemented comprehensive `AUTH_EVENT` and `AUTH_CHECK` console messaging to improve future troubleshooting.
+- **Visual Feedback**: Added an "Authenticating..." loading state to `ProtectedRoute` for a smoother user experience during verification.
 
 ---
 

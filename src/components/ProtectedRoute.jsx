@@ -9,16 +9,20 @@ const ProtectedRoute = ({ children }) => {
     const location = useLocation();
 
     useEffect(() => {
-        const checkAuth = async () => {
-            try {
-                const { data: { session } } = await supabase.auth.getSession();
-                console.log('AUTH_CHECK: Current Session User ID:', session?.user?.id);
+        let mounted = true;
 
-                if (!session) {
+        const verifyAdmin = async (session) => {
+            if (!session?.user) {
+                console.log('AUTH_CHECK: No valid session found');
+                if (mounted) {
                     setAuthenticated(false);
-                    return;
+                    setLoading(false);
                 }
-                // C-06 FIX: Verify user is an active admin, not just authenticated
+                return;
+            }
+
+            try {
+                console.log('AUTH_CHECK: Verifying user is an active admin...', session.user.id);
                 const { data: adminRecord, error: adminError } = await supabase
                     .from('admins')
                     .select('id, is_active')
@@ -26,48 +30,60 @@ const ProtectedRoute = ({ children }) => {
                     .eq('is_active', true)
                     .single();
                 
-                console.log('AUTH_CHECK: Admin Record Found:', adminRecord);
-                if (adminError) console.error('AUTH_CHECK: Admin Verify Error:', adminError);
+                if (adminError) {
+                    // Check if it's just 'no rows found' vs. a real database error
+                    if (adminError.code === 'PGRST116') {
+                        console.warn('AUTH_CHECK: No active admin record found for this user ID.');
+                    } else {
+                        console.error('AUTH_CHECK: Admin verification failed with error:', adminError);
+                    }
+                }
 
-                setAuthenticated(!!adminRecord);
-            } catch {
-                setAuthenticated(false);
+                if (mounted) {
+                    console.log('AUTH_CHECK: Admin record result:', adminRecord ? 'FOUND (ACTIVE)' : 'NOT FOUND');
+                    setAuthenticated(!!adminRecord);
+                }
+            } catch (err) {
+                console.error('AUTH_CHECK: Unexpected error during verification:', err);
+                if (mounted) setAuthenticated(false);
             } finally {
-                setLoading(false);
+                if (mounted) setLoading(false);
             }
         };
 
-        checkAuth();
-
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-            if (!session) {
-                setAuthenticated(false);
-                setLoading(false);
-                return;
+        // Standard pattern: Use onAuthStateChange as a single source of truth
+        // This handles INITIAL_SESSION, SIGNED_IN, SIGNED_OUT, token refreshed, etc.
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            console.log(`AUTH_EVENT: ${event}`, { userId: session?.user?.id });
+            
+            // For INITIAL_SESSION, we want to immediately check if we have a session to avoid flickering
+            if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
+                await verifyAdmin(session);
+            } else if (event === 'SIGNED_OUT') {
+                if (mounted) {
+                    setAuthenticated(false);
+                    setLoading(false);
+                }
             }
-            // Re-verify admin role on auth state change
-            const { data: adminRecord } = await supabase
-                .from('admins')
-                .select('id, is_active')
-                .eq('user_id', session.user.id)
-                .eq('is_active', true)
-                .single();
-            setAuthenticated(!!adminRecord);
-            setLoading(false);
         });
 
-        return () => subscription.unsubscribe();
+        return () => {
+            mounted = false;
+            subscription.unsubscribe();
+        };
     }, []);
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+            <div className="min-h-screen flex items-center justify-center bg-gray-50 flex-col space-y-4">
                 <Loader2 className="w-8 h-8 animate-spin text-red-600" />
+                <p className="text-sm font-bold text-gray-400 uppercase tracking-widest animate-pulse">Authenticating...</p>
             </div>
         );
     }
 
     if (!authenticated) {
+        console.warn('AUTH_CHECK: Access denied, redirecting to login');
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
