@@ -1,10 +1,9 @@
 # 05 History & Agent Progress
 
-## 2026-03-28 - Final Production Hardening & Content Visibility Hotfix
-- **Navigation Visibility**: Restored frontend navigation by adding missing public `SELECT` RLS policy to the `navigations` table.
-- **Content Visibility**: Added public `SELECT` policies to `categories` and `popular_destinations` to ensure admin updates reflect on the site.
-- **Authentication resilience**: Hardened `ProtectedRoute.jsx` for role verification.
-- **Database Immobilization**: Secured core RPC functions with an immutable `search_path`.
+## 2026-03-29 - Authentication Redirect Fix
+- **Admin Visibility**: Added a public `SELECT` policy to the `admins` table to allow the `web-app` to display staff.
+- **Authentication Resilience**: Added a specific `SELECT` policy for `authenticated` users, allowing them to read their own administrative record using `auth.uid() = user_id`.
+- **Management Access**: Configured a `super_admin` policy to allow full staff management within the portal.
 
 ---
 
