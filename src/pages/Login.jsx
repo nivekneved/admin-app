@@ -14,12 +14,27 @@ const Login = () => {
 
     React.useEffect(() => {
         const checkSession = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-                console.log('LOGIN: Existing session found, redirecting to dashboard...');
-                navigate('/');
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session) {
+                    console.log('LOGIN: Existing session found, verifying admin status...');
+                    const { data } = await supabase.rpc('get_auth_admin_status', { p_user_id: session.user.id });
+                    
+                    if (data && data.length > 0) {
+                        console.log('LOGIN: Admin confirmed, redirecting...');
+                        navigate('/');
+                        return; // Exit early
+                    } else {
+                        console.warn('LOGIN: Non-admin session detected. Signing out.');
+                        await supabase.auth.signOut();
+                        showAlert('Access Denied', 'Your account does not have administrative privileges.', 'error');
+                    }
+                }
+            } catch (err) {
+                console.error('LOGIN: Initial check failed:', err);
+            } finally {
+                setInitialCheck(false);
             }
-            setInitialCheck(false);
         };
         checkSession();
     }, [navigate]);
@@ -37,15 +52,27 @@ const Login = () => {
         setLoading(true);
 
         try {
-            const { error } = await supabase.auth.signInWithPassword({
+            const { data: { user }, error: signInError } = await supabase.auth.signInWithPassword({
                 email,
                 password,
             });
 
-            if (error) throw error;
+            if (signInError) throw signInError;
 
-            showAlert('Welcome Back', 'Login successful! Redirecting to dashboard...', 'success');
-            navigate('/');
+            // Verify admin status immediately after login
+            const { data: adminData, error: rpcError } = await supabase.rpc('get_auth_admin_status', { 
+                p_user_id: user.id 
+            });
+
+            if (rpcError) throw rpcError;
+
+            if (adminData && adminData.length > 0) {
+                showAlert('Welcome Back', 'Login successful! Redirecting to dashboard...', 'success');
+                navigate('/');
+            } else {
+                await supabase.auth.signOut();
+                showAlert('Access Denied', 'This account is not authorized to access the Admin Portal.', 'error');
+            }
         } catch (error) {
             showAlert('Authentication Failed', error.message || 'Invalid login credentials', 'error');
         } finally {
