@@ -9,7 +9,28 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [initialCheck, setInitialCheck] = useState(true);
     const navigate = useNavigate();
+
+    React.useEffect(() => {
+        const checkSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                console.log('LOGIN: Existing session found, redirecting to dashboard...');
+                navigate('/');
+            }
+            setInitialCheck(false);
+        };
+        checkSession();
+    }, [navigate]);
+
+    if (initialCheck) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-brand-charcoal px-4">
+                <Loader2 className="w-8 h-8 animate-spin text-brand-red" />
+            </div>
+        );
+    }
 
     const handleLogin = async (e) => {
         e.preventDefault();

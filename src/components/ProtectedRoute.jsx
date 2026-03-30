@@ -22,25 +22,18 @@ const ProtectedRoute = ({ children }) => {
             }
 
             try {
-                console.log('AUTH_CHECK: Verifying user is an active admin...', session.user.id);
-                const { data: adminRecord, error: adminError } = await supabase
-                    .from('admins')
-                    .select('id, is_active')
-                    .eq('user_id', session.user.id)
-                    .eq('is_active', true)
-                    .single();
+                console.log('AUTH_CHECK: Verifying user is an active admin via RPC...', session.user.id);
                 
-                if (adminError) {
-                    // Check if it's just 'no rows found' vs. a real database error
-                    if (adminError.code === 'PGRST116') {
-                        console.warn('AUTH_CHECK: No active admin record found for this user ID.');
-                    } else {
-                        console.error('AUTH_CHECK: Admin verification failed with error:', adminError);
-                    }
+                // C-07 FIX: Use RPC to bypass RLS recursion entirely
+                const { data: adminRecord, error: rpcError } = await supabase
+                    .rpc('get_auth_admin_status', { p_user_id: session.user.id });
+                
+                if (rpcError) {
+                    console.error('AUTH_CHECK: RPC verification failed with error:', rpcError);
                 }
 
                 if (mounted) {
-                    console.log('AUTH_CHECK: Admin record result:', adminRecord ? 'FOUND (ACTIVE)' : 'NOT FOUND');
+                    console.log('AUTH_CHECK: Admin record result (via RPC):', adminRecord ? 'FOUND (ACTIVE)' : 'NOT FOUND');
                     setAuthenticated(!!adminRecord);
                 }
             } catch (err) {
@@ -52,12 +45,10 @@ const ProtectedRoute = ({ children }) => {
         };
 
         // Standard pattern: Use onAuthStateChange as a single source of truth
-        // This handles INITIAL_SESSION, SIGNED_IN, SIGNED_OUT, token refreshed, etc.
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
             console.log(`AUTH_EVENT: ${event}`, { userId: session?.user?.id });
             
-            // For INITIAL_SESSION, we want to immediately check if we have a session to avoid flickering
-            if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
+            if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
                 await verifyAdmin(session);
             } else if (event === 'SIGNED_OUT') {
                 if (mounted) {
