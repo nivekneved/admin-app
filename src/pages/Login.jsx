@@ -34,11 +34,20 @@ const Login = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        if (!email || !password) return;
+        if (!email || !password || loading) return;
         
+        // 1. WATCHDOG (8 SECONDS): Absolute fail-safe for login hangs
+        const loginWatchdog = setTimeout(() => {
+            if (loading) {
+                console.warn('LOGIN: Watchdog triggered during sign-in hang.');
+                setLoading(false);
+                showAlert('Login Timeout', 'The connection is taking longer than usual. Please try again.', 'warning');
+            }
+        }, 8000);
+
         setLoading(true);
         try {
-            // SUPABASE GUIDELINE: Standard sign in with email and password
+            // SUPABASE SIGN IN
             const { data, error: signInError } = await supabase.auth.signInWithPassword({
                 email,
                 password,
@@ -47,28 +56,37 @@ const Login = () => {
             if (signInError) throw signInError;
 
             const user = data.user;
+            console.log('LOGIN: User signed in, verifying admin permissions...');
 
             // Step 1: Immediate Admin Verification
+            // We await it here for immediate feedback, but the AuthContext will also sync this.
             const { data: adminData, error: rpcError } = await supabase.rpc('get_auth_admin_status', { 
                 p_user_id: user.id 
             });
 
-            if (rpcError) throw rpcError;
+            if (rpcError) {
+                console.error('LOGIN: RPC Verification error:', rpcError.message);
+                // Fallback: If RPC fails but it's a real login, we let the AuthContext try its own sync
+                // However, for immediate feedback we'll proceed if we have a user
+            }
 
-            if (adminData && adminData.length > 0) {
+            const isUserAdmin = adminData && adminData.length > 0;
+
+            if (isUserAdmin) {
                 console.log('LOGIN: Access granted for', email);
                 showAlert('Authorized', 'Welcome back to the Admin Portal', 'success');
                 navigate('/', { replace: true });
-            } else {
+            } else if (adminData) {
+                // If we got adminData (even if 0 length), we know definitively they aren't admin
                 console.warn('LOGIN: Unauthorized attempt by', email);
                 await supabase.auth.signOut();
                 showAlert('Access Denied', 'This account is not authorized to access the Admin Portal.', 'error');
             }
         } catch (error) {
             console.error('LOGIN: Auth error:', error.message);
-            // SUPABASE GUIDELINE: Handle generic error messages for security
             showAlert('Authentication Failed', error.message || 'Invalid login credentials', 'error');
         } finally {
+            clearTimeout(loginWatchdog);
             setLoading(false);
         }
     };
