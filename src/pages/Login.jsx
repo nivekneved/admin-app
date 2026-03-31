@@ -10,6 +10,8 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [isResetting, setIsResetting] = useState(false);
+    const [resetEmailSent, setResetEmailSent] = useState(false);
     const { isAdmin, loading: authLoading } = useAuth();
     const navigate = useNavigate();
 
@@ -36,12 +38,15 @@ const Login = () => {
         
         setLoading(true);
         try {
-            const { data: { user }, error: signInError } = await supabase.auth.signInWithPassword({
+            // SUPABASE GUIDELINE: Standard sign in with email and password
+            const { data, error: signInError } = await supabase.auth.signInWithPassword({
                 email,
                 password,
             });
 
             if (signInError) throw signInError;
+
+            const user = data.user;
 
             // Step 1: Immediate Admin Verification
             const { data: adminData, error: rpcError } = await supabase.rpc('get_auth_admin_status', { 
@@ -51,8 +56,6 @@ const Login = () => {
             if (rpcError) throw rpcError;
 
             if (adminData && adminData.length > 0) {
-                // Step 2: Future MFA Check would go here
-                // For now, proceed to dashboard
                 console.log('LOGIN: Access granted for', email);
                 showAlert('Authorized', 'Welcome back to the Admin Portal', 'success');
                 navigate('/', { replace: true });
@@ -63,7 +66,31 @@ const Login = () => {
             }
         } catch (error) {
             console.error('LOGIN: Auth error:', error.message);
+            // SUPABASE GUIDELINE: Handle generic error messages for security
             showAlert('Authentication Failed', error.message || 'Invalid login credentials', 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleResetPassword = async (e) => {
+        e.preventDefault();
+        if (!email) return;
+
+        setLoading(true);
+        try {
+            // SUPABASE GUIDELINE: Reset password flow
+            const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: `${window.location.origin}/reset-password`,
+            });
+
+            if (error) throw error;
+
+            setResetEmailSent(true);
+            showAlert('Success', 'Password reset instructions have been sent to your email.', 'success');
+        } catch (error) {
+            console.error('LOGIN: Reset error:', error.message);
+            showAlert('Error', error.message || 'Failed to send reset email', 'error');
         } finally {
             setLoading(false);
         }
@@ -78,60 +105,119 @@ const Login = () => {
 
                     <div className="text-center mb-10 mt-2">
                         <img src={logo} alt="Travel Lounge" className="h-16 mx-auto mb-6" />
-                        <h1 className="text-2xl font-bold text-gray-900 mb-1">Admin Portal</h1>
-                        <p className="text-gray-500 text-sm">Sign in to manage your bookings</p>
+                        <h1 className="text-2xl font-bold text-gray-900 mb-1">
+                            {isResetting ? 'Reset Password' : 'Admin Portal'}
+                        </h1>
+                        <p className="text-gray-500 text-sm">
+                            {isResetting 
+                                ? 'Enter your email to receive a secure reset link' 
+                                : 'Sign in to manage your bookings'}
+                        </p>
                     </div>
 
-                    <form onSubmit={handleLogin} className="space-y-6">
-                        <div className="space-y-2">
-                            <label className="text-sm font-semibold text-gray-700 block ml-1">Email Address</label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                    <Mail size={18} />
+                    {!isResetting ? (
+                        <form onSubmit={handleLogin} className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-gray-700 block ml-1">Email Address</label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                        <Mail size={18} />
+                                    </div>
+                                    <input
+                                        type="email"
+                                        required
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="block w-full pl-10 pr-3 py-3 bg-gray-50 border border-slate-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition-all"
+                                        placeholder="admin@travellounge.mu"
+                                    />
                                 </div>
-                                <input
-                                    type="email"
-                                    required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="block w-full pl-10 pr-3 py-3 bg-gray-50 border border-slate-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition-all"
-                                    placeholder="admin@travellounge.mu"
-                                />
                             </div>
-                        </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-semibold text-gray-700 block ml-1">Password</label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                    <Lock size={18} />
+                            <div className="space-y-2">
+                                <div className="flex justify-between items-center ml-1">
+                                    <label className="text-sm font-semibold text-gray-700">Password</label>
+                                    <button 
+                                        type="button"
+                                        onClick={() => setIsResetting(true)}
+                                        className="text-[10px] font-black uppercase tracking-widest text-brand-red hover:underline"
+                                    >
+                                        Forgot Password?
+                                    </button>
                                 </div>
-                                <input
-                                    type="password"
-                                    required
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="block w-full pl-10 pr-3 py-3 bg-gray-50 border border-slate-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition-all"
-                                    placeholder="••••••••"
-                                />
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                        <Lock size={18} />
+                                    </div>
+                                    <input
+                                        type="password"
+                                        required
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className="block w-full pl-10 pr-3 py-3 bg-gray-50 border border-slate-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition-all"
+                                        placeholder="••••••••"
+                                    />
+                                </div>
                             </div>
-                        </div>
 
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full py-3 px-4 bg-brand-red text-white hover:bg-red-700 focus:ring-4 focus:ring-red-200 font-bold rounded-xl flex items-center justify-center space-x-2 transition-all transform hover:opacity-90 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed shadow-lg"
-                        >
-                            {loading ? (
-                                <Loader2 className="animate-spin" size={20} />
-                            ) : (
-                                <>
-                                    <LogIn size={20} />
-                                    <span>Sign In</span>
-                                </>
-                            )}
-                        </button>
-                    </form>
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full py-3 px-4 bg-brand-red text-white hover:bg-red-700 focus:ring-4 focus:ring-red-200 font-bold rounded-xl flex items-center justify-center space-x-2 transition-all transform hover:opacity-90 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed shadow-lg"
+                            >
+                                {loading ? (
+                                    <Loader2 className="animate-spin" size={20} />
+                                ) : (
+                                    <>
+                                        <LogIn size={20} />
+                                        <span>Sign In</span>
+                                    </>
+                                )}
+                            </button>
+                        </form>
+                    ) : (
+                        <form onSubmit={handleResetPassword} className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-gray-700 block ml-1">Email Address</label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                        <Mail size={18} />
+                                    </div>
+                                    <input
+                                        type="email"
+                                        required
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="block w-full pl-10 pr-3 py-3 bg-gray-50 border border-slate-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition-all"
+                                        placeholder="admin@travellounge.mu"
+                                    />
+                                </div>
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={loading || resetEmailSent}
+                                className="w-full py-3 px-4 bg-gray-900 text-white hover:bg-black font-bold rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg disabled:opacity-50"
+                            >
+                                {loading ? (
+                                    <Loader2 className="animate-spin" size={20} />
+                                ) : (
+                                    <span>{resetEmailSent ? 'Instructions Sent' : 'Send Reset Link'}</span>
+                                )}
+                            </button>
+
+                            <button 
+                                type="button"
+                                onClick={() => {
+                                    setIsResetting(false);
+                                    setResetEmailSent(false);
+                                }}
+                                className="w-full text-center text-xs text-gray-500 font-bold hover:text-gray-900 transition-colors"
+                            >
+                                Back to Sign In
+                            </button>
+                        </form>
+                    )}
 
                     <div className="mt-8 text-center pt-6 border-t border-slate-300">
                         <p className="text-gray-400 text-xs">
