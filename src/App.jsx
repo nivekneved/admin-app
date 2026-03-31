@@ -51,50 +51,43 @@ function App() {
           {/* Public Routes */}
           <Route path="/login" element={<Login />} />
 
-          {/* Protected Routes */}
-          <Route
-            path="/*"
-            element={
-              <ProtectedRoute>
-                <Layout>
-                  <Routes>
-                    <Route path="/" element={<Dashboard />} />
-                    <Route path="/team" element={<Team />} />
-                    <Route path="/team/create" element={<ManageStaff />} />
-                    <Route path="/team/edit/:id" element={<ManageStaff />} />
-                    <Route path="/users" element={<Navigate to="/team" replace />} />
-                    <Route path="/services" element={<Services />} />
-                    <Route path="/services/create" element={<CreateService />} />
-                    <Route path="/services/edit/:id" element={<CreateService />} />
-                    <Route path="/categories" element={<Categories />} />
-                    <Route path="/hero-slider" element={<HeroSlider />} />
-                    <Route path="/bookings" element={<Bookings />} />
-                    <Route path="/bookings/create" element={<CreateBooking />} />
-                    <Route path="/orders" element={<Orders />} />
-                    <Route path="/orders/create" element={<CreateOrder />} />
-                    <Route path="/reports" element={<Reports />} />
-                    <Route path="/invoices" element={<Invoices />} />
-                    <Route path="/invoices/create" element={<CreateInvoice />} />
-                    <Route path="/customers" element={<Customers />} />
-                    <Route path="/customers/create" element={<CreateCustomer />} />
-                    <Route path="/customers/:id" element={<ViewCustomer />} />
-                    <Route path="/reviews" element={<Reviews />} />
-                    <Route path="/faqs" element={<FAQs />} />
-                    <Route path="/cms" element={<CMS />} />
-                    <Route path="/inquiries" element={<Inquiries />} />
-                    <Route path="/subscribers" element={<Subscribers />} />
-                    <Route path="/news" element={<News />} />
-                    <Route path="/news/create" element={<CreateNews />} />
-                    <Route path="/news/edit/:id" element={<CreateNews />} />
-                     <Route path="/popup-ads" element={<PopupAds />} />
-                     <Route path="/navigation" element={<NavigationManager />} />
-                     <Route path="/settings" element={<Settings />} />
-                    <Route path="*" element={<Navigate to="/" />} />
-                  </Routes>
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
+          {/* Core App with Layout & Protection */}
+          <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/team" element={<Team />} />
+            <Route path="/team/create" element={<ManageStaff />} />
+            <Route path="/team/edit/:id" element={<ManageStaff />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/services/create" element={<CreateService />} />
+            <Route path="/services/edit/:id" element={<CreateService />} />
+            <Route path="/categories" element={<Categories />} />
+            <Route path="/hero-slider" element={<HeroSlider />} />
+            <Route path="/bookings" element={<Bookings />} />
+            <Route path="/bookings/create" element={<CreateBooking />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/orders/create" element={<CreateOrder />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/invoices" element={<Invoices />} />
+            <Route path="/invoices/create" element={<CreateInvoice />} />
+            <Route path="/customers" element={<Customers />} />
+            <Route path="/customers/create" element={<CreateCustomer />} />
+            <Route path="/customers/:id" element={<ViewCustomer />} />
+            <Route path="/reviews" element={<Reviews />} />
+            <Route path="/faqs" element={<FAQs />} />
+            <Route path="/cms" element={<CMS />} />
+            <Route path="/inquiries" element={<Inquiries />} />
+            <Route path="/subscribers" element={<Subscribers />} />
+            <Route path="/news" element={<News />} />
+            <Route path="/news/create" element={<CreateNews />} />
+            <Route path="/news/edit/:id" element={<CreateNews />} />
+            <Route path="/popup-ads" element={<PopupAds />} />
+            <Route path="/navigation" element={<NavigationManager />} />
+            <Route path="/settings" element={<Settings />} />
+            
+            {/* Fallbacks */}
+            <Route path="/users" element={<Navigate to="/team" replace />} />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Route>
         </Routes>
       </Router>
     </QueryClientProvider>

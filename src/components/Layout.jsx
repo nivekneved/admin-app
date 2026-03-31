@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Menu } from 'lucide-react';
+import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import logo from '../assets/logo.png';
 
-const Layout = ({ children }) => {
+const Layout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   return (
@@ -31,7 +32,7 @@ const Layout = ({ children }) => {
         </header>
 
         <main className={`flex-1 p-4 md:p-8 transition-all duration-500 ease-in-out ${isSidebarOpen ? 'lg:ml-64' : 'lg:ml-0'}`}>
-          {children}
+          <Outlet />
         </main>
       </div>
     </div>

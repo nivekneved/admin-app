@@ -39,6 +39,13 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     system: false
   });
 
+  // Automatically close mobile sidebar on navigation
+  React.useEffect(() => {
+    if (window.innerWidth < 1024) {
+      setIsOpen(false);
+    }
+  }, [location.pathname, setIsOpen]);
+
   const toggleGroup = (group) => {
     setOpenGroups(prev => ({
       ...prev,
