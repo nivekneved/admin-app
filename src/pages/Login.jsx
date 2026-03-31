@@ -3,43 +3,29 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Mail, Lock, LogIn, Loader2 } from 'lucide-react';
 import { showAlert } from '../utils/swal';
+import { useAuth } from '../contexts/AuthContext';
 import logo from '../assets/logo.png';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const [initialCheck, setInitialCheck] = useState(true);
+    const { isAdmin, loading: authLoading } = useAuth();
     const navigate = useNavigate();
 
+    // SUPABASE COMPLIANCE: If already logged in as admin, redirect away from login page
     React.useEffect(() => {
-        const checkExistingSession = async () => {
-            try {
-                const { data: { session } } = await supabase.auth.getSession();
-                if (session) {
-                    console.log('LOGIN: Session active, verifying path...');
-                    const { data } = await supabase.rpc('get_auth_admin_status', { p_user_id: session.user.id });
-                    
-                    if (data && data.length > 0) {
-                        navigate('/', { replace: true });
-                        return;
-                    }
-                    // If not admin, we let them stay on login so they can sign in as one, 
-                    // or we could sign them out explicitly here.
-                }
-            } catch (err) {
-                console.error('LOGIN: Session check failed:', err);
-            } finally {
-                setInitialCheck(false);
-            }
-        };
-        checkExistingSession();
-    }, [navigate]);
+        if (!authLoading && isAdmin) {
+            console.log('LOGIN: Redundant login page visit detected. Redirecting to dashboard.');
+            navigate('/', { replace: true });
+        }
+    }, [isAdmin, authLoading, navigate]);
 
-    if (initialCheck) {
+    if (authLoading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-brand-charcoal px-4">
-                <Loader2 className="w-8 h-8 animate-spin text-brand-red" />
+            <div className="min-h-screen flex flex-col items-center justify-center bg-brand-charcoal px-4">
+                <Loader2 className="w-12 h-12 animate-spin text-brand-red mb-4" />
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Initializing Portal...</p>
             </div>
         );
     }
