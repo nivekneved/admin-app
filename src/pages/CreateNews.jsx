@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { showAlert } from '../utils/swal';
 import { Button } from '../components/Button.jsx';
+import ImageUpload from '../components/ImageUpload.jsx';
 
 const CreateNews = () => {
     const navigate = useNavigate();
@@ -258,19 +259,18 @@ const CreateNews = () => {
                             <ImageIcon size={18} className="text-brand-red"/> Media & Classification
                         </h2>
                         
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-4">
-                                <div className="space-y-2">
-                                    <label className="text-xs font-black uppercase tracking-wider text-slate-500">Featured Image URL</label>
-                                    <input
-                                        type="url"
-                                        name="featured_image"
-                                        value={formData.featured_image}
-                                        onChange={handleChange}
-                                        className="w-full bg-slate-50 border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-red/20 transition-all font-medium"
-                                        placeholder="https://example.com/image.jpg"
-                                    />
-                                </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                             <div className="space-y-6">
+                                <ImageUpload
+                                    label="Featured Image"
+                                    value={formData.featured_image}
+                                    onChange={(url) => setFormData(prev => ({ ...prev, featured_image: url }))}
+                                    folder="news"
+                                    bucket="bucket"
+                                    aspectRatio="aspect-[16/9]"
+                                    placeholder="Upload featured image from PC"
+                                />
+
                                 <div className="space-y-2">
                                     <label className="text-xs font-black uppercase tracking-wider text-slate-500 flex items-center gap-1"><Tag size={12}/> Tags (comma separated)</label>
                                     <input
@@ -298,17 +298,6 @@ const CreateNews = () => {
                                         <option value="archived">Archived</option>
                                     </select>
                                 </div>
-                                
-                                {formData.featured_image && (
-                                    <div className="mt-4 border border-slate-100 p-2 rounded-xl bg-slate-50 flex justify-center">
-                                        <img 
-                                            src={formData.featured_image} 
-                                            alt="Preview" 
-                                            className="max-h-32 rounded-lg object-cover"
-                                            onError={(e) => { e.target.style.display = 'none'; }}
-                                        />
-                                    </div>
-                                )}
                             </div>
                         </div>
                     </div>
