@@ -28,6 +28,7 @@ const CreateService = () => {
         price: '',
         stock: '',
         status: 'In Stock',
+        short_description: '',
         description: '',
         image_url: '',
         secondary_image_url: '',
@@ -97,6 +98,7 @@ const CreateService = () => {
                     price: data.base_price || '',
                     stock: data.stock || '',
                     status: data.status || 'In Stock',
+                    short_description: data.short_description || '',
                     description: data.description || '',
                     image_url: data.image_url || '',
                     secondary_image_url: data.secondary_image_url || '',
@@ -325,6 +327,7 @@ const CreateService = () => {
                 base_price: parseFloat(formData.price) || 0,
                 stock: parseInt(formData.stock) || 0,
                 status: formData.status,
+                short_description: formData.short_description,
                 description: formData.description,
                 image_url: formData.image_url,
                 secondary_image_url: formData.secondary_image_url,
@@ -617,16 +620,29 @@ const CreateService = () => {
                                     </div>
                                 </div>
 
-                                <div>
-                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Detailed Narrative</label>
-                                    <textarea
-                                        name="description"
-                                        rows={4}
-                                        className="w-full px-6 py-4 bg-gray-50 border border-slate-300 rounded-3xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-sm font-medium resize-none leading-relaxed"
-                                        value={formData.description}
-                                        onChange={handleInputChange}
-                                        placeholder="Describe the inclusions, terms, and luxury standards of this service..."
-                                    />
+                                <div className="grid grid-cols-1 gap-6">
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Card Teaser (Short Description)</label>
+                                        <textarea
+                                            name="short_description"
+                                            rows={2}
+                                            className="w-full px-6 py-4 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-sm font-bold resize-none leading-tight"
+                                            value={formData.short_description}
+                                            onChange={handleInputChange}
+                                            placeholder="Catchy one-liner for search results and cards..."
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Detailed Narrative</label>
+                                        <textarea
+                                            name="description"
+                                            rows={4}
+                                            className="w-full px-6 py-4 bg-gray-50 border border-slate-300 rounded-3xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-sm font-medium resize-none leading-relaxed"
+                                            value={formData.description}
+                                            onChange={handleInputChange}
+                                            placeholder="Describe the inclusions, terms, and luxury standards of this service..."
+                                        />
+                                    </div>
                                 </div>
 
                                 <div>

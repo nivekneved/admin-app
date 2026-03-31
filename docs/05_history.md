@@ -1,5 +1,13 @@
 # 05 History & Agent Progress
 
+## 2026-03-31 - Service Metadata & Card Teasers
+- **Database Schema**: Added `short_description` column to `public.services` for card-specific summaries.
+- **Admin App Enhancement**: Integrated "Card Teaser (Short Description)" field into `CreateService.jsx` for both creation and editing.
+- **Web App Rendering**: Updated `ServiceCard.tsx` to prefer `short_description` if available, falling back to main description truncation for consistency.
+- **Listing Integration**: Updated `ServiceListing.tsx`, `DealsCarousel.tsx`, and `DestinationListing.tsx` to fetch and propagate `short_description` from Supabase to the UI.
+
+---
+
 ## 2026-03-29 - Authentication & RLS Stability Fix
 - **RLS Recursion Fix**: Resolved a critical "infinite recursion detected" error in the `admins` table by migrating policies to use `SECURITY DEFINER` functions (`is_admin_v2`, `is_super_admin`). This allows for safe role verification without circular policy calls.
 - **ProtectedRoute Stabilization**: Refactored the authentication guard to use a consolidated `onAuthStateChange` pattern, resolving "Lock not released" warnings and race conditions in `React.StrictMode`.
