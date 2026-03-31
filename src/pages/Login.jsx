@@ -13,30 +13,27 @@ const Login = () => {
     const navigate = useNavigate();
 
     React.useEffect(() => {
-        const checkSession = async () => {
+        const checkExistingSession = async () => {
             try {
                 const { data: { session } } = await supabase.auth.getSession();
                 if (session) {
-                    console.log('LOGIN: Existing session found, verifying admin status...');
+                    console.log('LOGIN: Session active, verifying path...');
                     const { data } = await supabase.rpc('get_auth_admin_status', { p_user_id: session.user.id });
                     
                     if (data && data.length > 0) {
-                        console.log('LOGIN: Admin confirmed, redirecting...');
-                        navigate('/');
-                        return; // Exit early
-                    } else {
-                        console.warn('LOGIN: Non-admin session detected. Signing out.');
-                        await supabase.auth.signOut();
-                        showAlert('Access Denied', 'Your account does not have administrative privileges.', 'error');
+                        navigate('/', { replace: true });
+                        return;
                     }
+                    // If not admin, we let them stay on login so they can sign in as one, 
+                    // or we could sign them out explicitly here.
                 }
             } catch (err) {
-                console.error('LOGIN: Initial check failed:', err);
+                console.error('LOGIN: Session check failed:', err);
             } finally {
                 setInitialCheck(false);
             }
         };
-        checkSession();
+        checkExistingSession();
     }, [navigate]);
 
     if (initialCheck) {
@@ -49,8 +46,9 @@ const Login = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        if (!email || !password) return;
+        
         setLoading(true);
-
         try {
             const { data: { user }, error: signInError } = await supabase.auth.signInWithPassword({
                 email,
@@ -59,7 +57,7 @@ const Login = () => {
 
             if (signInError) throw signInError;
 
-            // Verify admin status immediately after login
+            // Step 1: Immediate Admin Verification
             const { data: adminData, error: rpcError } = await supabase.rpc('get_auth_admin_status', { 
                 p_user_id: user.id 
             });
@@ -67,13 +65,18 @@ const Login = () => {
             if (rpcError) throw rpcError;
 
             if (adminData && adminData.length > 0) {
-                showAlert('Welcome Back', 'Login successful! Redirecting to dashboard...', 'success');
-                navigate('/');
+                // Step 2: Future MFA Check would go here
+                // For now, proceed to dashboard
+                console.log('LOGIN: Access granted for', email);
+                showAlert('Authorized', 'Welcome back to the Admin Portal', 'success');
+                navigate('/', { replace: true });
             } else {
+                console.warn('LOGIN: Unauthorized attempt by', email);
                 await supabase.auth.signOut();
                 showAlert('Access Denied', 'This account is not authorized to access the Admin Portal.', 'error');
             }
         } catch (error) {
+            console.error('LOGIN: Auth error:', error.message);
             showAlert('Authentication Failed', error.message || 'Invalid login credentials', 'error');
         } finally {
             setLoading(false);

@@ -130,6 +130,7 @@ const Services = () => {
   const [maxPrice, setMaxPrice] = useState('');
   const [selectedAmenities, setSelectedAmenities] = useState([]);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [filterRegion, setFilterRegion] = useState('All');
   const [sortBy, setSortBy] = useState('created_at:desc');
 
   // Derived unique amenities from services
@@ -146,7 +147,7 @@ const Services = () => {
   // Reset page when filters change
   React.useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, selectedCategories, filterStatus, minPrice, maxPrice, selectedAmenities, sortBy]);
+  }, [searchTerm, selectedCategories, filterStatus, filterRegion, minPrice, maxPrice, selectedAmenities, sortBy]);
 
 
   // ─── Handlers ─────────────────────────────────────────────────────────────
@@ -170,6 +171,7 @@ const Services = () => {
     setMinPrice('');
     setMaxPrice('');
     setSelectedAmenities([]);
+    setFilterRegion('All');
     setSortBy('created_at:desc');
     setCurrentPage(1);
   };
@@ -185,7 +187,7 @@ const Services = () => {
     }
   };
 
-  const hasActiveFilters = searchTerm || selectedCategories.length > 0 || filterStatus !== 'All' || minPrice || maxPrice || selectedAmenities.length > 0;
+  const hasActiveFilters = searchTerm || selectedCategories.length > 0 || filterStatus !== 'All' || filterRegion !== 'All' || minPrice || maxPrice || selectedAmenities.length > 0;
   const selectCls = 'px-3 py-2 text-sm font-semibold bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red appearance-none cursor-pointer text-gray-700 hover:border-slate-300 transition-colors';
 
   const toggleCategory = (cat) => {
@@ -218,6 +220,10 @@ const Services = () => {
 
     if (filterStatus !== 'All') {
       list = list.filter(s => s.status === filterStatus);
+    }
+
+    if (filterRegion !== 'All') {
+      list = list.filter(s => s.region === filterRegion);
     }
 
     if (minPrice) {
@@ -351,6 +357,28 @@ const Services = () => {
                     <select className={`${selectCls} w-full`} value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
                       <option value="All">All Statuses</option>
                       {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                    <ChevronDown size={12} className="absolute right-2.5 top-3.5 text-gray-400 pointer-events-none" />
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Geographical Zone</label>
+                  <div className="relative">
+                    <select className={`${selectCls} w-full`} value={filterRegion} onChange={(e) => setFilterRegion(e.target.value)}>
+                      <option value="All">All Regions</option>
+                      <option value="Mauritius">Mauritius (General)</option>
+                      <option value="North">North</option>
+                      <option value="South">South</option>
+                      <option value="East">East</option>
+                      <option value="West">West</option>
+                      <option value="Central">Central</option>
+                      <option value="North-West">North-West</option>
+                      <option value="South-West">South-West</option>
+                      <option value="Rodrigues">Rodrigues</option>
+                      <option value="Reunion">Reunion</option>
+                      <option value="Seychelles">Seychelles</option>
+                      <option value="International">International</option>
                     </select>
                     <ChevronDown size={12} className="absolute right-2.5 top-3.5 text-gray-400 pointer-events-none" />
                   </div>

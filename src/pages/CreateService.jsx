@@ -566,11 +566,18 @@ const CreateService = () => {
                                         <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Geographic Region</label>
                                         <select
                                             name="region"
-                                            className="w-full px-6 py-4 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
+                                            className="w-full px-6 py-4 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm cursor-pointer"
                                             value={formData.region}
                                             onChange={handleInputChange}
                                         >
-                                            <option value="Mauritius">Mauritius</option>
+                                            <option value="Mauritius">Mauritius (General)</option>
+                                            <option value="North">North Mauritius</option>
+                                            <option value="South">South Mauritius</option>
+                                            <option value="East">East Mauritius</option>
+                                            <option value="West">West Mauritius</option>
+                                            <option value="Central">Central Mauritius</option>
+                                            <option value="North-West">North-West Mauritius</option>
+                                            <option value="South-West">South-West Mauritius</option>
                                             <option value="Rodrigues">Rodrigues</option>
                                             <option value="Reunion">Reunion</option>
                                             <option value="Seychelles">Seychelles</option>

@@ -5,367 +5,401 @@ import {
     Info
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
 import { showAlert } from '../utils/swal';
 import ImageUpload from '../components/ImageUpload';
 
 const CMS = () => {
     const [loading, setLoading] = useState(true);
+    const [pagesLoading, setPagesLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [activePage, setActivePage] = useState('about-us');
+    
+    const [pages, setPages] = useState([]);
+    const [activePage, setActivePage] = useState('');
+    const [sections, setSections] = useState([]);
+    const [activeSection, setActiveSection] = useState(null);
     const [content, setContent] = useState({});
 
+    // Fetch unique pages on mount
     useEffect(() => {
-        fetchContent();
+        const fetchPages = async () => {
+            setPagesLoading(true);
+            try {
+                // Get unique page_slugs
+                const { data, error } = await supabase
+                    .from('content_blocks')
+                    .select('page_slug');
+                
+                if (error) throw error;
+                
+                const uniqueSlugs = [...new Set(data.map(item => item.page_slug))].sort();
+                const mappedPages = uniqueSlugs.map(slug => ({
+                    id: slug,
+                    name: slug.split(/[-_]/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') + ' Page',
+                    icon: getIconForPage(slug)
+                }));
+                
+                setPages(mappedPages);
+                if (mappedPages.length > 0 && !activePage) {
+                    setActivePage(mappedPages[0].id);
+                }
+            } catch (error) {
+                console.error('Error fetching CMS pages:', error);
+                showAlert('Error', 'Failed to load pages', 'error');
+            } finally {
+                setPagesLoading(false);
+            }
+        };
+        fetchPages();
+    }, []);
+
+    // Fetch sections when activePage changes
+    useEffect(() => {
+        if (activePage) {
+            fetchSections();
+        }
     }, [activePage]);
 
-    const fetchContent = async () => {
+    const fetchSections = async () => {
         setLoading(true);
         try {
             const { data, error } = await supabase
                 .from('content_blocks')
                 .select('*')
-                .eq('page_slug', activePage);
+                .eq('page_slug', activePage)
+                .order('section_key', { ascending: true });
 
-            if (error) {
-                if (error.code === '42P01') {
-                    setContent({});
-                } else {
-                    throw error;
-                }
+            if (error) throw error;
+            
+            setSections(data);
+            if (data.length > 0) {
+                const firstSection = data[0];
+                setActiveSection(firstSection.section_key);
+                setContent(firstSection.content || {});
             } else {
-                const contentMap = {};
-                data.forEach(block => {
-                    contentMap[block.section_key] = block.content;
-                });
-                setContent(contentMap);
+                setActiveSection(null);
+                setContent({});
             }
         } catch (error) {
-            console.error('Error fetching CMS content:', error);
-            showAlert('Error', 'Failed to load page content', 'error');
+            console.error('Error fetching sections:', error);
+            showAlert('Error', 'Failed to load page sections', 'error');
         } finally {
             setLoading(false);
         }
     };
 
-    const handleContentChange = (section, key, value) => {
+    const getIconForPage = (slug) => {
+        if (slug.includes('home')) return <Layout size={18} />;
+        if (slug.includes('about')) return <Info size={18} />;
+        if (slug.includes('contact')) return <Globe size={18} />;
+        if (slug.includes('faq')) return <Type size={18} />;
+        return <Layout size={18} />;
+    };
+
+    const formatKey = (key) => {
+        if (!key) return '';
+        return key.split(/[-_]/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    };
+
+    const handleContentChange = (key, value) => {
         setContent(prev => ({
             ...prev,
-            [section]: {
-                ...prev[section],
-                [key]: value
-            }
+            [key]: value
         }));
     };
 
-    const handleSaveSection = async (sectionKey) => {
-        setSaving(sectionKey);
-        try {
-            const sectionContent = content[sectionKey];
-            
-            // Check if block exists
-            const { data: existing } = await supabase
-                .from('content_blocks')
-                .select('id')
-                .eq('page_slug', activePage)
-                .eq('section_key', sectionKey)
-                .single();
+    const handleArrayChange = (key, index, subKey, value) => {
+        const newArray = [...(content[key] || [])];
+        newArray[index] = { ...newArray[index], [subKey]: value };
+        handleContentChange(key, newArray);
+    };
 
-            if (existing) {
-                const { error } = await supabase
-                    .from('content_blocks')
-                    .update({ content: sectionContent, updated_at: new Date() })
-                    .eq('id', existing.id);
-                if (error) throw error;
-            } else {
-                const { error } = await supabase
-                    .from('content_blocks')
-                    .insert([{
-                        page_slug: activePage,
-                        section_key: sectionKey,
-                        content: sectionContent
-                    }]);
-                if (error) throw error;
+    const handleSave = async () => {
+        if (!activeSection) return;
+        setSaving(true);
+        try {
+            const block = sections.find(s => s.section_key === activeSection);
+            if (!block) throw new Error('No active section to save');
+
+            // 1. Audit current state
+            console.log(`CMS_SAVE: Attempting to update ${activePage}/${activeSection}`);
+
+            const { data, error } = await supabase
+                .from('content_blocks')
+                .update({ 
+                    content: content, 
+                    updated_at: new Date().toISOString() 
+                })
+                .eq('id', block.id)
+                .select();
+
+            if (error) {
+                console.error('CMS_SAVE: Database error:', error);
+                throw error;
             }
 
-            showAlert('Saved', `${sectionKey} section updated successfully`, 'success');
+            if (!data || data.length === 0) {
+                throw new Error('Update successful but check returned no rows. Maybe policy violation.');
+            }
+            
+            setSections(prev => prev.map(s => s.id === block.id ? { ...s, content: content } : s));
+            
+            showAlert('Synchronization Success', `Section [${formatKey(activeSection)}] has been deployed to production.`, 'success');
         } catch (error) {
-            console.error('Error saving CMS block:', error);
-            showAlert('Error', 'Failed to save changes. Ensure table exists.', 'error');
+            console.error('CMS_SAVE: Critical failure:', error);
+            showAlert('Deployment Failed', error.message || 'Check your permissions and network connection.', 'error');
         } finally {
             setSaving(false);
         }
     };
 
-    const pages = [
-        { id: 'about-us', name: 'About Us page', icon: <Info size={18} /> },
-        { id: 'contact', name: 'Contact page', icon: <Globe size={18} /> },
-        { id: 'home', name: 'Home sectors', icon: <Layout size={18} /> },
-        { id: 'tailormade', name: 'Tailormade Page', icon: <Layout size={18} strokeWidth={2.5} /> },
-        { id: 'news', name: 'News Page', icon: <Info size={18} /> },
-        { id: 'flights', name: 'Flights Page', icon: <Globe size={18} /> },
-        { id: 'destinations', name: 'Destinations', icon: <Layout size={18} /> },
-        { id: 'activities', name: 'Activities', icon: <Layout size={18} /> }
-    ];
-
-    if (loading) {
+    if (pagesLoading) {
         return (
             <div className="py-20 flex flex-col items-center">
                 <Loader2 className="animate-spin text-brand-red mb-4" size={48} />
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Accessing CMS Core...</p>
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Initializing CMS Interface...</p>
             </div>
         );
     }
 
     return (
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-black text-gray-900 tracking-tight">Content Management System</h1>
-                    <p className="text-gray-400 text-sm font-medium">Edit website text and media without modification of code</p>
+        <div className="flex flex-col min-h-screen -mt-6 -mx-6 bg-slate-50">
+            {/* Top Navigation Bar */}
+            <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 px-10 py-6 flex items-center justify-between">
+                <div className="flex items-center gap-6">
+                    <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg">
+                        <Layout size={24} className="text-white" />
+                    </div>
+                    <div>
+                        <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">CMS Orchestrator</h1>
+                        <div className="flex items-center gap-2 mt-1">
+                            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Connection</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                {/* Sidebar Navigation */}
-                <Card className="lg:col-span-1 border border-slate-300 shadow-sm rounded-3xl bg-white overflow-hidden h-fit">
-                    <CardHeader className="p-6 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
-                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Active Pages</span>
-                        <Button onClick={fetchContent} variant="ghost" className="p-1 h-auto text-gray-400 hover:text-brand-red">
-                            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-                        </Button>
-                    </CardHeader>
-                    <CardContent className="p-2">
-                        {pages.map(page => (
-                            <button
-                                key={page.id}
-                                onClick={() => setActivePage(page.id)}
-                                className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all group ${
-                                    activePage === page.id 
-                                    ? 'bg-brand-red text-white shadow-lg shadow-red-100' 
-                                    : 'text-gray-500 hover:bg-gray-50'
-                                }`}
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className={`p-2 rounded-xl ${activePage === page.id ? 'bg-white/20' : 'bg-gray-100 group-hover:bg-white'}`}>
-                                        {page.icon}
-                                    </div>
-                                    <span className="text-xs font-black uppercase tracking-tight">{page.name}</span>
-                                </div>
-                                <ChevronRight size={16} className={activePage === page.id ? 'text-white' : 'text-gray-300'} />
-                            </button>
-                        ))}
-                    </CardContent>
-                </Card>
+                <div className="flex items-center gap-4">
+                    <Button 
+                        onClick={fetchSections} 
+                        variant="soft" 
+                        className="rounded-xl border border-gray-100 bg-white shadow-sm px-4 py-4"
+                    >
+                        <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
+                    </Button>
+                    <Button 
+                        onClick={handleSave} 
+                        disabled={saving || !activeSection}
+                        className="bg-red-600 hover:bg-red-700 text-white px-8 py-6 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] shadow-xl shadow-red-200 transition-all flex items-center gap-3"
+                    >
+                        {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                        {saving ? 'Syncing...' : 'Deploy Changes'}
+                    </Button>
+                </div>
+            </header>
 
-                {/* Content Editor */}
-                <div className="lg:col-span-3 space-y-6">
-                    {activePage === 'about-us' && (
-                        <>
-                            {/* Hero Section Editor */}
-                            <SectionEditor 
-                                title="Hero Section" 
-                                icon={<Layout size={20} />}
-                                onSave={() => handleSaveSection('hero')}
-                                isSaving={saving === 'hero'}
-                            >
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <InputField 
-                                        label="Main Title" 
-                                        value={content.hero?.title || 'Your World, Our Expertise'} 
-                                        onChange={(val) => handleContentChange('hero', 'title', val)}
-                                    />
-                                    <InputField 
-                                        label="Red Highlight Word" 
-                                        value={content.hero?.highlight || 'Expertise'} 
-                                        onChange={(val) => handleContentChange('hero', 'highlight', val)}
-                                    />
-                                    <div className="md:col-span-2">
-                                        <TextAreaField 
-                                            label="Intro Paragraph" 
-                                            value={content.hero?.description || 'Since 2014, Travel Lounge has been the premier destination for discerning travelers in Mauritius.'} 
-                                            onChange={(val) => handleContentChange('hero', 'description', val)}
-                                        />
-                                    </div>
-                                    <InputField 
-                                        label="Banner Text" 
-                                        value={content.hero?.banner || 'IATA Accredited Agency'} 
-                                        onChange={(val) => handleContentChange('hero', 'banner', val)}
-                                    />
-                                </div>
-                            </SectionEditor>
+            <div className="flex-1 flex overflow-hidden">
+                {/* 1. Page & Section Menu (Combined Sidebar) */}
+                <aside className="w-80 border-r border-gray-100 bg-white flex flex-col pt-8">
+                    <div className="px-8 mb-6">
+                        <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">Architectural View</h2>
+                    </div>
 
-                            {/* Core Identity Editor */}
-                            <SectionEditor 
-                                title="Core Identity" 
-                                icon={<Type size={20} />}
-                                onSave={() => handleSaveSection('identity')}
-                                isSaving={saving === 'identity'}
-                            >
-                                <div className="space-y-4">
-                                    <InputField 
-                                        label="Sub-headline" 
-                                        value={content.identity?.subheadline || 'A One-Stop Travel Solutions Provider'} 
-                                        onChange={(val) => handleContentChange('identity', 'subheadline', val)}
-                                    />
-                                    <TextAreaField 
-                                        label="Mission Quote" 
-                                        value={content.identity?.quote || 'Our mission is to provide dedicated support...'} 
-                                        onChange={(val) => handleContentChange('identity', 'quote', val)}
-                                    />
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <InputField 
-                                            label="Experience Years" 
-                                            value={content.identity?.years || '10+'} 
-                                            onChange={(val) => handleContentChange('identity', 'years', val)}
-                                        />
-                                        <InputField 
-                                            label="Certification Text" 
-                                            value={content.identity?.cert || 'IATA Globally Certified'} 
-                                            onChange={(val) => handleContentChange('identity', 'cert', val)}
-                                        />
-                                    </div>
+                    <div className="flex-1 overflow-y-auto px-4 space-y-8 pb-10">
+                        {/* Page Selection */}
+                        <div className="space-y-2">
+                             <div className="px-4 text-[9px] font-bold text-red-500 uppercase tracking-widest bg-red-50 py-1.5 rounded-lg mb-4">Site Maps</div>
+                             {pages.map(page => (
+                                <div key={page.id} className="space-y-1">
+                                    <button
+                                        onClick={() => setActivePage(page.id)}
+                                        className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all ${
+                                            activePage === page.id 
+                                            ? 'bg-slate-900 text-white shadow-xl shadow-slate-200' 
+                                            : 'text-slate-500 hover:bg-slate-50'
+                                        }`}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            {page.icon}
+                                            <span className="text-[10px] font-black uppercase tracking-tight">{page.name}</span>
+                                        </div>
+                                        {activePage === page.id && <ChevronRight size={14} className="text-slate-400" />}
+                                    </button>
+                                    
+                                    {/* Inline sections if active */}
+                                    {activePage === page.id && (
+                                        <div className="ml-4 pl-4 border-l-2 border-slate-100 py-2 space-y-1 mt-2 mb-4 animate-in slide-in-from-left-2 duration-300">
+                                            {sections.length > 0 ? sections.map(section => (
+                                                <button
+                                                    key={section.id}
+                                                    onClick={() => {
+                                                        setActiveSection(section.section_key);
+                                                        setContent(section.content || {});
+                                                    }}
+                                                    className={`w-full text-left py-2.5 px-3 rounded-lg text-[9px] font-bold uppercase tracking-widest transition-all ${
+                                                        activeSection === section.section_key 
+                                                        ? 'bg-red-50 text-red-600 border border-red-100 shadow-sm' 
+                                                        : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50'
+                                                    }`}
+                                                >
+                                                    {formatKey(section.section_key)}
+                                                </button>
+                                            )) : (
+                                                <p className="text-[8px] text-slate-300 uppercase px-3 italic">Empty Map</p>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
-                            </SectionEditor>
+                             ))}
+                        </div>
+                    </div>
+                </aside>
 
-                            {/* Vision & Mission Editor */}
-                            <SectionEditor 
-                                title="Vision & Mission" 
-                                icon={<Globe size={20} />}
-                                onSave={() => handleSaveSection('vision_mission')}
-                                isSaving={saving === 'vision_mission'}
-                            >
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div className="space-y-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                                        <h4 className="text-[10px] font-black text-brand-red uppercase tracking-widest">Vision Block</h4>
-                                        <InputField 
-                                            label="Title" 
-                                            value={content.vision_mission?.vision_title || 'Our Vision'} 
-                                            onChange={(val) => handleContentChange('vision_mission', 'vision_title', val)}
-                                        />
-                                        <TextAreaField 
-                                            label="Description" 
-                                            value={content.vision_mission?.vision_desc || 'To be a one-stop travel solutions provider...'} 
-                                            onChange={(val) => handleContentChange('vision_mission', 'vision_desc', val)}
-                                        />
-                                    </div>
-                                    <div className="space-y-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                                        <h4 className="text-[10px] font-black text-brand-red uppercase tracking-widest">Mission Block</h4>
-                                        <InputField 
-                                            label="Title" 
-                                            value={content.vision_mission?.mission_title || 'Our Mission'} 
-                                            onChange={(val) => handleContentChange('vision_mission', 'mission_title', val)}
-                                        />
-                                        <TextAreaField 
-                                            label="Description" 
-                                            value={content.vision_mission?.mission_desc || 'Our dedicated corporate team members focus on personal advice...'} 
-                                            onChange={(val) => handleContentChange('vision_mission', 'mission_desc', val)}
-                                        />
-                                    </div>
+                {/* 2. Editor Canvas */}
+                <main className="flex-1 overflow-y-auto p-12 lg:p-20 bg-slate-50/50">
+                    <div className="max-w-4xl mx-auto">
+                        {!activeSection ? (
+                            <div className="py-32 flex flex-col items-center justify-center text-center opacity-50 grayscale">
+                                <div className="w-24 h-24 bg-white rounded-full border-2 border-dashed border-slate-300 flex items-center justify-center mb-6 shadow-xl shadow-slate-100">
+                                    <Layout size={32} className="text-slate-300" />
                                 </div>
-                            </SectionEditor>
-                        </>
-                    )}
-
-                    {['tailormade', 'news', 'flights', 'destinations', 'activities', 'contact', 'home'].includes(activePage) && (
-                        <SectionEditor 
-                            title={`${activePage.charAt(0).toUpperCase() + activePage.slice(1)} Hero Section`}
-                            icon={<Layout size={20} />}
-                            onSave={() => handleSaveSection('hero')}
-                            isSaving={saving === 'hero'}
-                        >
-                            <div className="space-y-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <InputField 
-                                        label="Hero Title" 
-                                        value={content.hero?.title || ''} 
-                                        onChange={(val) => handleContentChange('hero', 'title', val)}
-                                    />
-                                    <InputField 
-                                        label="Hero Subtitle" 
-                                        value={content.hero?.subtitle || ''} 
-                                        onChange={(val) => handleContentChange('hero', 'subtitle', val)}
-                                    />
-                                </div>
-                                <ImageUpload
-                                    label="Hero Background Image"
-                                    value={content.hero?.image_url || ''}
-                                    onChange={(url) => handleContentChange('hero', 'image_url', url)}
-                                    folder="hero"
-                                    aspectRatio="aspect-[21/9]"
-                                />
-                                {activePage === 'home' && (
-                                    <div className="pt-4 border-t border-gray-100">
-                                        <InputField 
-                                            label="Experience Section Image" 
-                                            value={content.identity?.experience_image || ''} 
-                                            onChange={(val) => handleContentChange('identity', 'experience_image', val)}
-                                        />
-                                        <p className="text-[10px] text-gray-400 mt-1">Global asset used for the homepage &quot;Our Experience&quot; block.</p>
-                                    </div>
-                                )}
+                                <h3 className="text-xl font-bold text-slate-900 mb-2 uppercase tracking-tighter">No Block Selected</h3>
+                                <p className="text-sm text-slate-500 max-w-xs font-medium">Please select a map and specific block from the left to begin orchestration.</p>
                             </div>
-                        </SectionEditor>
-                    )}
+                        ) : (
+                            <div className="space-y-12 animate-in fade-in zoom-in-95 duration-500 pb-20">
+                                <div className="flex flex-col gap-2">
+                                    <span className="text-[10px] font-black text-red-600 uppercase tracking-[0.4em]">Section Configuration</span>
+                                    <h2 className="text-5xl font-black text-slate-900 tracking-tight leading-none uppercase italic">
+                                        {formatKey(activeSection)}
+                                    </h2>
+                                    <div className="flex items-center gap-4 mt-6 p-4 bg-white rounded-2xl border border-slate-100 shadow-sm inline-flex w-fit">
+                                        <div className="flex flex-col px-2">
+                                            <span className="text-[8px] font-bold text-slate-300 uppercase tracking-widest">Target Map</span>
+                                            <span className="text-[10px] font-black text-slate-700 uppercase">{activePage}</span>
+                                        </div>
+                                        <div className="w-px h-6 bg-slate-100"></div>
+                                        <div className="flex flex-col px-2">
+                                            <span className="text-[8px] font-bold text-slate-300 uppercase tracking-widest">Block Identification</span>
+                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-tight font-mono">{sections.find(s => s.section_key === activeSection)?.id.slice(0, 12)}</span>
+                                        </div>
+                                    </div>
+                                </div>
 
-                    {!pages.find(p => p.id === activePage) && (
-                        <Card className="p-20 text-center flex flex-col items-center gap-4 bg-white border border-slate-300 rounded-[2.5rem]">
-                            <Layout size={48} className="text-gray-200" />
-                            <h3 className="text-gray-900 font-black">Module Under Development</h3>
-                            <p className="text-gray-400 text-sm max-w-xs mx-auto">The CMS integration for {activePage} is being mapped and will be available shortly.</p>
-                        </Card>
-                    )}
-                </div>
+                                <div className="bg-white rounded-[3rem] border border-gray-100 p-12 lg:p-16 shadow-2xl shadow-slate-200/50">
+                                    <div className="grid grid-cols-1 gap-12">
+                                        {Object.entries(content).map(([key, value]) => {
+                                            const isImage = key.toLowerCase().includes('image') || key.toLowerCase().includes('url') || key.toLowerCase().includes('logo') || key.toLowerCase().includes('icon');
+                                            const isDescription = key.toLowerCase().includes('desc') || key.toLowerCase().includes('content') || key.toLowerCase().includes('text') || key.toLowerCase().includes('quote');
+                                            const isArray = Array.isArray(value);
+
+                                            if (isArray) {
+                                                return (
+                                                    <div key={key} className="space-y-8 pt-10 border-t border-slate-50 first:pt-0 first:border-0">
+                                                        <div className="flex items-center justify-between">
+                                                            <div className="flex items-center gap-4">
+                                                                <div className="w-2 h-8 bg-red-600 rounded-full"></div>
+                                                                <h4 className="text-[13px] font-black text-slate-900 uppercase tracking-[0.2em]">{formatKey(key)} Library</h4>
+                                                            </div>
+                                                            <span className="p-2 px-4 bg-slate-50 text-slate-400 text-[10px] font-black rounded-xl uppercase tracking-widest">{value.length} Items</span>
+                                                        </div>
+                                                        <div className="grid grid-cols-1 gap-6">
+                                                            {value.map((item, index) => (
+                                                                <div key={index} className="p-10 bg-slate-50/50 rounded-[2.5rem] border border-slate-100 relative group transition-all hover:bg-white hover:shadow-xl hover:shadow-slate-100">
+                                                                    <div className="absolute top-8 right-10 w-8 h-8 rounded-full bg-white border border-slate-100 flex items-center justify-center text-[10px] font-black text-slate-400">
+                                                                        {index + 1}
+                                                                    </div>
+                                                                    <div className="grid grid-cols-1 gap-6">
+                                                                        {Object.keys(item).map(subKey => (
+                                                                            <InputField 
+                                                                                key={subKey}
+                                                                                label={formatKey(subKey)}
+                                                                                value={item[subKey] || ''}
+                                                                                onChange={(val) => handleArrayChange(key, index, subKey, val)}
+                                                                            />
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            }
+
+                                            if (isImage) {
+                                                return (
+                                                    <ImageUpload
+                                                        key={key}
+                                                        label={formatKey(key)}
+                                                        value={value || ''}
+                                                        onChange={(url) => handleContentChange(key, url)}
+                                                        folder={activePage}
+                                                        aspectRatio={key.includes('hero') ? 'aspect-[21/9]' : 'aspect-square'}
+                                                    />
+                                                );
+                                            }
+
+                                            if (isDescription) {
+                                                return (
+                                                    <TextAreaField 
+                                                        key={key}
+                                                        label={formatKey(key)}
+                                                        value={value || ''}
+                                                        onChange={(val) => handleContentChange(key, val)}
+                                                    />
+                                                );
+                                            }
+
+                                            return (
+                                                <InputField 
+                                                    key={key}
+                                                    label={formatKey(key)}
+                                                    value={value || ''}
+                                                    onChange={(val) => handleContentChange(key, val)}
+                                                />
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </main>
             </div>
         </div>
     );
 };
 
-const SectionEditor = ({ title, icon, children, onSave, isSaving }) => (
-    <Card className="border border-slate-300 shadow-xl shadow-gray-200/20 rounded-[2.5rem] bg-white overflow-hidden">
-        <CardHeader className="p-6 border-b border-gray-50 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-gray-50 text-gray-500 rounded-xl">
-                    {icon}
-                </div>
-                <h3 className="text-sm font-black text-gray-900 uppercase tracking-tight">{title}</h3>
-            </div>
-            <Button 
-                onClick={onSave} 
-                disabled={isSaving}
-                className="bg-slate-900 hover:bg-black text-white px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2"
-            >
-                {isSaving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
-                {isSaving ? 'Processing' : 'Deploy Changes'}
-            </Button>
-        </CardHeader>
-        <CardContent className="p-8">
-            {children}
-        </CardContent>
-    </Card>
-);
-
 const InputField = ({ label, value, onChange }) => (
-    <div className="space-y-1">
-        <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">{label}</label>
-        <input
-            type="text"
-            className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 text-sm"
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-        />
+    <div className="space-y-1.5 group">
+        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2 transition-colors group-focus-within:text-red-600">
+            <span className="w-1.5 h-1.5 bg-red-600 rounded-full scale-0 group-focus-within:scale-100 transition-all"></span>
+            {label}
+        </label>
+        <div className="relative">
+            <input
+                type="text"
+                className="w-full px-6 py-4 bg-white border border-slate-200 rounded-2xl focus:border-slate-900 focus:outline-none transition-all font-bold text-gray-800 text-sm shadow-sm group-hover:shadow-md focus:shadow-xl focus:shadow-slate-200"
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+            />
+        </div>
     </div>
 );
 
 const TextAreaField = ({ label, value, onChange }) => (
-    <div className="space-y-1">
-        <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">{label}</label>
-        <textarea
-            className="w-full px-4 py-3 bg-gray-50/50 border border-slate-300 rounded-2xl focus:border-brand-red focus:outline-none transition-all font-bold text-gray-800 text-sm h-24 resize-none leading-relaxed"
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-        />
+    <div className="space-y-1.5 group">
+        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2 transition-colors group-focus-within:text-red-600">
+            <span className="w-1.5 h-1.5 bg-red-600 rounded-full scale-0 group-focus-within:scale-100 transition-all"></span>
+            {label}
+        </label>
+        <div className="relative">
+            <textarea
+                className="w-full px-6 py-4 bg-white border border-slate-200 rounded-3xl focus:border-slate-900 focus:outline-none transition-all font-bold text-gray-800 text-sm h-32 resize-none leading-relaxed shadow-sm group-hover:shadow-md focus:shadow-xl focus:shadow-slate-200"
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+            />
+        </div>
     </div>
 );
 

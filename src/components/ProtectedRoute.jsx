@@ -26,47 +26,32 @@ const ProtectedRoute = ({ children }) => {
         let mounted = true;
 
         const verifyAdmin = async (session) => {
-            if (!mounted) return;
-            
-            if (verifying.current) {
-                console.log('AUTH_CHECK: Verification already in progress, skipping redundant call');
-                return;
-            }
-
-            if (!session?.user) {
-                console.log('AUTH_CHECK: No valid session found');
-                if (mounted) {
+            if (!mounted || !session?.user) {
+                if (mounted && !session?.user) {
                     setAuthenticated(false);
                     setLoading(false);
                 }
                 return;
             }
+            
+            if (verifying.current) return;
 
             try {
                 verifying.current = true;
-                console.log('AUTH_CHECK: Verifying admin status for:', session.user.id);
+                console.log('AUTH_CHECK: Verifying session for', session.user.id);
                 
-                // Set a manual timeout for the RPC call
-                const rpcPromise = supabase.rpc('get_auth_admin_status', { p_user_id: session.user.id });
-                const timeoutPromise = new Promise((_, reject) => 
-                    setTimeout(() => reject(new Error('RPC_TIMEOUT')), 5000)
-                );
-
-                const { data, error: rpcError } = await Promise.race([rpcPromise, timeoutPromise]);
+                const { data, error: rpcError } = await supabase.rpc('get_auth_admin_status', { 
+                    p_user_id: session.user.id 
+                });
                 
-                if (rpcError) {
-                    console.error('AUTH_CHECK: RPC Error:', rpcError);
-                    throw rpcError;
-                }
+                if (rpcError) throw rpcError;
 
                 if (mounted) {
-                    // get_auth_admin_status returns SETOF public.admins, so data is an array
                     const isAdmin = Array.isArray(data) && data.length > 0;
-                    console.log('AUTH_CHECK: Result:', isAdmin ? 'AUTHORIZED' : 'ACCESS_DENIED');
                     setAuthenticated(isAdmin);
                 }
             } catch (err) {
-                console.error('AUTH_CHECK: Critical Failure:', err.message || err);
+                console.error('AUTH_CHECK: Verification failed:', err.message);
                 if (mounted) setAuthenticated(false);
             } finally {
                 verifying.current = false;
@@ -74,28 +59,40 @@ const ProtectedRoute = ({ children }) => {
             }
         };
 
-        // Unified initialization
-        const init = async () => {
+        // Standard Supabase initialization pattern
+        const setupAuth = async () => {
+             // 1. Get initial session immediately
              const { data: { session } } = await supabase.auth.getSession();
-             await verifyAdmin(session);
-        };
-        init();
+             if (session) {
+                 await verifyAdmin(session);
+             } else {
+                 if (mounted) setLoading(false);
+             }
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-            console.log(`AUTH_EVENT: ${event}`);
-            if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-                await verifyAdmin(session);
-            } else if (event === 'SIGNED_OUT') {
-                if (mounted) {
-                    setAuthenticated(false);
-                    setLoading(false);
-                }
-            }
+             // 2. Subscribe to changes (SIGNED_IN, SIGNED_OUT, TOKEN_REFRESHED)
+             const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, newSession) => {
+                 console.log(`AUTH_EVENT: ${event}`);
+                 if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+                     await verifyAdmin(newSession);
+                 } else if (event === 'SIGNED_OUT') {
+                     if (mounted) {
+                         setAuthenticated(false);
+                         setLoading(false);
+                     }
+                 }
+             });
+
+             return subscription;
+        };
+
+        let authSubscription;
+        setupAuth().then(sub => {
+            authSubscription = sub;
         });
 
         return () => {
             mounted = false;
-            subscription.unsubscribe();
+            if (authSubscription) authSubscription.unsubscribe();
         };
     }, []);
 
