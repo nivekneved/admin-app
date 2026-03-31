@@ -16,6 +16,7 @@ export const AuthProvider = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const verifying = useRef(false);
+  const initialized = useRef(false);
 
   // SUPABASE COMPLIANCE: Verify the admin status using a server-side RPC check
   const verifyAdminStatus = async (currentUser) => {
@@ -23,29 +24,32 @@ export const AuthProvider = ({ children }) => {
     
     try {
       verifying.current = true;
-      console.log('AUTH_CONTEXT: Verifying admin permissions for', currentUser.id);
+      console.log('AUTH_CONTEXT: Verifying permissions for', currentUser.id);
       
       const { data, error } = await supabase.rpc('get_auth_admin_status', { 
         p_user_id: currentUser.id 
       });
 
-      if (error) throw error;
+      if (error) {
+        console.warn('AUTH_CONTEXT: Admin RPC Error:', error.message);
+        return false;
+      }
       
       const adminExists = Array.isArray(data) && data.length > 0;
-      console.log('AUTH_CONTEXT: Admin verification result:', adminExists);
       return adminExists;
     } catch (err) {
-      console.error('AUTH_CONTEXT: Admin verification failed:', err.message);
+      console.error('AUTH_CONTEXT: Admin verification failed:', err);
       return false;
     } finally {
       verifying.current = false;
     }
   };
 
-  const syncAuthState = async () => {
+  const syncAuthState = async (forced = false) => {
+    if (initialized.current && !forced) return;
+    
     try {
       setLoading(true);
-      // SUPABASE BEST PRACTICE: Use getUser() for initial server-side token validation
       const { data: { user: currentUser }, error } = await supabase.auth.getUser();
       
       if (error || !currentUser) {
@@ -60,7 +64,6 @@ export const AuthProvider = ({ children }) => {
         const isUserAdmin = await verifyAdminStatus(currentUser);
         setIsAdmin(isUserAdmin);
 
-        // If logged in, but not an admin, we clear the session to prevent "limbo" states
         if (!isUserAdmin && currentSession) {
           console.warn('AUTH_CONTEXT: Non-admin session detected. Clearing...');
           await supabase.auth.signOut();
@@ -72,15 +75,25 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.error('AUTH_CONTEXT: Sync failed:', err);
     } finally {
+      initialized.current = true;
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    // 1. Initial State Sync
+    // 1. WATCHDOG (6 SECONDS): Absolute fail-safe for UI hangs
+    const watchdog = setTimeout(() => {
+        if (!initialized.current) {
+            console.warn('AUTH_CONTEXT: Watchdog triggered! Auth taking too long. Forcing resolution.');
+            setLoading(false);
+            initialized.current = true;
+        }
+    }, 6000);
+
+    // 2. Initial State Sync
     syncAuthState();
 
-    // 2. Auth State Change Listener (SUPABASE RECOMMENDED PATTERN)
+    // 3. Auth State Change Listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
       console.log('AUTH_EVENT_CENTRAL:', event);
       
@@ -91,16 +104,19 @@ export const AuthProvider = ({ children }) => {
           const isUserAdmin = await verifyAdminStatus(currentSession.user);
           setIsAdmin(isUserAdmin);
           setLoading(false);
+          initialized.current = true;
         }
       } else if (event === 'SIGNED_OUT') {
         setSession(null);
         setUser(null);
         setIsAdmin(false);
         setLoading(false);
+        initialized.current = true;
       }
     });
 
     return () => {
+      clearTimeout(watchdog);
       subscription.unsubscribe();
     };
   }, []);
