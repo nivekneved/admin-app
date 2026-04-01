@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
 import {
@@ -15,6 +15,7 @@ import { showAlert, showConfirm } from '../utils/swal';
 const selectCls = "bg-gray-50 border border-slate-300 text-gray-900 text-[11px] font-black uppercase tracking-widest rounded-2xl focus:ring-brand-red focus:border-brand-red block w-full p-2.5 appearance-none pr-8 transition-all cursor-pointer hover:bg-white";
 
 const Bookings = () => {
+  const location = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [bookingsPerPage] = useState(8);
@@ -54,6 +55,16 @@ const Bookings = () => {
 
   const [showViewModal, setShowViewModal] = useState(false);
   const [viewingBooking, setViewingBooking] = useState(null);
+
+  useEffect(() => {
+    if (bookings.length > 0 && location.state?.highlightId) {
+      const target = bookings.find(b => b.id === location.state.highlightId);
+      if (target) {
+        setViewingBooking(target);
+        setShowViewModal(true);
+      }
+    }
+  }, [bookings, location.state]);
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingBooking, setEditingBooking] = useState(null);
@@ -375,8 +386,12 @@ const Bookings = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {currentBookings.map((booking) => (
-                    <tr key={booking.id} className="even:bg-gray-100/40 hover:bg-gray-100/60 transition-colors">
+                   {currentBookings.map((booking) => (
+                    <tr 
+                      key={booking.id} 
+                      onClick={() => openViewModal(booking)}
+                      className="group even:bg-gray-100/40 hover:bg-gray-100/60 transition-colors cursor-pointer"
+                    >
                       <td className="px-8 py-5 whitespace-nowrap">
                         <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">#{booking.id?.toString().slice(0, 8)}</div>
                         <div className="flex items-center text-[10px] font-semibold text-gray-500">
@@ -420,7 +435,7 @@ const Bookings = () => {
                       </td>
 
                       <td className="px-8 py-5 whitespace-nowrap text-right">
-                        <div className="flex justify-end items-center gap-1">
+                        <div className="flex justify-end items-center gap-1" onClick={(e) => e.stopPropagation()}>
                           <button
                             onClick={() => openViewModal(booking)}
                             className="p-2.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"

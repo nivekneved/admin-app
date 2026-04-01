@@ -413,6 +413,15 @@ const ManageStaff = () => {
                             </div>
                         </section>
 
+                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
+                            <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em] mb-4">
+                                <CheckCircle size={16} className="text-brand-red" /> Recent System Activities
+                            </h3>
+                            <div className="space-y-4">
+                                <StaffActivities adminId={id} />
+                            </div>
+                        </section>
+
                         <section className="bg-red-50 p-8 rounded-3xl border border-red-100 flex items-start gap-4">
                             <div className="p-3 bg-white rounded-2xl text-brand-red shadow-sm shrink-0">
                                 <Info size={20} />
@@ -445,6 +454,58 @@ const ManageStaff = () => {
                     </Button>
                 </div>
             </form>
+        </div>
+    );
+};
+
+const StaffActivities = ({ adminId }) => {
+    const [activities, setActivities] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (adminId) fetchActivities();
+    }, [adminId]);
+
+    const fetchActivities = async () => {
+        setLoading(true);
+        try {
+            const { data, error } = await supabase
+                .from('editorial_posts')
+                .select('id, title, status, created_at')
+                .eq('author_id', adminId)
+                .order('created_at', { ascending: false })
+                .limit(5);
+
+            if (!error) setActivities(data || []);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (loading) return <div className="flex items-center gap-2 text-gray-400 text-[10px] font-black uppercase"><Loader2 size={12} className="animate-spin" /> Fetching Log...</div>;
+    
+    if (activities.length === 0) return <div className="text-gray-400 text-[10px] font-black uppercase italic">No documented system activities found for this identity.</div>;
+
+    return (
+        <div className="space-y-3">
+            {activities.map(act => (
+                <div key={act.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-2xl border border-slate-300 border-dashed">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-white rounded-xl text-brand-red shadow-sm border border-red-50">
+                            <Save size={14} />
+                        </div>
+                        <div>
+                            <p className="text-xs font-black text-gray-900 line-clamp-1">{act.title}</p>
+                            <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest">Authored Editorial Post • {new Date(act.created_at).toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                    <span className={`px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-lg border ${act.status === 'published' ? 'bg-green-50 text-green-600 border-green-100' : 'bg-gray-50 text-gray-500 border-gray-100'}`}>
+                        {act.status}
+                    </span>
+                </div>
+            ))}
         </div>
     );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
 import { Search, Plus, Edit, Trash2, Mail, Phone, MapPin, Loader2, RefreshCw, UserCheck, UserPlus, Eye, ChevronDown, ArrowUpDown, Printer } from 'lucide-react';
@@ -11,6 +11,7 @@ import { showAlert, showConfirm } from '../utils/swal';
 const selectCls = "bg-gray-50 border border-slate-300 text-gray-900 text-[11px] font-black uppercase tracking-widest rounded-2xl focus:ring-brand-red focus:border-brand-red block w-full p-2.5 appearance-none pr-8 transition-all cursor-pointer hover:bg-white";
 
 const Customers = () => {
+    const navigate = useNavigate();
     const [customers, setCustomers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -407,32 +408,36 @@ const Customers = () => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
                                     {currentCustomers.map((customer) => (
-                                        <tr key={customer.id} className="even:bg-gray-100/40 hover:bg-gray-100/60 transition-colors">
+                                        <tr 
+                                            key={customer.id} 
+                                            onClick={() => navigate(`/customers/${customer.id}`)}
+                                            className="group even:bg-gray-100/40 hover:bg-gray-100/60 transition-colors cursor-pointer"
+                                        >
                                             <td className="px-4 py-5 whitespace-nowrap">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="h-10 w-10 rounded-2xl bg-gray-50 border border-slate-300 flex items-center justify-center text-sm font-black text-gray-400 shrink-0">
+                                                    <div className="h-10 w-10 rounded-2xl bg-gray-50 border border-slate-300 flex items-center justify-center text-sm font-black text-gray-400 shrink-0 group-hover:border-brand-red group-hover:text-brand-red transition-all">
                                                         {customer.first_name?.charAt(0)}{customer.last_name?.charAt(0)}
                                                     </div>
                                                     <div>
-                                                        <div className="text-sm font-black text-gray-900 leading-tight">{customer.first_name} {customer.last_name}</div>
+                                                        <div className="text-sm font-black text-gray-900 leading-tight group-hover:text-brand-red transition-colors">{customer.first_name} {customer.last_name}</div>
                                                         <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-0.5">#{customer.id?.slice(0, 8)}</div>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="px-4 py-5">
                                                 <div className="flex items-center text-xs font-black text-gray-900 mb-1.5 leading-tight tracking-tight">
-                                                    <Mail size={12} className="mr-2 text-gray-300 shrink-0" />
+                                                    <Mail size={12} className="mr-2 text-gray-300 shrink-0 group-hover:text-brand-red/50 transition-colors" />
                                                     {customer.email}
                                                 </div>
                                                 <div className="flex items-center text-[10px] font-bold text-gray-400 leading-tight">
-                                                    <Phone size={12} className="mr-2 text-gray-300 shrink-0" />
+                                                    <Phone size={12} className="mr-2 text-gray-300 shrink-0 group-hover:text-brand-red/50 transition-colors" />
                                                     {customer.phone || 'NO VOX DATA'}
                                                 </div>
                                             </td>
                                             <td className="px-4 py-5">
                                                 <div className="flex flex-col gap-2">
                                                     <div className="flex items-center gap-2">
-                                                        <MapPin size={12} className="text-gray-300 shrink-0" />
+                                                        <MapPin size={12} className="text-gray-300 shrink-0 group-hover:text-brand-red/50 transition-colors" />
                                                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{customer.country || 'GLOBAL'}</span>
                                                         {customer.is_subscriber ? (
                                                             <span className="px-2 py-0.5 text-[8px] font-black uppercase tracking-widest bg-green-50 text-green-600 rounded-lg border border-green-100">
@@ -453,7 +458,7 @@ const Customers = () => {
                                                 </div>
                                             </td>
                                             <td className="px-4 py-5 whitespace-nowrap text-right no-print">
-                                                <div className="flex justify-end items-center gap-1">
+                                                <div className="flex justify-end items-center gap-1" onClick={(e) => e.stopPropagation()}>
                                                     <Link to={`/customers/${customer.id}`}>
                                                         <button
                                                             className="p-2.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all"

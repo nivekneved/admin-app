@@ -241,7 +241,11 @@ const Team = () => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
                                     {currentItems.map((member) => (
-                                        <tr key={member.id} className="even:bg-gray-100/40 hover:bg-gray-100/60 transition-colors">
+                                        <tr 
+                                            key={member.id} 
+                                            onClick={() => openEdit(member)}
+                                            className="group even:bg-gray-100/40 hover:bg-gray-100/60 transition-colors cursor-pointer"
+                                        >
                                             <td className="px-8 py-5">
                                                 <div className="flex items-center gap-4">
                                                     <div className="w-10 h-10 rounded-xl overflow-hidden bg-gray-100 border border-slate-300 shrink-0">
@@ -283,7 +287,7 @@ const Team = () => {
                                                 </div>
                                             </td>
                                             <td className="px-8 py-5 text-right">
-                                                <div className="flex justify-end items-center gap-1">
+                                                <div className="flex justify-end items-center gap-1" onClick={(e) => e.stopPropagation()}>
                                                     <button onClick={() => openEdit(member)} className="p-2.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-xl transition-all" title="Edit Profile">
                                                         <Edit2 size={16} />
                                                     </button>

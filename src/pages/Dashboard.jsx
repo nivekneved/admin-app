@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/Card';
-import { Users, Calendar, Loader2, UserCheck, TrendingUp, DollarSign } from 'lucide-react';
+import { Users, Calendar, Loader2, UserCheck, TrendingUp, DollarSign, ArrowRight, ExternalLink } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalAdmins: 0,
     totalCustomers: 0,
     totalBookings: 0,
-    totalRevenue: 0
+    totalRevenue: 0,
+    todayBookings: 0,
+    todayRevenue: 0
   });
   const [recentAdmins, setRecentAdmins] = useState([]);
   const [recentBookings, setRecentBookings] = useState([]);
@@ -33,7 +37,7 @@ const Dashboard = () => {
         .from('admins')
         .select('id, username, email, role, created_at, photo_url, name')
         .order('created_at', { ascending: false })
-        .limit(4);
+        .limit(5);
 
       const { data: bookings } = await supabase
         .from('bookings')
@@ -50,12 +54,11 @@ const Dashboard = () => {
           )
         `)
         .order('created_at', { ascending: false })
-        .limit(4);
+        .limit(5);
 
       const { data: allBookingsData } = await supabase
         .from('bookings')
-        .select('total_price, amount, status, created_at')
-        .range(0, 999);
+        .select('total_price, amount, status, created_at');
 
       const allBookings = allBookingsData || [];
       
@@ -84,8 +87,6 @@ const Dashboard = () => {
       setRecentBookings(bookings || []);
       setLastSynced(new Date().toLocaleTimeString());
 
-
-
     } catch (err) {
       console.error('Dashboard Data Master Sync Error:', err);
     } finally {
@@ -103,21 +104,21 @@ const Dashboard = () => {
   };
 
   return (
-    <div>
+    <div className="space-y-8 animate-in fade-in duration-700">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Enterprise Dashboard</h1>
-          <p className="text-sm text-gray-400 font-medium">Real-time business intelligence & monitoring</p>
+          <h1 className="text-3xl font-black text-gray-900 tracking-tight">Enterprise Dashboard</h1>
+          <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Real-time business intelligence & monitoring</p>
         </div>
         <div className="flex flex-col items-end">
           <button
             onClick={fetchDashboardData}
-            className="bg-white border border-slate-300 text-gray-600 px-4 py-2 rounded-xl text-sm font-bold hover:bg-gray-50 transition-all flex items-center shadow-sm"
+            className="group bg-white border border-slate-300 text-gray-600 px-6 py-2.5 rounded-2xl text-xs font-black uppercase tracking-widest hover:border-brand-red hover:text-brand-red transition-all flex items-center shadow-sm"
           >
-            <span className="mr-2">↻</span> Sync Data
+            <span className="mr-2 group-hover:rotate-180 transition-transform duration-500">↻</span> Refresh Metrics
           </button>
           {lastSynced && (
-            <span className="text-[10px] text-gray-400 font-bold mt-2 uppercase tracking-widest">
+            <span className="text-[10px] text-gray-300 font-black mt-2 uppercase tracking-tight">
               Last Synced: {lastSynced}
             </span>
           )}
@@ -125,90 +126,119 @@ const Dashboard = () => {
       </div>
 
       {loading ? (
-        <div className="flex flex-col items-center justify-center h-96">
-          <Loader2 className="animate-spin text-brand-red mb-4" size={40} />
-          <p className="text-gray-500 font-bold">Synchronizing with Global Database...</p>
+        <div className="flex flex-col items-center justify-center h-96 bg-white/50 backdrop-blur-sm rounded-[3rem] border border-slate-200">
+          <div className="p-8 bg-white rounded-full shadow-xl shadow-gray-100 mb-6">
+            <Loader2 className="animate-spin text-brand-red" size={48} />
+          </div>
+          <p className="text-gray-400 font-black uppercase tracking-[0.2em] animate-pulse">Syncing Global Data Engine...</p>
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card className="bg-white border border-slate-300 shadow-sm hover:shadow-md transition-all h-full">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-center mb-4">
-                  <div className="p-3 bg-red-50 text-brand-red rounded-2xl">
-                    <Users size={24} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div 
+              onClick={() => navigate('/team')}
+              className="group cursor-pointer transform hover:-translate-y-1 transition-all duration-300"
+            >
+              <Card className="bg-white border border-slate-200 shadow-sm group-hover:shadow-xl group-hover:border-red-100 rounded-[2.5rem] overflow-hidden">
+                <CardContent className="p-8 text-left">
+                  <div className="flex justify-between items-center mb-6">
+                    <div className="p-4 bg-red-50 text-brand-red rounded-3xl group-hover:bg-brand-red group-hover:text-white transition-colors duration-300">
+                      <Users size={28} />
+                    </div>
+                    <ArrowRight size={20} className="text-slate-200 group-hover:text-brand-red transition-colors" />
                   </div>
-                  <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest bg-gray-50 px-2 py-0.5 rounded-lg border border-gray-100">System</span>
-                </div>
-                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">Total Staff</h3>
-                <div className="text-3xl font-black text-gray-900">{stats.totalAdmins}</div>
-              </CardContent>
-            </Card>
+                  <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Total Staff</h3>
+                  <div className="text-4xl font-black text-slate-900 tracking-tighter">{stats.totalAdmins}</div>
+                </CardContent>
+              </Card>
+            </div>
 
-            <Card className="bg-white border border-slate-300 shadow-sm hover:shadow-md transition-all h-full">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-center mb-4">
-                  <div className="p-3 bg-red-50 text-brand-red rounded-2xl">
-                    <UserCheck size={24} />
+            <div 
+              onClick={() => navigate('/customers')}
+              className="group cursor-pointer transform hover:-translate-y-1 transition-all duration-300"
+            >
+              <Card className="bg-white border border-slate-200 shadow-sm group-hover:shadow-xl group-hover:border-red-100 rounded-[2.5rem] overflow-hidden">
+                <CardContent className="p-8 text-left">
+                  <div className="flex justify-between items-center mb-6">
+                    <div className="p-4 bg-slate-50 text-slate-900 rounded-3xl group-hover:bg-slate-900 group-hover:text-white transition-colors duration-300">
+                      <UserCheck size={28} />
+                    </div>
+                    <ArrowRight size={20} className="text-slate-200 group-hover:text-slate-900 transition-colors" />
                   </div>
-                  <span className="text-[10px] font-black text-red-400 uppercase tracking-widest bg-red-50/50 px-2 py-0.5 rounded-lg border border-red-100/50">Growth</span>
-                </div>
-                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">Customers</h3>
-                <div className="text-3xl font-black text-gray-900">{stats.totalCustomers}</div>
-              </CardContent>
-            </Card>
+                  <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Customers</h3>
+                  <div className="text-4xl font-black text-slate-900 tracking-tighter">{stats.totalCustomers}</div>
+                </CardContent>
+              </Card>
+            </div>
 
-            <Card className="bg-white border border-slate-300 shadow-sm hover:shadow-md transition-all h-full">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-center mb-4">
-                  <div className="p-3 bg-green-50 text-green-600 rounded-2xl">
-                    <Calendar size={24} />
+            <div 
+              onClick={() => navigate('/bookings')}
+              className="group cursor-pointer transform hover:-translate-y-1 transition-all duration-300"
+            >
+              <Card className="bg-white border border-slate-200 shadow-sm group-hover:shadow-xl group-hover:border-green-100 rounded-[2.5rem] overflow-hidden">
+                <CardContent className="p-8 text-left">
+                  <div className="flex justify-between items-center mb-6">
+                    <div className="p-4 bg-green-50 text-green-600 rounded-3xl group-hover:bg-green-600 group-hover:text-white transition-colors duration-300">
+                      <Calendar size={28} />
+                    </div>
+                    <div className="flex flex-col items-end">
+                      <span className="text-[10px] font-black text-green-600 bg-green-50 px-2 py-0.5 rounded-full mb-1">+{stats.todayBookings} TODAY</span>
+                      <ArrowRight size={20} className="text-slate-200 group-hover:text-green-600 transition-colors" />
+                    </div>
                   </div>
-                  <span className="text-[10px] font-black text-green-400 uppercase tracking-widest bg-green-50 px-2 py-0.5 rounded-lg border border-green-100">Activity</span>
-                </div>
-                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">Bookings</h3>
-                <div className="flex items-baseline gap-2">
-                  <div className="text-3xl font-black text-gray-900">{stats.totalBookings}</div>
-                  <span className="text-[10px] font-black text-green-600 bg-green-100/50 px-1.5 py-0.5 rounded">+{stats.todayBookings} TODAY</span>
-                </div>
-              </CardContent>
-            </Card>
+                  <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Bookings</h3>
+                  <div className="text-4xl font-black text-slate-900 tracking-tighter">{stats.totalBookings}</div>
+                </CardContent>
+              </Card>
+            </div>
 
-            <Card className="bg-white border border-slate-300 shadow-sm hover:shadow-md transition-all h-full">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-center mb-4">
-                  <div className="p-3 bg-red-50 text-brand-red rounded-2xl">
-                    <DollarSign size={24} />
+            <div 
+              onClick={() => navigate('/reports')}
+              className="group cursor-pointer transform hover:-translate-y-1 transition-all duration-300"
+            >
+              <Card className="bg-white border border-slate-200 shadow-sm group-hover:shadow-xl group-hover:border-amber-100 rounded-[2.5rem] overflow-hidden">
+                <CardContent className="p-8 text-left">
+                  <div className="flex justify-between items-center mb-6">
+                    <div className="p-4 bg-amber-50 text-amber-600 rounded-3xl group-hover:bg-amber-600 group-hover:text-white transition-colors duration-300">
+                      <DollarSign size={28} />
+                    </div>
+                    <div className="flex items-center text-green-600 font-black text-[10px] bg-green-50 px-2 py-0.5 rounded-full">
+                      <TrendingUp size={12} className="mr-1" /> LIVE
+                    </div>
                   </div>
-                  <div className="flex items-center text-green-600 font-black text-[10px] bg-green-50 px-2 py-0.5 rounded-lg border border-green-100">
-                    <TrendingUp size={12} className="mr-1" /> LIVE
-                  </div>
-                </div>
-                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">Revenue</h3>
-                <div className="text-3xl font-black text-gray-900">Rs {stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
-                <div className="text-[10px] font-bold text-gray-400 mt-2">
-                  TODAY: <span className="text-green-600 font-black">Rs {stats.todayRevenue.toLocaleString()}</span>
-                </div>
-              </CardContent>
-            </Card>
+                  <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Revenue</h3>
+                  <div className="text-3xl font-black text-slate-900 tracking-tight">Rs {stats.totalRevenue.toLocaleString()}</div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="border border-slate-300 shadow-sm overflow-hidden">
-              <CardHeader className="bg-gray-50/50 border-b border-gray-100 px-6 py-4">
-                <CardTitle className="text-sm font-black uppercase tracking-widest text-gray-500 flex items-center">
-                  <Users size={16} className="mr-2" /> Recent Staff Activity
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <Card className="bg-white border border-slate-200 shadow-sm rounded-[3rem] overflow-hidden">
+              <CardHeader className="bg-slate-50/50 border-b border-slate-100 px-10 py-6 flex flex-row items-center justify-between">
+                <CardTitle className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 flex items-center">
+                  <Users size={16} className="mr-3 text-brand-red" /> Recent Staff Activity
                 </CardTitle>
+                <button 
+                  onClick={() => navigate('/team')}
+                  className="text-[10px] font-black uppercase tracking-widest text-brand-red hover:underline flex items-center gap-1"
+                >
+                  View All <ExternalLink size={10} />
+                </button>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="overflow-x-auto text-left">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <tbody className="bg-white divide-y divide-gray-200">
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-slate-100">
+                    <tbody className="bg-white divide-y divide-slate-100">
                       {recentAdmins.length > 0 ? recentAdmins.map((admin) => (
-                        <tr key={admin.id} className="even:bg-gray-50/80 hover:bg-gray-100/50 transition-colors">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center text-left">
-                              <div className="h-9 w-9 rounded-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center text-xs font-bold text-gray-400 mr-3 border border-gray-100 overflow-hidden">
+                        <tr 
+                          key={admin.id} 
+                          onClick={() => navigate(`/team/edit/${admin.id}`)}
+                          className="group cursor-pointer hover:bg-slate-50 transition-colors"
+                        >
+                          <td className="px-10 py-5 whitespace-nowrap">
+                            <div className="flex items-center">
+                              <div className="h-12 w-12 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-sm font-black text-slate-400 mr-4 overflow-hidden group-hover:border-red-200 transition-colors">
                                 {admin.photo_url ? (
                                   <img src={admin.photo_url} alt={admin.name} className="w-full h-full object-cover" />
                                 ) : (
@@ -216,23 +246,24 @@ const Dashboard = () => {
                                 )}
                               </div>
                               <div className="text-left">
-                                <div className="text-sm font-bold text-gray-900">{admin.name || admin.username}</div>
-                                <div className="text-[10px] text-gray-400 font-medium">{admin.email}</div>
+                                <div className="text-sm font-black text-slate-900 group-hover:text-brand-red transition-colors">{admin.name || admin.username}</div>
+                                <div className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">{admin.email}</div>
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`px-2 py-0.5 text-[9px] font-black uppercase tracking-tighter rounded-full border ${admin.role === 'admin' ? 'bg-red-50 text-brand-red border-red-100' : 'bg-gray-50 text-gray-500 border-gray-100'
-                              }`}>
+                          <td className="px-10 py-5 whitespace-nowrap">
+                            <span className={`px-3 py-1 text-[9px] font-black uppercase tracking-widest rounded-full border ${
+                              admin.role === 'admin' ? 'bg-red-50 text-brand-red border-red-100' : 'bg-slate-50 text-slate-500 border-slate-100'
+                            }`}>
                               {admin.role}
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-[11px] font-bold text-gray-400 text-right">
-                            {formatDate(admin.created_at)}
+                          <td className="px-10 py-5 whitespace-nowrap text-right">
+                             <ArrowRight size={14} className="ml-auto text-slate-200 group-hover:text-brand-red transform group-hover:translate-x-1 transition-all" />
                           </td>
                         </tr>
                       )) : (
-                        <tr><td className="p-10 text-center text-gray-400 italic">No admin activity.</td></tr>
+                        <tr><td colSpan={3} className="p-16 text-center text-slate-400 font-black uppercase tracking-widest italic">No System Activity Found</td></tr>
                       )}
                     </tbody>
                   </table>
@@ -240,41 +271,54 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            <Card className="border border-slate-300 shadow-sm overflow-hidden">
-              <CardHeader className="bg-gray-50/50 border-b border-gray-100 px-6 py-4">
-                <CardTitle className="text-sm font-black uppercase tracking-widest text-gray-500 flex items-center">
-                  <Calendar size={16} className="mr-2" /> Recent Bookings
+            <Card className="bg-white border border-slate-200 shadow-sm rounded-[3rem] overflow-hidden">
+              <CardHeader className="bg-slate-50/50 border-b border-slate-100 px-10 py-6 flex flex-row items-center justify-between">
+                <CardTitle className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 flex items-center">
+                  <Calendar size={16} className="mr-3 text-green-600" /> Recent Bookings
                 </CardTitle>
+                <button 
+                  onClick={() => navigate('/bookings')}
+                  className="text-[10px] font-black uppercase tracking-widest text-green-600 hover:underline flex items-center gap-1"
+                >
+                  View All <ExternalLink size={10} />
+                </button>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="overflow-x-auto text-left">
-                  <table className="min-w-full divide-y divide-gray-50">
-                    <tbody className="bg-white divide-y divide-gray-200 text-left">
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-slate-100">
+                    <tbody className="bg-white divide-y divide-slate-100">
                       {recentBookings.length > 0 ? recentBookings.map((booking) => (
-                        <tr key={booking.id} className="even:bg-gray-50/80 hover:bg-gray-100/50 transition-colors">
-                          <td className="px-6 py-4 whitespace-nowrap">
+                        <tr 
+                          key={booking.id}
+                          onClick={() => navigate('/bookings', { state: { highlightId: booking.id } })}
+                          className="group cursor-pointer hover:bg-slate-50 transition-colors"
+                        >
+                          <td className="px-10 py-5 whitespace-nowrap">
                             <div className="text-left">
-                              <div className="text-sm font-bold text-gray-900">
+                              <div className="text-sm font-black text-slate-900 group-hover:text-green-600 transition-colors">
                                 {booking.customers
                                   ? `${booking.customers.first_name} ${booking.customers.last_name}`
                                   : 'Guest Traveler'}
                               </div>
-                              <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{booking.service_type}</div>
+                              <div className="text-[10px] text-slate-400 font-black uppercase tracking-widest">{booking.service_type} • {formatDate(booking.check_in_date || booking.date || booking.created_at)}</div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right">
-                            <div className="text-sm font-black text-gray-900">Rs {(booking.total_price || booking.amount || 0).toFixed(2)}</div>
-                            <span className={`px-2 py-0.5 text-[9px] font-black uppercase tracking-tighter rounded-full border ${
+                          <td className="px-10 py-5 whitespace-nowrap text-right">
+                            <div className="text-sm font-black text-slate-900 mb-1">Rs {Number(booking.total_price || booking.amount || 0).toLocaleString()}</div>
+                            <span className={`px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-lg border ${
                               booking.status?.toLowerCase() === 'confirmed' || booking.status?.toLowerCase() === 'completed' ? 'bg-green-50 text-green-700 border-green-100' :
                               booking.status?.toLowerCase() === 'pending' ? 'bg-yellow-50 text-yellow-700 border-yellow-100' :
                                 'bg-red-50 text-red-700 border-red-100'
-                              }`}>
+                            }`}>
                               {booking.status}
                             </span>
                           </td>
+                          <td className="px-10 py-5 whitespace-nowrap text-right">
+                             <ArrowRight size={14} className="ml-auto text-slate-200 group-hover:text-green-600 transform group-hover:translate-x-1 transition-all" />
+                          </td>
                         </tr>
                       )) : (
-                        <tr><td className="p-10 text-center text-gray-400 italic">No recent bookings.</td></tr>
+                        <tr><td colSpan={3} className="p-16 text-center text-slate-400 font-black uppercase tracking-widest italic">No Bookings Recorded</td></tr>
                       )}
                     </tbody>
                   </table>
@@ -289,3 +333,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
