@@ -6,6 +6,7 @@
 - **Mobile Lint Pass**: Resolved 10+ ESLint warnings in the Home screen by removing unused dependencies and optimizing component destructuring.
 - **Admin Interactivity**: Refactored the dashboard and management tables (Recent Bookings, Activity) to support row-level click navigation, enabling deep-links into specific detail modals and profiles.
 - **Asset Resolution**: Verified category image mapping in `resolveImageUrl` ensuring compatibility between local assets and Supabase bucket storage.
+- **Session Security**: Migrated Admin App authentication storage to `sessionStorage`. Active sessions are now automatically terminated when the browser tab or window is closed, requiring re-authentication for every new session.
 
 ## 2026-04-01 - Admin Interactivity & Web Refinement
 - **Admin Dashboard**: Refactored `Dashboard.jsx` to enable full interactivity. Clickable summary cards for Staff, Customers, and Bookings now navigate to their respective pages. Added interactive "Recent Staff" and "Recent Bookings" rows with deep-linking to details.
