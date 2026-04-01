@@ -35,6 +35,28 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     let mounted = true;
 
+    const initAuth = async () => {
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      if (!mounted) return;
+
+      if (currentSession?.user) {
+        setSession(currentSession);
+        setUser(currentSession.user);
+        const adminVerified = await checkAdminStatus(currentSession.user);
+        if (!mounted) return;
+        setIsAdmin(adminVerified);
+        
+        // If they are not an admin BUT we found a session, show warning
+        if (!adminVerified) {
+          console.warn('[AuthContext] Session found but user is not an admin. Signing out.');
+          await supabase.auth.signOut();
+        }
+      }
+      setLoading(false);
+    };
+
+    initAuth();
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
         if (!mounted) return;
@@ -43,27 +65,23 @@ export const AuthProvider = ({ children }) => {
           setSession(currentSession);
           setUser(currentSession.user);
 
-          if (event === 'TOKEN_REFRESHED') {
-            setLoading(false);
-            return;
+          // Only re-verify if it's a specific auth event that implies a change
+          if (['SIGNED_IN', 'USER_UPDATED', 'MFA_CHALLENGE_VERIFIED'].includes(event)) {
+             const adminVerified = await checkAdminStatus(currentSession.user);
+             if (!mounted) return;
+             setIsAdmin(adminVerified);
+             
+             if (!adminVerified && event === 'SIGNED_IN') {
+               console.warn('[AuthContext] New sign-in detected but user is not an admin. Signing out.');
+               await supabase.auth.signOut();
+             }
           }
-
-          const adminVerified = await checkAdminStatus(currentSession.user);
-          if (!mounted) return;
-          setIsAdmin(adminVerified);
-          setLoading(false);
-
-          if (!adminVerified && event === 'SIGNED_IN') {
-            console.warn('[AuthContext] Authenticated user is not an admin. Signing out.');
-            await supabase.auth.signOut();
-          }
-
         } else {
           setSession(null);
           setUser(null);
           setIsAdmin(false);
-          setLoading(false);
         }
+        setLoading(false);
       }
     );
 

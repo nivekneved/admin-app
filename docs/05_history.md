@@ -1,5 +1,11 @@
 # 05 History & Agent Progress
 
+## 2026-04-01 - Admin Session Stability & API Integrity
+- **Admin API Fix**: Resolved a critical `400 Bad Request` error in `Reports.jsx` caused by a malformed query requesting non-existent `price` and `quantity` columns from `booking_items`. Updated to use the correct `amount` column and refined the revenue aggregation logic.
+- **Auth State Stabilization**: Refactored `AuthContext.jsx` to implement an explicit `initAuth()` sequence on mount. This ensures the admin session and role verification are fully resolved before the application proceeds to render protected routes, eliminating intermittent "No valid session" redirects during navigation.
+- **Session Security Enforcement**: Verified that `sessionStorage` is correctly handling tab-level isolation. Re-authenticated sessions now correctly persist across page refreshes but are strictly purged upon tab closure, meeting the user's security requirement.
+- **Interactivity Audit**: Confirmed all dashboard summary cards and recent activity rows (Bookings, Staff, Customers) are fully interactive and deep-link correctly to their management detail views.
+
 ## 2026-04-01 - Mobile Category Navigation & Ecosystem Stability
 - **Mobile Navigation Fix**: Resolved the "category cards not working" issue by implementing `!inner` joins in `useSearchServices.ts`. This ensures correct PostgreSQL filtering of root service records by nested category slugs.
 - **Expo Router Enhancement**: Updated category navigation in `(tabs)/index.tsx` to use robust object-based routing (`router.push({ pathname, params })`) for reliable cross-tab state propagation.

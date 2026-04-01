@@ -135,7 +135,7 @@ const Reports = () => {
   };
 
   const fetchBookingStats = async () => {
-    const { data } = await supabase.from('bookings').select('status, amount, total_price, booking_items(price, quantity)');
+    const { data } = await supabase.from('bookings').select('status, amount, total_price, booking_items(amount)');
     if (!data) return;
     
     const confirmedStatuses = ['confirmed', 'completed', 'paid'];
@@ -146,7 +146,7 @@ const Reports = () => {
     const revenue = data
       .filter(b => confirmedStatuses.includes(b.status?.toLowerCase()))
       .reduce((sum, b) => {
-        if (b.booking_items?.length) return sum + b.booking_items.reduce((is, it) => is + (Number(it.price) * Number(it.quantity || 1)), 0);
+        if (b.booking_items?.length) return sum + b.booking_items.reduce((is, it) => is + (Number(it.amount) || 0), 0);
         return sum + Number(b.total_price || b.amount || 0);
       }, 0);
 
