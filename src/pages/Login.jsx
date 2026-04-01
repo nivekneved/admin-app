@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Mail, Lock, LogIn, Loader2 } from 'lucide-react';
@@ -6,109 +6,93 @@ import { showAlert } from '../utils/swal';
 import { useAuth } from '../contexts/AuthContext';
 import logo from '../assets/logo.png';
 
+// ─────────────────────────────────────────────
+// Login — Clean & Simple
+// Only calls signInWithPassword.
+// AuthContext handles all role verification.
+// ─────────────────────────────────────────────
+
 const Login = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [isResetting, setIsResetting] = useState(false);
+    const [email, setEmail]                   = useState('');
+    const [password, setPassword]             = useState('');
+    const [loading, setLoading]               = useState(false);
+    const [isResetting, setIsResetting]       = useState(false);
     const [resetEmailSent, setResetEmailSent] = useState(false);
-    const { isAdmin, loading: authLoading } = useAuth();
+
+    const { session, isAdmin, loading: authLoading } = useAuth();
     const navigate = useNavigate();
 
-    // SUPABASE COMPLIANCE: If already logged in as admin, redirect away from login page
-    React.useEffect(() => {
-        if (!authLoading && isAdmin) {
-            console.log('LOGIN: Redundant login page visit detected. Redirecting to dashboard.');
+    // If already logged in as admin, skip the login page
+    useEffect(() => {
+        if (!authLoading && session && isAdmin) {
+            console.log('[Login] Already authenticated. Redirecting to dashboard.');
             navigate('/', { replace: true });
         }
-    }, [isAdmin, authLoading, navigate]);
+    }, [session, isAdmin, authLoading, navigate]);
 
+    // Show initializing spinner while auth context is resolving
     if (authLoading) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center bg-brand-charcoal px-4">
                 <Loader2 className="w-12 h-12 animate-spin text-brand-red mb-4" />
-                <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Initializing Portal...</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">
+                    Initializing Portal...
+                </p>
             </div>
         );
     }
 
+    // ── Login handler — no RPC here, AuthContext does the role check ──
     const handleLogin = async (e) => {
         e.preventDefault();
         if (!email || !password || loading) return;
-        
-        // 1. WATCHDOG (8 SECONDS): Absolute fail-safe for login hangs
-        const loginWatchdog = setTimeout(() => {
-            if (loading) {
-                console.warn('LOGIN: Watchdog triggered during sign-in hang.');
-                setLoading(false);
-                showAlert('Login Timeout', 'The connection is taking longer than usual. Please try again.', 'warning');
-            }
-        }, 8000);
 
         setLoading(true);
         try {
-            // SUPABASE SIGN IN
-            const { data, error: signInError } = await supabase.auth.signInWithPassword({
-                email,
-                password,
-            });
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-            if (signInError) throw signInError;
+            if (error) throw error;
 
-            const user = data.user;
-            console.log('LOGIN: User signed in, verifying admin permissions...');
+            // Success — Supabase session is live.
+            // AuthContext's onAuthStateChange will fire SIGNED_IN,
+            // run the admin RPC check, and update isAdmin.
+            // The useEffect above will then redirect to dashboard.
+            // Nothing else needed here.
+            console.log('[Login] Sign-in successful. Awaiting AuthContext verification...');
 
-            // Step 1: Immediate Admin Verification
-            // We await it here for immediate feedback, but the AuthContext will also sync this.
-            const { data: adminData, error: rpcError } = await supabase.rpc('get_auth_admin_status', { 
-                p_user_id: user.id 
-            });
-
-            if (rpcError) {
-                console.error('LOGIN: RPC Verification error:', rpcError.message);
-                // Fallback: If RPC fails but it's a real login, we let the AuthContext try its own sync
-                // However, for immediate feedback we'll proceed if we have a user
-            }
-
-            const isUserAdmin = adminData && adminData.length > 0;
-
-            if (isUserAdmin) {
-                console.log('LOGIN: Access granted for', email);
-                showAlert('Authorized', 'Welcome back to the Admin Portal', 'success');
-                navigate('/', { replace: true });
-            } else if (adminData) {
-                // If we got adminData (even if 0 length), we know definitively they aren't admin
-                console.warn('LOGIN: Unauthorized attempt by', email);
-                await supabase.auth.signOut();
-                showAlert('Access Denied', 'This account is not authorized to access the Admin Portal.', 'error');
-            }
         } catch (error) {
-            console.error('LOGIN: Auth error:', error.message);
-            showAlert('Authentication Failed', error.message || 'Invalid login credentials', 'error');
-        } finally {
-            clearTimeout(loginWatchdog);
+            console.error('[Login] Sign-in error:', error.message);
+
+            // Supabase returns "Invalid login credentials" for wrong email/password
+            const friendlyMessage =
+                error.message?.toLowerCase().includes('invalid login credentials')
+                    ? 'Incorrect email or password. Please try again.'
+                    : error.message || 'Authentication failed. Please try again.';
+
+            showAlert('Login Failed', friendlyMessage, 'error');
             setLoading(false);
         }
+        // Note: we intentionally don't clear loading on SUCCESS
+        // because the page will navigate away. Clearing it would cause a flash.
     };
 
+    // ── Reset password handler ──
     const handleResetPassword = async (e) => {
         e.preventDefault();
         if (!email) return;
 
         setLoading(true);
         try {
-            // SUPABASE GUIDELINE: Reset password flow
             const { error } = await supabase.auth.resetPasswordForEmail(email, {
                 redirectTo: `${window.location.origin}/reset-password`,
             });
-
             if (error) throw error;
 
             setResetEmailSent(true);
-            showAlert('Success', 'Password reset instructions have been sent to your email.', 'success');
+            showAlert('Email Sent', 'Password reset instructions have been sent to your email.', 'success');
         } catch (error) {
-            console.error('LOGIN: Reset error:', error.message);
-            showAlert('Error', error.message || 'Failed to send reset email', 'error');
+            console.error('[Login] Reset error:', error.message);
+            showAlert('Error', error.message || 'Failed to send reset email. Please try again.', 'error');
         } finally {
             setLoading(false);
         }
@@ -118,25 +102,29 @@ const Login = () => {
         <div className="min-h-screen flex items-center justify-center bg-brand-charcoal p-4">
             <div className="w-full max-w-md">
                 <div className="bg-white rounded-2xl p-8 shadow-2xl relative overflow-hidden">
-                    {/* Subtle accent line */}
+                    {/* Accent bar */}
                     <div className="absolute top-0 left-0 w-full h-2 bg-brand-red"></div>
 
+                    {/* Header */}
                     <div className="text-center mb-10 mt-2">
                         <img src={logo} alt="Travel Lounge" className="h-16 mx-auto mb-6" />
                         <h1 className="text-2xl font-bold text-gray-900 mb-1">
                             {isResetting ? 'Reset Password' : 'Admin Portal'}
                         </h1>
                         <p className="text-gray-500 text-sm">
-                            {isResetting 
-                                ? 'Enter your email to receive a secure reset link' 
+                            {isResetting
+                                ? 'Enter your email to receive a secure reset link'
                                 : 'Sign in to manage your bookings'}
                         </p>
                     </div>
 
+                    {/* ── Sign In Form ── */}
                     {!isResetting ? (
                         <form onSubmit={handleLogin} className="space-y-6">
                             <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700 block ml-1">Email Address</label>
+                                <label className="text-sm font-semibold text-gray-700 block ml-1">
+                                    Email Address
+                                </label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                                         <Mail size={18} />
@@ -148,6 +136,7 @@ const Login = () => {
                                         onChange={(e) => setEmail(e.target.value)}
                                         className="block w-full pl-10 pr-3 py-3 bg-gray-50 border border-slate-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition-all"
                                         placeholder="admin@travellounge.mu"
+                                        autoComplete="email"
                                     />
                                 </div>
                             </div>
@@ -155,7 +144,7 @@ const Login = () => {
                             <div className="space-y-2">
                                 <div className="flex justify-between items-center ml-1">
                                     <label className="text-sm font-semibold text-gray-700">Password</label>
-                                    <button 
+                                    <button
                                         type="button"
                                         onClick={() => setIsResetting(true)}
                                         className="text-[10px] font-black uppercase tracking-widest text-brand-red hover:underline"
@@ -174,6 +163,7 @@ const Login = () => {
                                         onChange={(e) => setPassword(e.target.value)}
                                         className="block w-full pl-10 pr-3 py-3 bg-gray-50 border border-slate-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition-all"
                                         placeholder="••••••••"
+                                        autoComplete="current-password"
                                     />
                                 </div>
                             </div>
@@ -194,9 +184,12 @@ const Login = () => {
                             </button>
                         </form>
                     ) : (
+                    /* ── Reset Password Form ── */
                         <form onSubmit={handleResetPassword} className="space-y-6">
                             <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700 block ml-1">Email Address</label>
+                                <label className="text-sm font-semibold text-gray-700 block ml-1">
+                                    Email Address
+                                </label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                                         <Mail size={18} />
@@ -208,6 +201,7 @@ const Login = () => {
                                         onChange={(e) => setEmail(e.target.value)}
                                         className="block w-full pl-10 pr-3 py-3 bg-gray-50 border border-slate-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition-all"
                                         placeholder="admin@travellounge.mu"
+                                        autoComplete="email"
                                     />
                                 </div>
                             </div>
@@ -220,19 +214,16 @@ const Login = () => {
                                 {loading ? (
                                     <Loader2 className="animate-spin" size={20} />
                                 ) : (
-                                    <span>{resetEmailSent ? 'Instructions Sent' : 'Send Reset Link'}</span>
+                                    <span>{resetEmailSent ? 'Instructions Sent ✓' : 'Send Reset Link'}</span>
                                 )}
                             </button>
 
-                            <button 
+                            <button
                                 type="button"
-                                onClick={() => {
-                                    setIsResetting(false);
-                                    setResetEmailSent(false);
-                                }}
+                                onClick={() => { setIsResetting(false); setResetEmailSent(false); }}
                                 className="w-full text-center text-xs text-gray-500 font-bold hover:text-gray-900 transition-colors"
                             >
-                                Back to Sign In
+                                ← Back to Sign In
                             </button>
                         </form>
                     )}
