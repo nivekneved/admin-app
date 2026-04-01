@@ -1,5 +1,12 @@
 # 05 History & Agent Progress
 
+## 2026-04-01 - Mobile Category Navigation & Ecosystem Stability
+- **Mobile Navigation Fix**: Resolved the "category cards not working" issue by implementing `!inner` joins in `useSearchServices.ts`. This ensures correct PostgreSQL filtering of root service records by nested category slugs.
+- **Expo Router Enhancement**: Updated category navigation in `(tabs)/index.tsx` to use robust object-based routing (`router.push({ pathname, params })`) for reliable cross-tab state propagation.
+- **Mobile Lint Pass**: Resolved 10+ ESLint warnings in the Home screen by removing unused dependencies and optimizing component destructuring.
+- **Admin Interactivity**: Refactored the dashboard and management tables (Recent Bookings, Activity) to support row-level click navigation, enabling deep-links into specific detail modals and profiles.
+- **Asset Resolution**: Verified category image mapping in `resolveImageUrl` ensuring compatibility between local assets and Supabase bucket storage.
+
 ## 2026-04-01 - Admin Interactivity & Web Refinement
 - **Admin Dashboard**: Refactored `Dashboard.jsx` to enable full interactivity. Clickable summary cards for Staff, Customers, and Bookings now navigate to their respective pages. Added interactive "Recent Staff" and "Recent Bookings" rows with deep-linking to details.
 - **Staff Management**: Enhanced `Team.jsx` and `ManageStaff.jsx` with clickable list rows and a new "Recent System Activities" tracker component to verify individual staff contributions (e.g., Mandini Boolauk).
