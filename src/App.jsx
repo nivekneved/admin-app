@@ -2,10 +2,10 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Layout from './components/Layout';
-import ProtectedRoute from './components/ProtectedRoute';
-import { AuthProvider } from './contexts/AuthContext';
-import Login from './pages/Login';
-import ResetPassword from './pages/ResetPassword';
+// import ProtectedRoute from './components/ProtectedRoute'; // AUTH DISABLED
+// import { AuthProvider } from './contexts/AuthContext';    // AUTH DISABLED
+// import Login from './pages/Login';                        // AUTH DISABLED
+// import ResetPassword from './pages/ResetPassword';        // AUTH DISABLED
 import Dashboard from './pages/Dashboard';
 import Services from './pages/Services';
 import Orders from './pages/Orders';
@@ -48,15 +48,16 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Router>
-          <Routes>
-          {/* Public Routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
+      {/* <AuthProvider> AUTH DISABLED */}
+      <Router>
+        <Routes>
+          {/* AUTH DISABLED — login/reset routes commented out */}
+          {/* <Route path="/login" element={<Login />} /> */}
+          {/* <Route path="/reset-password" element={<ResetPassword />} /> */}
 
-          {/* Core App with Layout & Protection */}
-          <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+          {/* All routes are now open — ProtectedRoute wrapper removed */}
+          {/* <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}> */}
+          <Route element={<Layout />}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/team" element={<Team />} />
             <Route path="/team/create" element={<ManageStaff />} />
@@ -87,14 +88,14 @@ function App() {
             <Route path="/popup-ads" element={<PopupAds />} />
             <Route path="/navigation" element={<NavigationManager />} />
             <Route path="/settings" element={<Settings />} />
-            
+
             {/* Fallbacks */}
             <Route path="/users" element={<Navigate to="/team" replace />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Route>
         </Routes>
       </Router>
-      </AuthProvider>
+      {/* </AuthProvider> AUTH DISABLED */}
     </QueryClientProvider>
   );
 }
