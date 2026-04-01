@@ -13,11 +13,9 @@ import { showAlert, showConfirm } from '../utils/swal';
 import ImageUpload from '../components/ImageUpload';
 import { resolveImageUrl } from '../utils/image';
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 const slugify = (str) =>
     str.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
-// — Icon Mapping —
 const categoryIcons = {
     'hotels': <Hotel size={18} strokeWidth={2.5} className="text-brand-red" />,
     'activities': <Activity size={18} strokeWidth={2.5} className="text-brand-red" />,
@@ -43,13 +41,11 @@ const defaultForm = () => ({
     show_on_home: false,
 });
 
-// ═════════════════════════════════════════════════════════════════════════════
 const Categories = () => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [togglingId, setTogglingId] = useState(null);
 
-    // — Toolbar —
     const [searchTerm, setSearchTerm] = useState('');
     const [filterActive, setFilterActive] = useState('All');
     const [sortBy, setSortBy] = useState('display_order:asc');
@@ -57,7 +53,6 @@ const Categories = () => {
 
     const selectCls = "bg-gray-50 border border-slate-300 text-gray-900 text-[11px] font-black uppercase tracking-widest rounded-2xl focus:ring-brand-red focus:border-brand-red block w-full p-2.5 appearance-none pr-8 transition-all cursor-pointer hover:bg-white";
 
-    // — Modals —
     const [showFormModal, setShowFormModal] = useState(false);
     const [showViewModal, setShowViewModal] = useState(false);
     const [viewingCat, setViewingCat] = useState(null);
@@ -67,7 +62,6 @@ const Categories = () => {
 
     useEffect(() => { fetchCategories(); }, []);
 
-    // ─── Fetch ────────────────────────────────────────────────────────────────
     const fetchCategories = async () => {
         setLoading(true);
         try {
@@ -86,7 +80,6 @@ const Categories = () => {
         }
     };
 
-    // ─── Filter + Sort ────────────────────────────────────────────────────────
     const processed = useMemo(() => {
         let list = [...categories];
 
@@ -122,7 +115,6 @@ const Categories = () => {
         setSortBy('display_order:asc');
     };
 
-    // ─── CRUD ─────────────────────────────────────────────────────────────────
     const openCreateModal = () => {
         setEditingCat(null);
         setFormData(defaultForm());
@@ -156,7 +148,6 @@ const Categories = () => {
         const { name, value, type, checked } = e.target;
         setFormData(prev => {
             const updated = { ...prev, [name]: type === 'checkbox' ? checked : value };
-            // Auto-generate slug from name if creating new
             if (name === 'name' && !editingCat) updated.slug = slugify(value);
             return updated;
         });
@@ -214,7 +205,6 @@ const Categories = () => {
         }
     };
 
-    // ─── Toggle active ─────────────────────────────────────────────────────────
     const toggleActive = async (cat) => {
         setTogglingId(cat.id);
         const next = !cat.is_active;
@@ -233,7 +223,6 @@ const Categories = () => {
         }
     };
 
-    // ─── Display order quick adjust ────────────────────────────────────────────
     const shiftOrder = async (cat, direction) => {
         const newOrder = (cat.display_order || 0) + direction;
         try {
@@ -253,10 +242,8 @@ const Categories = () => {
 
 
 
-    // ═══════════════════════════════════════════════════════════════════════════
     return (
         <div>
-            {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                 <div>
                     <h1 className="text-2xl font-black text-gray-900 tracking-tight">Categories</h1>
@@ -401,7 +388,6 @@ const Categories = () => {
                                                 </div>
                                             </td>
 
-                                            {/* Configuration (Description + Display Order) */}
                                             <td className="px-8 py-5">
                                                 <div className="text-[11px] font-bold text-gray-400 leading-relaxed mb-1.5 max-w-[200px] line-clamp-2" title={cat.description}>
                                                     {cat.description || 'No description provided.'}
@@ -499,7 +485,6 @@ const Categories = () => {
                                         </button>
                                     </div>
 
-                                    {/* Content */}
                                     <div className="flex-1">
                                         <h3 className="text-lg font-black text-gray-900 tracking-tight mb-1 group-hover:text-brand-red transition-colors">{cat.name}</h3>
                                         <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 font-mono">/{cat.slug}</p>
@@ -508,7 +493,6 @@ const Categories = () => {
                                         </p>
                                     </div>
 
-                                    {/* Meta info */}
                                     <div className="flex items-center justify-between py-3 border-t border-gray-50 mb-4 mt-auto">
                                         <div className="flex items-center gap-2">
                                             <span className="text-[9px] font-black text-gray-300 uppercase tracking-widest">Order:</span>
@@ -525,7 +509,6 @@ const Categories = () => {
                                         )}
                                     </div>
 
-                                    {/* Actions */}
                                     <div className="grid grid-cols-3 gap-2">
                                         <button
                                             onClick={() => openViewModal(cat)}
@@ -556,13 +539,9 @@ const Categories = () => {
                 </CardContent>
             </Card>
 
-            {/* ═══════════════════════════════════════════════════════════════
-          VIEW Modal
-      ═══════════════════════════════════════════════════════════════ */}
             <Modal isOpen={showViewModal} onClose={() => setShowViewModal(false)} title="Category Details" size="md">
                 {viewingCat && (
                     <div className="space-y-4">
-                        {/* Header */}
                         <div className="flex items-center gap-4 bg-gray-50 rounded-xl p-4 border border-slate-300">
                             <div className="h-12 w-12 rounded-2xl bg-red-50/50 border border-red-100/50 flex items-center justify-center text-2xl shadow-sm">
                                 {getCategoryIcon(viewingCat.name)}
@@ -576,7 +555,6 @@ const Categories = () => {
                             </span>
                         </div>
 
-                        {/* Details grid */}
                         <div className="grid grid-cols-2 gap-3">
                             <div className="bg-gray-50 rounded-xl p-3 border border-slate-300">
                                 <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1"><Hash size={10} className="mr-1" /> Display Order</div>
@@ -622,9 +600,6 @@ const Categories = () => {
                 )}
             </Modal>
 
-            {/* ═══════════════════════════════════════════════════════════════
-          CREATE / EDIT Modal
-      ═══════════════════════════════════════════════════════════════ */}
             <Modal isOpen={showFormModal} onClose={closeFormModal} title={editingCat ? 'Edit Category' : 'Add New Category'} size="md">
                 <form onSubmit={handleSubmit} className="space-y-4">
 
@@ -693,7 +668,6 @@ const Categories = () => {
                         aspectRatio="aspect-video"
                     />
 
-                    {/* Toggles */}
                     <div className="flex items-center gap-6 pt-1">
                         <label className="flex items-center gap-2 cursor-pointer select-none">
                             <input type="checkbox" name="is_active" checked={formData.is_active} onChange={handleInputChange} className="accent-brand-red w-4 h-4" />

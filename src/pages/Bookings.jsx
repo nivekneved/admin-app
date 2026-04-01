@@ -19,7 +19,6 @@ const Bookings = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [bookingsPerPage] = useState(8);
 
-  // ─── Queries ─────────────────────────────────────────────────────────────
   const { data: bookings = [], isLoading: loading, refetch: refetchBookings } = useQuery({
     queryKey: ['bookings'],
     queryFn: async () => {
@@ -49,20 +48,13 @@ const Bookings = () => {
     }
   });
 
-  // — Filtering & Sorting State —
   const [filterStatus, setFilterStatus] = useState('All');
   const [filterType, setFilterType] = useState('All');
   const [sortBy, setSortBy] = useState('created_at:desc');
 
-  // Modal states
-
-
-
-  // — View Booking Modal —
   const [showViewModal, setShowViewModal] = useState(false);
   const [viewingBooking, setViewingBooking] = useState(null);
 
-  // — Edit Booking Modal —
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingBooking, setEditingBooking] = useState(null);
   const [editFormData, setEditFormData] = useState({
@@ -74,12 +66,7 @@ const Bookings = () => {
   });
   const [editLoading, setEditLoading] = useState(false);
 
-  // — Status toggle loading —
   const [togglingId, setTogglingId] = useState(null);
-
-
-  // Removed fetchCustomers as it was only used for the old Add Booking modal
-
 
   const getActivityIcon = (type) => {
     switch (type?.toLowerCase()) {
@@ -97,16 +84,11 @@ const Bookings = () => {
     return 'bg-red-50 text-red-700 border-red-100';
   };
 
-  // Removed redundant handleSubmit - Use CreateBooking page for transactional safety
-
-
-  // ─── View Booking ─────────────────────────────────────────────────────────
   const openViewModal = (booking) => {
     setViewingBooking(booking);
     setShowViewModal(true);
   };
 
-  // ─── Edit Booking ─────────────────────────────────────────────────────────
   const openEditModal = (booking) => {
     setEditingBooking(booking);
     setEditFormData({
@@ -135,7 +117,7 @@ const Bookings = () => {
           service_name: editFormData.service_name,
           check_in_date: editFormData.check_in_date,
           amount: parseFloat(editFormData.amount) || 0,
-          total_price: parseFloat(editFormData.amount) || 0, // Ensure both are synced
+          total_price: parseFloat(editFormData.amount) || 0,
           status: editFormData.status,
           updated_at: new Date().toISOString()
         })
@@ -154,7 +136,6 @@ const Bookings = () => {
     }
   };
 
-  // ─── Quick Status Toggle ──────────────────────────────────────────────────
   const cycleStatus = async (booking) => {
     const next = {
       Pending: 'Confirmed',
@@ -180,7 +161,6 @@ const Bookings = () => {
     }
   };
 
-  // ─── Delete Booking ───────────────────────────────────────────────────────
   const deleteBooking = async (id) => {
     const result = await showConfirm(
       'Delete Booking?',
@@ -211,11 +191,9 @@ const Bookings = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  // ─── Filter + Pagination ──────────────────────────────────────────────────
   const filteredBookings = useMemo(() => {
     let list = [...bookings];
 
-    // 1. Search filter
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       list = list.filter(b => {
@@ -228,17 +206,14 @@ const Bookings = () => {
       });
     }
 
-    // 2. Status filter
     if (filterStatus !== 'All') {
       list = list.filter(b => b.status === filterStatus);
     }
 
-    // 3. Activity Type filter
     if (filterType !== 'All') {
       list = list.filter(b => b.service_type === filterType);
     }
 
-    // 4. Sorting
     const [field, dir] = sortBy.split(':');
     list.sort((a, b) => {
       let vA, vB;
@@ -276,13 +251,11 @@ const Bookings = () => {
     setCurrentPage(1);
   };
 
-
   const indexOfLastBooking = currentPage * bookingsPerPage;
   const indexOfFirstBooking = indexOfLastBooking - bookingsPerPage;
   const currentBookings = filteredBookings.slice(indexOfFirstBooking, indexOfLastBooking);
   const totalPages = Math.ceil(filteredBookings.length / bookingsPerPage);
 
-  // ─────────────────────────────────────────────────────────────────────────
   return (
     <div>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
@@ -446,7 +419,6 @@ const Bookings = () => {
                         </span>
                       </td>
 
-                      {/* ── CRUD Action Buttons ── */}
                       <td className="px-8 py-5 whitespace-nowrap text-right">
                         <div className="flex justify-end items-center gap-1">
                           <button
@@ -512,7 +484,6 @@ const Bookings = () => {
             )}
           </div>
 
-          {/* Pagination */}
           {filteredBookings.length > bookingsPerPage && (
             <div className="flex items-center justify-between px-8 py-6 bg-gray-50/50 border-t border-slate-300">
               <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
@@ -539,9 +510,6 @@ const Bookings = () => {
         </CardContent>
       </Card>
 
-      {/* ═══════════════════════════════════════════════════════════════
-          VIEW Booking Modal
-      ═══════════════════════════════════════════════════════════════ */}
       <Modal
         isOpen={showViewModal}
         onClose={() => setShowViewModal(false)}
@@ -550,7 +518,6 @@ const Bookings = () => {
       >
         {viewingBooking && (
           <div className="space-y-5">
-            {/* Header strip */}
             <div className="flex items-center justify-between bg-gray-50 rounded-xl p-4 border border-slate-300">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-full bg-white border border-slate-300 flex items-center justify-center text-sm font-black text-gray-500 shadow-sm">
@@ -570,7 +537,6 @@ const Bookings = () => {
               </span>
             </div>
 
-            {/* Detail grid */}
             <div className="grid grid-cols-2 gap-3">
 
               <div className="bg-gray-50 rounded-xl p-3 border border-slate-300">
@@ -666,7 +632,6 @@ const Bookings = () => {
               </div>
             </div>
 
-            {/* Actions */}
             <div className="flex justify-end gap-2 pt-2 border-t border-gray-50">
               <button
                 onClick={() => { setShowViewModal(false); openEditModal(viewingBooking); }}
@@ -685,9 +650,6 @@ const Bookings = () => {
         )}
       </Modal>
 
-      {/* ═══════════════════════════════════════════════════════════════
-          EDIT Booking Modal
-      ═══════════════════════════════════════════════════════════════ */}
       <Modal
         isOpen={showEditModal}
         onClose={() => setShowEditModal(false)}
@@ -791,8 +753,6 @@ const Bookings = () => {
           </div>
         </form>
       </Modal>
-
-      {/* Modal for adding removed to favor transactional CreateBooking page */}
 
     </div >
   );

@@ -256,7 +256,6 @@ const CreateService = () => {
         });
     };
 
-    // — Itinerary Handlers —
     const addItineraryDay = () => {
         setFormData(prev => ({
             ...prev,
@@ -371,15 +370,12 @@ const CreateService = () => {
                 serviceId = data.id;
             }
 
-            // Sync Many-to-Many Categories
-            // First clear existing
             const { error: deleteError } = await supabase
                 .from('service_categories')
                 .delete()
                 .eq('service_id', serviceId);
             if (deleteError) throw deleteError;
 
-            // Then insert new associations
             if (formData.category_ids.length > 0) {
                 const associations = formData.category_ids.map(catId => ({
                     service_id: serviceId,
@@ -412,7 +408,6 @@ const CreateService = () => {
 
     return (
         <div className="max-w-6xl mx-auto space-y-8 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {/* Header & Navigation */}
             <div className="flex items-center justify-between">
                 <button
                     onClick={() => navigate('/services')}
@@ -434,7 +429,6 @@ const CreateService = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8">
-                {/* Service Hero Card */}
                 <div className="relative group">
                     <div className="absolute -inset-1 bg-gradient-to-r from-brand-red to-red-400 rounded-3xl blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
                     <Card className="relative bg-white border border-slate-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
@@ -444,7 +438,6 @@ const CreateService = () => {
                         </div>
                         <CardContent className="px-10 pb-10 relative">
                             <div className="flex flex-col md:flex-row items-end gap-8 -mt-20">
-                                {/* Image Preview Section */}
                                 <div className="relative group/photo flex-shrink-0">
                                     <div className="w-56 h-56 rounded-3xl border-[6px] border-white shadow-2xl bg-gray-50 overflow-hidden relative">
                                         <ImageUpload
@@ -504,9 +497,7 @@ const CreateService = () => {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Left Column: Core Details */}
                     <div className="lg:col-span-2 space-y-8">
-                        {/* Section: Standard Details */}
                         <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
                             <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em] mb-4">
                                 <Tag size={16} className="text-brand-red" /> Service Identity
@@ -691,7 +682,6 @@ const CreateService = () => {
                         </section>
 
 
-                        {/* Section: Promotional Strategy */}
                         <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
                             <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em] mb-4">
                                 <Tag size={16} className="text-brand-red" /> Promotional Strategy
@@ -727,7 +717,6 @@ const CreateService = () => {
                             </div>
                         </section>
 
-                        {/* Section: Visual Gallery */}
                         <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
@@ -779,7 +768,6 @@ const CreateService = () => {
                             </div>
                         </section>
 
-                        {/* Section: Narrative Highlights & Terms */}
                         <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-8">
                              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
                                 <div>
@@ -854,7 +842,6 @@ const CreateService = () => {
                              </div>
                         </section>
 
-                        {/* Section: Hotel/Room Type Specifications (Conditional) */}
                         {formData.category_ids.some(id => categories.find(c => c.id === id)?.name === 'Hotels') && (
                             <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
                                 <div className="flex items-center justify-between mb-4">
@@ -956,10 +943,9 @@ const CreateService = () => {
                                                                             </Button>
                                                                         </div>
                                                                         
-                                                                        {/* Hidden ImageUpload for gallery context */}
                                                                         <div className="border border-slate-300 rounded-xl p-3 bg-gray-50/50 border-dashed">
                                                                             <ImageUpload
-                                                                                value="" // Always empty as we push to array
+                                                                                value=""
                                                                                 onChange={url => addRoomImage(idx, url)}
                                                                                 folder="services"
                                                                                 aspectRatio="aspect-[4/1]"
@@ -971,7 +957,6 @@ const CreateService = () => {
                                                                 </div>
                                                             </div>
 
-                                                            {/* Room Image Gallery Preview */}
                                                             <div className="flex flex-wrap gap-3 mt-2">
                                                                 {(rt.images || []).map((imgUrl, imgIdx) => (
                                                                     <div key={imgIdx} className="relative group/img w-20 h-20 rounded-xl overflow-hidden border border-slate-300 shadow-sm">
@@ -1085,7 +1070,6 @@ const CreateService = () => {
                             </section>
                         )}
 
-                        {/* Section: Activity/Cruise Itinerary (Conditional) */}
                         {formData.category_ids.some(id => {
                             const cat = categories.find(c => c.id === id);
                             return cat && (cat.name === 'Activities' || cat.name === 'Cruises' || cat.name === 'Group Tours');
@@ -1177,7 +1161,6 @@ const CreateService = () => {
                             )}
                     </div>
 
-                    {/* Right Column: Numbers & Status */}
                     <div className="lg:col-span-1 space-y-8">
                         <section className="bg-brand-charcoal text-white p-8 rounded-3xl shadow-xl shadow-gray-200 space-y-6 relative overflow-hidden">
                             <div className="absolute top-0 right-0 p-8 text-white/5 -translate-y-4 translate-x-4">

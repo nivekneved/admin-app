@@ -25,7 +25,7 @@ const Login = () => {
     // If already logged in as admin, skip the login page
     useEffect(() => {
         if (!authLoading && session && isAdmin) {
-            console.log('[Login] Already authenticated. Redirecting to dashboard.');
+
             navigate('/', { replace: true });
         }
     }, [session, isAdmin, authLoading, navigate]);
@@ -49,7 +49,7 @@ const Login = () => {
 
         setLoading(true);
         try {
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            const { error } = await supabase.auth.signInWithPassword({ email, password });
 
             if (error) throw error;
 
@@ -58,7 +58,7 @@ const Login = () => {
             // run the admin RPC check, and update isAdmin.
             // The useEffect above will then redirect to dashboard.
             // Nothing else needed here.
-            console.log('[Login] Sign-in successful. Awaiting AuthContext verification...');
+
 
         } catch (error) {
             console.error('[Login] Sign-in error:', error.message);

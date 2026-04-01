@@ -1,11 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthProvider } from './contexts/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
-// import ProtectedRoute from './components/ProtectedRoute'; // AUTH DISABLED
-// import { AuthProvider } from './contexts/AuthContext';    // AUTH DISABLED
-// import Login from './pages/Login';                        // AUTH DISABLED
-// import ResetPassword from './pages/ResetPassword';        // AUTH DISABLED
+import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Services from './pages/Services';
 import Orders from './pages/Orders';
@@ -37,8 +36,8 @@ import NavigationManager from './pages/NavigationManager';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 10,   // 10 minutes
+      staleTime: 1000 * 60 * 5,
+      gcTime: 1000 * 60 * 10,
       retry: 1,
       refetchOnWindowFocus: false,
     },
@@ -48,16 +47,11 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      {/* <AuthProvider> AUTH DISABLED */}
-      <Router>
-        <Routes>
-          {/* AUTH DISABLED — login/reset routes commented out */}
-          {/* <Route path="/login" element={<Login />} /> */}
-          {/* <Route path="/reset-password" element={<ResetPassword />} /> */}
-
-          {/* All routes are now open — ProtectedRoute wrapper removed */}
-          {/* <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}> */}
-          <Route element={<Layout />}>
+      <AuthProvider>
+        <Router>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/team" element={<Team />} />
             <Route path="/team/create" element={<ManageStaff />} />
@@ -89,13 +83,12 @@ function App() {
             <Route path="/navigation" element={<NavigationManager />} />
             <Route path="/settings" element={<Settings />} />
 
-            {/* Fallbacks */}
             <Route path="/users" element={<Navigate to="/team" replace />} />
-            <Route path="*" element={<Navigate to="/" />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>
       </Router>
-      {/* </AuthProvider> AUTH DISABLED */}
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

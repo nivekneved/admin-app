@@ -1,5 +1,11 @@
 # 05 History & Agent Progress
 
+## 2026-04-01 - Ecosystem Stabilization & Debloat (Production Candidate)
+- **Admin App Security**: Fully restored `AuthProvider` and `ProtectedRoute` around the `/` layout routes in `App.jsx`, neutralizing an open-access authentication bypass. Purged unrouted views (`ResetPassword.jsx`) and debug payloads (`console.log`) throughout the auth cycle. Refactored `Login.jsx` to prevent unused variables from breaking CI.
+- **Mobile App Build Stabilizer**: Resolved catastrophic ESLint parser failures by installing the orphaned `eslint-plugin-import` dev dependency required by Expo. Mobile pipelines now pass `npm run lint` cleanly.
+- **Web App Strict Typings**: Erased all rogue `any` Typescript signatures within the `privacy-policy` to `Record<string, unknown>`. Patched a severe React hook optimization warning in `BookingWizard.tsx` by migrating unstable generic `watch()` calls to `useWatch({ control })`, and converted rigid Zod `.default('')` properties to `.optional()` mapped fields for 100% accurate `react-hook-form` type resolution. Fixed broken DOM parsing map in `terms-conditions`.
+- **Ecosystem Node Debloat**: Performed mass uninstallation of heavy, orphaned NPM dependencies across the architecture utilizing `depcheck`, shrinking deployment pipelines (Removed `next-intl`, `react-dropzone`, `react-hot-toast`, `uuid`, `date-fns`, `qrcode.react`). 
+- **Compilation Gate Pass**: Both `npx tsc --noEmit` and pipeline lint validations built perfectly locally, yielding `EXIT CODE 0` clearing the final deployment gate.
 ## 2026-03-31 - Service Metadata & Card Teasers
 - **Database Schema**: Added `short_description` column to `public.services` for card-specific summaries.
 - **Admin App Enhancement**: Integrated "Card Teaser (Short Description)" field into `CreateService.jsx` for both creation and editing.

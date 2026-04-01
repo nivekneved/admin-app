@@ -20,12 +20,10 @@ const CMS = () => {
     const [activeSection, setActiveSection] = useState(null);
     const [content, setContent] = useState({});
 
-    // Fetch unique pages on mount
     useEffect(() => {
         const fetchPages = async () => {
             setPagesLoading(true);
             try {
-                // Get unique page_slugs
                 const { data, error } = await supabase
                     .from('content_blocks')
                     .select('page_slug');
@@ -53,7 +51,6 @@ const CMS = () => {
         fetchPages();
     }, []);
 
-    // Fetch sections when activePage changes
     useEffect(() => {
         if (activePage) {
             fetchSections();
@@ -120,8 +117,7 @@ const CMS = () => {
         try {
             const block = sections.find(s => s.section_key === activeSection);
             if (!block) throw new Error('No active section to save');
-
-            // 1. Audit current state
+            
             console.log(`CMS_SAVE: Attempting to update ${activePage}/${activeSection}`);
 
             const { data, error } = await supabase
@@ -199,14 +195,12 @@ const CMS = () => {
             </header>
 
             <div className="flex-1 flex overflow-hidden">
-                {/* 1. Page & Section Menu (Combined Sidebar) */}
                 <aside className="w-80 border-r border-gray-100 bg-white flex flex-col pt-8">
                     <div className="px-8 mb-6">
                         <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">Architectural View</h2>
                     </div>
 
                     <div className="flex-1 overflow-y-auto px-4 space-y-8 pb-10">
-                        {/* Page Selection */}
                         <div className="space-y-2">
                              <div className="px-4 text-[9px] font-bold text-red-500 uppercase tracking-widest bg-red-50 py-1.5 rounded-lg mb-4">Site Maps</div>
                              {pages.map(page => (
@@ -226,7 +220,6 @@ const CMS = () => {
                                         {activePage === page.id && <ChevronRight size={14} className="text-slate-400" />}
                                     </button>
                                     
-                                    {/* Inline sections if active */}
                                     {activePage === page.id && (
                                         <div className="ml-4 pl-4 border-l-2 border-slate-100 py-2 space-y-1 mt-2 mb-4 animate-in slide-in-from-left-2 duration-300">
                                             {sections.length > 0 ? sections.map(section => (
@@ -255,7 +248,6 @@ const CMS = () => {
                     </div>
                 </aside>
 
-                {/* 2. Editor Canvas */}
                 <main className="flex-1 overflow-y-auto p-12 lg:p-20 bg-slate-50/50">
                     <div className="max-w-4xl mx-auto">
                         {!activeSection ? (

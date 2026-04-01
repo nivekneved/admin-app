@@ -22,23 +22,19 @@ const Dashboard = () => {
   const fetchDashboardData = async () => {
     setLoading(true);
     try {
-      // Get the start of today in local time (UTC+4 for Mauritius)
       const now = new Date();
       const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       
-      // 1. Fetch Exact Counts using head queries (no row limits)
       const { count: adminCount } = await supabase.from('admins').select('*', { count: 'exact', head: true });
       const { count: customerCount } = await supabase.from('customers').select('*', { count: 'exact', head: true });
       const { count: bookingCount } = await supabase.from('bookings').select('*', { count: 'exact', head: true });
 
-      // 2. Fetch Recent Admins
       const { data: admins } = await supabase
         .from('admins')
         .select('id, username, email, role, created_at, photo_url, name')
         .order('created_at', { ascending: false })
         .limit(4);
 
-      // 3. Fetch Recent Bookings with Customer Info
       const { data: bookings } = await supabase
         .from('bookings')
         .select(`
@@ -56,23 +52,19 @@ const Dashboard = () => {
         .order('created_at', { ascending: false })
         .limit(4);
 
-      // 4. Calculate Total Revenue & Today's Stats
-      // Fetch more rows to ensure accurate calculation for revenue (limit to 10k for safety)
       const { data: allBookingsData } = await supabase
         .from('bookings')
         .select('total_price, amount, status, created_at')
-        .range(0, 9999);
+        .range(0, 999);
 
       const allBookings = allBookingsData || [];
       
-      // Revenue should only count confirmed/completed bookings (case-insensitive check)
       const confirmedStatuses = ['confirmed', 'completed', 'paid'];
       
       const revenue = allBookings
         .filter(b => confirmedStatuses.includes(b.status?.toLowerCase()))
         .reduce((sum, b) => sum + (Number(b.total_price || b.amount) || 0), 0);
 
-      // Today's Stats
       const todayBookings = allBookings.filter(b => new Date(b.created_at) >= startOfToday);
       const todayTotal = todayBookings.length;
       const todayRevenue = todayBookings
@@ -92,8 +84,10 @@ const Dashboard = () => {
       setRecentBookings(bookings || []);
       setLastSynced(new Date().toLocaleTimeString());
 
+
+
     } catch (err) {
-      console.error('Dashboard Data Sync Error:', err);
+      console.error('Dashboard Data Master Sync Error:', err);
     } finally {
       setLoading(false);
     }
@@ -137,7 +131,6 @@ const Dashboard = () => {
         </div>
       ) : (
         <>
-          {/* Dashboard Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <Card className="bg-white border border-slate-300 shadow-sm hover:shadow-md transition-all h-full">
               <CardContent className="p-6">
@@ -201,7 +194,6 @@ const Dashboard = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Recent Admins Card */}
             <Card className="border border-slate-300 shadow-sm overflow-hidden">
               <CardHeader className="bg-gray-50/50 border-b border-gray-100 px-6 py-4">
                 <CardTitle className="text-sm font-black uppercase tracking-widest text-gray-500 flex items-center">
@@ -248,7 +240,6 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            {/* Recent Bookings Card */}
             <Card className="border border-slate-300 shadow-sm overflow-hidden">
               <CardHeader className="bg-gray-50/50 border-b border-gray-100 px-6 py-4">
                 <CardTitle className="text-sm font-black uppercase tracking-widest text-gray-500 flex items-center">

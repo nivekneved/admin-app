@@ -14,10 +14,8 @@ import ExcelImport from '../components/ExcelImport';
 import { bulkSyncServices } from '../services/serviceSync';
 import { showAlert, showConfirm } from '../utils/swal';
 
-// ─── Constants ────────────────────────────────────────────────────────────────
 const STATUSES = ['In Stock', 'Low Stock', 'Out of Stock'];
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 const statusBadge = (s) => {
   if (s === 'In Stock') return 'bg-green-50 text-green-700 border-green-100';
   if (s === 'Low Stock') return 'bg-yellow-50 text-yellow-700 border-yellow-100';
@@ -25,7 +23,6 @@ const statusBadge = (s) => {
   return 'bg-gray-50 text-gray-500 border-gray-100';
 };
 
-// ─── Service thumbnail ────────────────────────────────────────────────────────
 const Thumb = ({ src, size = 'sm' }) => {
   const [error, setError] = React.useState(false);
   const dim = size === 'sm' ? 'h-9 w-9' : 'h-10 w-10';
@@ -46,7 +43,6 @@ const Thumb = ({ src, size = 'sm' }) => {
   );
 };
 
-// ─── Service Card Image with Fallback ─────────────────────────────────────────
 const ServiceCardImage = ({ src }) => {
   const [error, setError] = React.useState(false);
 
@@ -67,7 +63,6 @@ const ServiceCardImage = ({ src }) => {
   );
 };
 
-// ═════════════════════════════════════════════════════════════════════════════
 const Services = () => {
   const navigate = useNavigate();
   const [viewMode, setViewMode] = useState('list');
@@ -75,7 +70,6 @@ const Services = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
-  // ─── Queries ─────────────────────────────────────────────────────────────
   const { data: categories = [], isLoading: categoriesLoading } = useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
@@ -122,7 +116,6 @@ const Services = () => {
 
   const loading = categoriesLoading || servicesLoading;
 
-  // — Toolbar —
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [filterStatus, setFilterStatus] = useState('All');
@@ -144,13 +137,11 @@ const Services = () => {
     return Array.from(set).sort();
   }, [services]);
 
-  // Reset page when filters change
   React.useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, selectedCategories, filterStatus, filterRegion, minPrice, maxPrice, selectedAmenities, sortBy]);
 
 
-  // ─── Handlers ─────────────────────────────────────────────────────────────
   const openCreate = () => navigate('/services/create');
   const openEdit = (s) => navigate(`/services/edit/${s.id}`);
 
@@ -177,14 +168,9 @@ const Services = () => {
   };
   
   const handleBulkImport = async (data) => {
-    try {
-      await bulkSyncServices(data);
-      showAlert('Success', `${data.length} services imported successfully`, 'success');
-      refetchServices();
-    } catch (error) {
-      console.error('Import error:', error);
-      throw error; // Re-throw to be caught by ExcelImport component handleImport
-    }
+    await bulkSyncServices(data);
+    showAlert('Success', `${data.length} services imported successfully`, 'success');
+    refetchServices();
   };
 
   const hasActiveFilters = searchTerm || selectedCategories.length > 0 || filterStatus !== 'All' || filterRegion !== 'All' || minPrice || maxPrice || selectedAmenities.length > 0;
@@ -202,7 +188,6 @@ const Services = () => {
     );
   };
 
-  // ─── Filter & Search ──────────────────────────────────────────────────────
   const processed = useMemo(() => {
     let list = [...services];
     if (searchTerm) {

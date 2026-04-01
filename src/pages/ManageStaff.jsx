@@ -132,11 +132,8 @@ const ManageStaff = () => {
                 if (error) throw error;
                 showAlert('Success', 'Staff identity has been updated', 'success');
             } else {
-                // For new members, password is required
                 if (!payload.password) throw new Error('Password is required for new accounts');
 
-                // Create Auth User first (Simplified for this context, usually needs Edge Function or Admin API)
-                // In this app's pattern, we insert into admins table directly for profile tracking
                 const { error } = await supabase
                     .from('admins')
                     .insert([{ ...payload, created_at: new Date().toISOString() }]);
@@ -163,7 +160,6 @@ const ManageStaff = () => {
 
     return (
         <div className="max-w-6xl mx-auto space-y-8 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {/* Header & Navigation */}
             <div className="flex items-center justify-between">
                 <button
                     onClick={() => navigate('/team')}
@@ -185,7 +181,6 @@ const ManageStaff = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8">
-                {/* Profile Hero Card */}
                 <div className="relative group">
                     <div className="absolute -inset-1 bg-gradient-to-r from-brand-red to-red-400 rounded-3xl blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
                     <Card className="relative bg-white border border-slate-300 shadow-xl shadow-gray-200/50 rounded-3xl overflow-hidden">
@@ -195,7 +190,6 @@ const ManageStaff = () => {
                         </div>
                         <CardContent className="px-10 pb-10 relative">
                             <div className="flex flex-col md:flex-row items-end gap-8 -mt-16">
-                                {/* Photo Preview Section */}
                                 <div className="relative">
                                     <div className="w-40 h-40 rounded-3xl border-[6px] border-white shadow-2xl bg-gray-100 overflow-hidden group/photo relative">
                                         {formData.photo_url ? (
@@ -264,7 +258,6 @@ const ManageStaff = () => {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Left Panel: System Access */}
                     <div className="lg:col-span-1 space-y-8">
                         <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
                             <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em] mb-4">
@@ -367,7 +360,6 @@ const ManageStaff = () => {
                         </section>
                     </div>
 
-                    {/* Right Panel: Identity Narrative */}
                     <div className="lg:col-span-2 space-y-8">
                         <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
                             <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em] mb-4">

@@ -1,12 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 
-// ─────────────────────────────────────────────
-// Auth Context — Simple & Reliable
-// Single source of truth: onAuthStateChange
-// No mutex, no watchdog, no auto-signout races
-// ─────────────────────────────────────────────
-
 const AuthContext = createContext({
   session: null,
   user: null,
@@ -19,9 +13,8 @@ export const AuthProvider = ({ children }) => {
   const [session, setSession] = useState(null);
   const [user, setUser]       = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [loading, setLoading] = useState(true); // true ONLY until first auth event resolves
+  const [loading, setLoading] = useState(true);
 
-  // ── Check admin role via RPC (no mutex needed — each call is independent) ──
   const checkAdminStatus = async (currentUser) => {
     if (!currentUser) return false;
     try {
@@ -42,40 +35,30 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     let mounted = true;
 
-    // ── 1. Subscribe to auth state changes (fires immediately with current state) ──
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
-        console.log('[AuthContext] event:', event);
-
         if (!mounted) return;
 
         if (currentSession?.user) {
-          // We have a valid session — set it immediately so the app unblocks
           setSession(currentSession);
           setUser(currentSession.user);
 
-          // TOKEN_REFRESHED: session refreshed silently — no need to re-verify admin
-          // We already know they're admin. Just update the session reference.
           if (event === 'TOKEN_REFRESHED') {
-            // Session is already valid; admin state is unchanged — do nothing extra
             setLoading(false);
             return;
           }
 
-          // SIGNED_IN / USER_UPDATED: verify admin role
           const adminVerified = await checkAdminStatus(currentSession.user);
           if (!mounted) return;
           setIsAdmin(adminVerified);
           setLoading(false);
 
           if (!adminVerified && event === 'SIGNED_IN') {
-            // Authenticated but not an admin — sign them out cleanly
             console.warn('[AuthContext] Authenticated user is not an admin. Signing out.');
             await supabase.auth.signOut();
           }
 
         } else {
-          // No session (SIGNED_OUT or no existing session)
           setSession(null);
           setUser(null);
           setIsAdmin(false);
@@ -90,10 +73,8 @@ export const AuthProvider = ({ children }) => {
     };
   }, []);
 
-  // ── Sign out helper ──
   const signOut = async () => {
     await supabase.auth.signOut();
-    // State will be cleared by the SIGNED_OUT event above
   };
 
   return (

@@ -4,7 +4,6 @@ import {
   Users, 
   UserCheck, 
   Package, 
-  // ShoppingCart, 
   Settings, 
   LogOut, 
   Home, 
@@ -39,7 +38,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     system: false
   });
 
-  // Automatically close mobile sidebar on navigation
   React.useEffect(() => {
     if (window.innerWidth < 1024) {
       setIsOpen(false);
@@ -80,9 +78,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       items: [
         { title: 'Services', path: '/services', icon: <Package size={16} /> },
         { title: 'Categories', path: '/categories', icon: <Layers size={16} /> },
-        // { title: 'Orders', path: '/orders', icon: <ShoppingCart size={16} /> },
         { title: 'Bookings', path: '/bookings', icon: <Calendar size={16} /> },
-        // { title: 'Invoices', path: '/invoices', icon: <FileEdit size={16} /> },
         { title: 'Reports', path: '/reports', icon: <BarChart2 size={16} /> },
       ]
     },
@@ -123,7 +119,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
   return (
     <>
-      {/* Mobile Overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-20 lg:hidden transition-opacity duration-300"
@@ -137,7 +132,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         <div className="flex flex-col items-center justify-center py-6 px-4 border-b border-slate-300 bg-white relative shrink-0">
           <button
             onClick={() => setIsOpen(false)}
-            className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-all duration-300 lg:hidden"
+            className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-all duration-300"
             title="Collapse Sidebar"
           >
             <X size={18} />
@@ -147,7 +142,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             alt="Travel Lounge" 
             className="h-10 mb-3 object-contain" 
           />
-          {/* <h1 className="text-[10px] font-black tracking-[0.2em] uppercase text-gray-500">Dashboard</h1> */}
         </div>
 
         <nav className="mt-2 px-3 flex-1 overflow-y-auto custom-scrollbar pb-20">
