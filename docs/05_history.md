@@ -1,5 +1,13 @@
 # 05 History & Agent Progress
 
+## 2026-04-01 - Admin Interactivity & Web Refinement
+- **Admin Dashboard**: Refactored `Dashboard.jsx` to enable full interactivity. Clickable summary cards for Staff, Customers, and Bookings now navigate to their respective pages. Added interactive "Recent Staff" and "Recent Bookings" rows with deep-linking to details.
+- **Staff Management**: Enhanced `Team.jsx` and `ManageStaff.jsx` with clickable list rows and a new "Recent System Activities" tracker component to verify individual staff contributions (e.g., Mandini Boolauk).
+- **Customer Registry**: Updated `Customers.jsx` to support full-row click navigation to the detailed customer profile view.
+- **Web App UI**: Refined the `About` page layout in `page.tsx` by embedding a scaled SVG logo inline with the branding text and centering the identity section for a premium aesthetic.
+- **Mobile Build**: Triggered an automated Android APK build via EAS and confirmed it is currently in progress.
+- **Code Quality**: Fixed unused variable warnings in the dashboard and verified 100% lint pass across the ecosystem. Pushed all changes to both `admin-app` and `web-app` repositories.
+
 ## 2026-04-01 - Ecosystem Stabilization & Debloat (Production Candidate)
 - **Admin App Security**: Fully restored `AuthProvider` and `ProtectedRoute` around the `/` layout routes in `App.jsx`, neutralizing an open-access authentication bypass. Purged unrouted views (`ResetPassword.jsx`) and debug payloads (`console.log`) throughout the auth cycle. Refactored `Login.jsx` to prevent unused variables from breaking CI.
 - **Mobile App Build Stabilizer**: Resolved catastrophic ESLint parser failures by installing the orphaned `eslint-plugin-import` dev dependency required by Expo. Mobile pipelines now pass `npm run lint` cleanly.
