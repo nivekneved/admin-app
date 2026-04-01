@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
         console.warn('[AuthContext] RPC error:', error.message);
         return false;
       }
-      return Array.isArray(data) && data.length > 0;
+      return data?.is_admin_or_staff === true;
     } catch (err) {
       console.error('[AuthContext] checkAdminStatus threw:', err);
       return false;
