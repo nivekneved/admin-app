@@ -11,6 +11,7 @@ import {
   Calendar, 
   BarChart2, 
   Layers, 
+  MapPin,
   X, 
   Layout, 
   MessageSquare, 
