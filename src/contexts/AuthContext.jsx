@@ -18,8 +18,10 @@ export const AuthProvider = ({ children }) => {
   const checkAdminStatus = async (currentUser) => {
     if (!currentUser) return false;
     try {
+      // Pass the email for email-based linking if user_id is not yet set
       const { data, error } = await supabase.rpc('get_auth_admin_status', {
         p_user_id: currentUser.id,
+        p_email: currentUser.email,
       });
       if (error) {
         console.warn('[AuthContext] RPC error:', error.message);
@@ -46,11 +48,8 @@ export const AuthProvider = ({ children }) => {
         if (!mounted) return;
         setIsAdmin(adminVerified);
         
-        // If they are not an admin BUT we found a session, show warning
-        if (!adminVerified) {
-          console.warn('[AuthContext] Session found but user is not an admin. Signing out.');
-          await supabase.auth.signOut();
-        }
+        // Removed auto-signOut here to prevent infinite login loops.
+        // ProtectedRoute handles the actual access control.
       }
       setLoading(false);
     };
@@ -71,10 +70,8 @@ export const AuthProvider = ({ children }) => {
              if (!mounted) return;
              setIsAdmin(adminVerified);
              
-             if (!adminVerified && event === 'SIGNED_IN') {
-               console.warn('[AuthContext] New sign-in detected but user is not an admin. Signing out.');
-               await supabase.auth.signOut();
-             }
+             // Removed auto-signOut here. We let the UI (Login page/ProtectedRoute) 
+             // show a localized error message instead of kicking them out silently.
           }
         } else {
           setSession(null);

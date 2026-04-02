@@ -119,7 +119,25 @@ const Login = () => {
                     </div>
 
                     {/* ── Sign In Form ── */}
-                    {!isResetting ? (
+                    {session && !isAdmin ? (
+                        <div className="space-y-6">
+                            <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
+                                <h3 className="text-sm font-black text-red-600 uppercase tracking-widest mb-2 flex items-center gap-2">
+                                    <Lock size={16} /> Access Denied
+                                </h3>
+                                <p className="text-xs text-red-500 font-bold leading-relaxed">
+                                    Your account ({session.user.email}) is successfully authenticated, but it is not linked to an administrator profile. 
+                                    Please contact our technical department for access.
+                                </p>
+                            </div>
+                            <button
+                                onClick={() => supabase.auth.signOut()}
+                                className="w-full py-3 px-4 bg-gray-100 text-gray-900 hover:bg-gray-200 font-bold rounded-xl transition-all"
+                            >
+                                Sign Out & Try Another Account
+                            </button>
+                        </div>
+                    ) : !isResetting ? (
                         <form onSubmit={handleLogin} className="space-y-6">
                             <div className="space-y-2">
                                 <label className="text-sm font-semibold text-gray-700 block ml-1">
