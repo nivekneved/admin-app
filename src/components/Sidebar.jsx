@@ -51,24 +51,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     }));
   };
 
-  const handleLogout = async () => {
-    const result = await showConfirm(
-      'Sign Out?',
-      'Are you sure you want to end your current session?',
-      'Yes, Logout'
-    );
-
-    if (!result.isConfirmed) return;
-
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      showAlert('Signed Out', 'You have been successfully logged out.', 'success');
-      navigate('/login');
-    } catch (error) {
-      showAlert('Error', error.message || 'Error logging out', 'error');
-    }
-  };
 
   const menuGroups = [
     {
@@ -201,15 +183,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           ))}
         </nav>
 
-        <div className="absolute bottom-0 w-full p-4 border-t border-slate-300 bg-white">
-          <button
-            onClick={handleLogout}
-            className="flex items-center text-gray-500 hover:text-brand-red w-full px-4 py-3 rounded-xl hover:bg-red-50 transition-all duration-300 group"
-          >
-            <LogOut size={18} className="mr-3 group-hover:scale-110 transition-transform" />
-            <span className="font-bold text-xs uppercase tracking-tight">Logout</span>
-          </button>
-        </div>
       </div>
     </>
   );
