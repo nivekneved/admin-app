@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
-import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Services from './pages/Services';
 import Orders from './pages/Orders';
