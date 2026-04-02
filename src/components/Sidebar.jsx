@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import { 
   Users, 
   UserCheck, 
@@ -31,6 +32,7 @@ import logo from '../assets/logo.png';
 const Sidebar = ({ isOpen, setIsOpen }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { signOut } = useAuth();
   const [openGroups, setOpenGroups] = useState({
     business: true,
     engagement: false,
@@ -180,6 +182,23 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
               </div>
             </div>
           ))}
+
+          <div className="mt-8 pt-4 border-t border-slate-100">
+            <button
+              onClick={() => {
+                showConfirm('Sign Out', 'Are you sure you want to exit the command center?').then((result) => {
+                  if (result.isConfirmed) {
+                    signOut();
+                    navigate('/login');
+                  }
+                });
+              }}
+              className="w-full flex items-center px-4 py-3 rounded-xl text-slate-400 hover:text-brand-red hover:bg-red-50 transition-all duration-300 group"
+            >
+              <LogOut size={18} className="mr-3 group-hover:translate-x-1 transition-transform" />
+              <span className="font-bold text-xs uppercase tracking-tight">Sign Out</span>
+            </button>
+          </div>
         </nav>
       </div>
     </>

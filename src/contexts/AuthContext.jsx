@@ -1,24 +1,53 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 
-// Authentication has been removed as per guest-only requirement
 const AuthContext = createContext({
     user: null,
-    isAdmin: true,
-    loading: false,
-    signIn: async () => ({ success: true }),
+    isAdmin: false,
+    loading: true,
+    signIn: async () => ({ success: false }),
     signOut: async () => {},
     session: null
 })
 
 export const AuthProvider = ({ children }) => {
-    // Return a mocked environment where everyone is an admin by default without login
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const storedUser = sessionStorage.getItem('admin-session');
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+        setLoading(false);
+    }, []);
+
+    const signIn = async (username, password) => {
+        if (username === 'admin' && password === 'travellounge2026') {
+            const adminUser = { 
+                id: 'admin-master', 
+                email: 'admin@travellounge.mu', 
+                user_metadata: { name: 'Master Admin' } 
+            };
+            sessionStorage.setItem('admin-session', JSON.stringify(adminUser));
+            setUser(adminUser);
+            return { success: true };
+        } else {
+            return { success: false, error: 'Invalid authentication credentials' };
+        }
+    };
+
+    const signOut = async () => {
+        sessionStorage.removeItem('admin-session');
+        setUser(null);
+    };
+
     const value = {
-        user: { id: 'admin-guest', email: 'admin@travellounge.mu', user_metadata: { name: 'Admin Guest' } },
-        session: { user: { id: 'admin-guest' } },
-        isAdmin: true,
-        loading: false,
-        signIn: async () => ({ success: true }),
-        signOut: async () => {}
+        user,
+        session: user ? { user } : null,
+        isAdmin: !!user,
+        loading,
+        signIn,
+        signOut
     }
 
     return (
