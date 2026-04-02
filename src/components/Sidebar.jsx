@@ -34,7 +34,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
   const [openGroups, setOpenGroups] = useState({
     business: true,
     engagement: false,
-    content: false,
+    content: true,
     system: false
   });
 
@@ -50,7 +50,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       [group]: !prev[group]
     }));
   };
-
 
   const menuGroups = [
     {
@@ -80,7 +79,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       title: 'Content & CMS',
       icon: <Globe size={18} />,
       items: [
-        { title: 'CMS Pages', path: '/cms', icon: <FileEdit size={16} /> },
+        { title: 'Site Map Orchestrator', path: '/cms', icon: <MapPin size={16} /> },
         { title: 'News Editor', path: '/news', icon: <FileText size={16} /> },
         { title: 'Hero Slider', path: '/hero-slider', icon: <Layout size={16} /> },
         { title: 'Navigation', path: '/navigation', icon: <Layers size={16} /> },
@@ -182,7 +181,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             </div>
           ))}
         </nav>
-
       </div>
     </>
   );
