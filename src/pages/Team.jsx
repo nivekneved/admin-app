@@ -167,9 +167,11 @@ const Team = () => {
                                     onChange={(e) => setFilterRole(e.target.value)}
                                 >
                                     <option value="All">All Roles</option>
-                                    <option value="Admin">Admin</option>
-                                    <option value="Staff">Staff</option>
-                                    <option value="Partner">Partner</option>
+                                    <option value="super_admin">Super Admin</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="director">Director</option>
+                                    <option value="manager">Manager</option>
+                                    <option value="sales">Sales</option>
                                 </select>
                                 <ChevronDown size={12} className="absolute right-2.5 top-3.5 text-gray-400 pointer-events-none" />
                             </div>
@@ -264,11 +266,13 @@ const Team = () => {
                                                         </p>
                                                         <div className="flex items-center gap-2">
                                                             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter mr-2">@{member.username}</p>
-                                                            <span className={`px-2 py-0.5 inline-flex text-[8px] font-black uppercase tracking-widest rounded-lg border ${member.role === 'admin' ? 'bg-red-50 text-brand-red border-red-100' :
+                                                            <span className={`px-2 py-0.5 inline-flex text-[8px] font-black uppercase tracking-widest rounded-lg border ${
+                                                                (member.role === 'admin' || member.role === 'super_admin') ? 'bg-red-50 text-brand-red border-red-100' :
+                                                                member.role === 'director' ? 'bg-purple-50 text-purple-700 border-purple-100' :
                                                                 member.role === 'manager' ? 'bg-orange-50 text-orange-700 border-orange-100' :
                                                                     'bg-gray-50 text-gray-500 border-gray-100'
                                                                 }`}>
-                                                                {member.role}
+                                                                {member.role?.replace('_', ' ')}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -324,8 +328,13 @@ const Team = () => {
                                     </div>
                                     <div className="p-6 flex flex-col flex-1">
                                         <div className="flex items-center justify-between mb-3">
-                                            <span className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border ${member.role === 'admin' ? 'bg-red-50 text-brand-red border-red-100' : 'bg-gray-50 text-gray-500 border-gray-100'}`}>
-                                                {member.role}
+                                            <span className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border ${
+                                                (member.role === 'admin' || member.role === 'super_admin') ? 'bg-red-50 text-brand-red border-red-100' :
+                                                member.role === 'director' ? 'bg-purple-50 text-purple-700 border-purple-100' :
+                                                member.role === 'manager' ? 'bg-orange-50 text-orange-700 border-orange-100' :
+                                                'bg-gray-50 text-gray-500 border-gray-100'
+                                            }`}>
+                                                {member.role?.replace('_', ' ')}
                                             </span>
                                             {member.show_on_front_page && <Globe size={14} className="text-brand-red" title="Visible on Front Page" />}
                                         </div>

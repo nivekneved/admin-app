@@ -24,13 +24,18 @@ const ManageStaff = () => {
     const isEdit = !!id;
 
     const roles = [
+        { value: 'super_admin', label: 'Global Systems Administrator' },
         { value: 'admin', label: 'Universal Root Administrator' },
+        { value: 'director', label: 'Managing Director' },
         { value: 'manager', label: 'Operations Manager' },
         { value: 'staff', label: 'Standard Staff' },
         { value: 'receptionist', label: 'Receptionist' },
         { value: 'editor', label: 'Content Manager' },
         { value: 'sales', label: 'Sales Consultant' },
-        { value: 'accountant', label: 'Accounts Representative' }
+        { value: 'sales_corporate_sr', label: 'Senior Corporate Sales' },
+        { value: 'sales_corporate', label: 'Corporate Sales' },
+        { value: 'consultant', label: 'Travel Consultant' },
+        { value: 'accountant', label: 'Account Representative' }
     ];
 
     const [formData, setFormData] = useState({
