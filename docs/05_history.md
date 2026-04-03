@@ -1,5 +1,12 @@
 # 05 History & Agent Progress
 
+## 2026-04-03 - Unified RLS Security Architecture & Data Reconciliation
+- **RLS Policy Suite**: Deployed a comprehensive, zero-regression security overhaul covering 24+ project tables. Replaced fragmented policies with a three-tier unified architecture (Elevated, Content, Operations) to eliminate access conflicts.
+- **Identity Reconciliation**: Resolved the "Disconnected ID" issue by linking 100% of matching `auth.users` to the `admins` and `customers` tables via email-based SQL reconciliation.
+- **Access Restoration**: Fixed 401 and 404 API errors for metadata tables (`service_categories`, `navigations`, `content_blocks`) by restoring missing public read and staff management policies.
+- **Security Definer Optimization**: Refactored internal RLS functions to use `SECURITY DEFINER` and specific `search_path` to prevent recursion and improve horizontal scaling performance.
+- **Documentation**: Generated `docs/07_rls_diagnosis.md` detailing the full diagnostic audit and remediation steps.
+
 ## 2026-04-01 - Admin Session Stability & API Integrity
 - **Admin API Fix**: Resolved a critical `400 Bad Request` error in `Reports.jsx` caused by a malformed query requesting non-existent `price` and `quantity` columns from `booking_items`. Updated to use the correct `amount` column and refined the revenue aggregation logic.
 - **Auth State Stabilization**: Refactored `AuthContext.jsx` to implement an explicit `initAuth()` sequence on mount. This ensures the admin session and role verification are fully resolved before the application proceeds to render protected routes, eliminating intermittent "No valid session" redirects during navigation.
