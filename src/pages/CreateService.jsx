@@ -41,6 +41,9 @@ const CreateService = () => {
         featured: false,
         priority: 0,
         max_group_size: '',
+        max_adults: '',
+        max_children: '',
+        child_age_limit: 12,
         is_seasonal_deal: false,
         deal_note: 'Limited Time',
         is_active: true,
@@ -111,6 +114,9 @@ const CreateService = () => {
                     featured: data.featured || false,
                     priority: data.priority || 0,
                     max_group_size: data.max_group_size || '',
+                    max_adults: data.max_adults || '',
+                    max_children: data.max_children || '',
+                    child_age_limit: data.child_age_limit ?? 12,
                     is_seasonal_deal: data.is_seasonal_deal || false,
                     deal_note: data.deal_note || 'Limited Time',
                     is_active: data.is_active ?? true,
@@ -339,6 +345,9 @@ const CreateService = () => {
                 featured: formData.featured,
                 priority: parseInt(formData.priority) || 0,
                 max_group_size: parseInt(formData.max_group_size) || null,
+                max_adults: parseInt(formData.max_adults) || null,
+                max_children: parseInt(formData.max_children) || null,
+                child_age_limit: parseInt(formData.child_age_limit) || 12,
                 is_seasonal_deal: formData.is_seasonal_deal,
                 deal_note: formData.deal_note,
                 is_active: formData.is_active,
@@ -1206,17 +1215,44 @@ const CreateService = () => {
                                 </div>
 
                                 <div className="pt-4 border-t border-white/5">
-                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Grouping & Group Size</label>
-                                    <div className="relative mb-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                        <div className="relative">
+                                            <input
+                                                type="number"
+                                                name="max_adults"
+                                                className="w-full pl-6 pr-6 py-4 bg-white/5 border border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-black text-xl text-white outline-none"
+                                                value={formData.max_adults}
+                                                onChange={handleInputChange}
+                                                placeholder="No limit"
+                                            />
+                                            <div className="absolute right-4 top-4 text-[10px] font-black text-gray-500 uppercase tracking-widest">ADULTS MAX</div>
+                                        </div>
+                                        <div className="relative">
+                                            <input
+                                                type="number"
+                                                name="max_children"
+                                                className="w-full pl-6 pr-6 py-4 bg-white/5 border border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-black text-xl text-white outline-none"
+                                                value={formData.max_children}
+                                                onChange={handleInputChange}
+                                                placeholder="No limit"
+                                            />
+                                            <div className="absolute right-4 top-4 text-[10px] font-black text-gray-500 uppercase tracking-widest">KIDS MAX</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="relative mb-6">
                                         <input
                                             type="number"
-                                            name="max_group_size"
+                                            name="child_age_limit"
                                             className="w-full pl-6 pr-6 py-4 bg-white/5 border border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-black text-xl text-white outline-none"
-                                            value={formData.max_group_size}
+                                            value={formData.child_age_limit}
                                             onChange={handleInputChange}
-                                            placeholder="No limit"
+                                            placeholder="12"
                                         />
-                                        <div className="absolute right-4 top-4 text-[10px] font-black text-gray-500 uppercase tracking-widest">PAX MAX</div>
+                                        <div className="absolute right-4 top-4 text-[10px] font-black text-gray-500 uppercase tracking-widest">CHILD AGE LIMIT</div>
+                                        <p className="mt-2 ml-1 text-[9px] font-bold text-gray-500 uppercase tracking-widest leading-relaxed">
+                                            Guests above this age are considered adults.
+                                        </p>
                                     </div>
                                     <div className="flex items-center justify-between px-2">
                                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Featured Status</label>
