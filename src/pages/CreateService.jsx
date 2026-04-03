@@ -7,7 +7,7 @@ import { Button } from '../components/Button';
 import {
     ArrowLeft, Tag, DollarSign, Package,
     Loader2, Info, Camera,
-    Save, Plus, BedDouble,
+    Save, Plus, BedDouble, Utensils, Globe,
     ToggleLeft, ToggleRight, X, Calendar
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -44,6 +44,9 @@ const CreateService = () => {
         max_adults: '',
         max_children: '',
         child_age_limit: 12,
+        child_price: '',
+        meta_title: '',
+        meta_description: '',
         is_seasonal_deal: false,
         deal_note: 'Limited Time',
         is_active: true,
@@ -53,7 +56,8 @@ const CreateService = () => {
         included: [],
         not_included: [],
         cancellation_policy: '',
-        terms_and_conditions: ''
+        terms_and_conditions: '',
+        meal_plans: []
     });
 
     const isEdit = !!id;
@@ -117,6 +121,9 @@ const CreateService = () => {
                     max_adults: data.max_adults || '',
                     max_children: data.max_children || '',
                     child_age_limit: data.child_age_limit ?? 12,
+                    child_price: data.child_price || '',
+                    meta_title: data.meta_title || '',
+                    meta_description: data.meta_description || '',
                     is_seasonal_deal: data.is_seasonal_deal || false,
                     deal_note: data.deal_note || 'Limited Time',
                     is_active: data.is_active ?? true,
@@ -126,7 +133,8 @@ const CreateService = () => {
                     included: data.included || [],
                     not_included: data.not_included || [],
                     cancellation_policy: data.cancellation_policy || '',
-                    terms_and_conditions: data.terms_and_conditions || ''
+                    terms_and_conditions: data.terms_and_conditions || '',
+                    meal_plans: data.meal_plans || []
                 });
             }
         } catch (e) {
@@ -348,6 +356,9 @@ const CreateService = () => {
                 max_adults: parseInt(formData.max_adults) || null,
                 max_children: parseInt(formData.max_children) || null,
                 child_age_limit: parseInt(formData.child_age_limit) || 12,
+                child_price: parseFloat(formData.child_price) || 0,
+                meta_title: formData.meta_title,
+                meta_description: formData.meta_description,
                 is_seasonal_deal: formData.is_seasonal_deal,
                 deal_note: formData.deal_note,
                 is_active: formData.is_active,
@@ -358,6 +369,7 @@ const CreateService = () => {
                 not_included: formData.not_included,
                 cancellation_policy: formData.cancellation_policy,
                 terms_and_conditions: formData.terms_and_conditions,
+                meal_plans: formData.meal_plans,
                 updated_at: new Date().toISOString()
             };
 
@@ -595,12 +607,16 @@ const CreateService = () => {
                                             value={formData.service_type}
                                             onChange={handleInputChange}
                                         >
-                                            <option value="land_activity">Land activity</option>
-                                            <option value="sea_activity">Sea activity</option>
+                                            <option value="day_package">Day Package</option>
                                             <option value="hotel">Hotel</option>
+                                            <option value="restaurant">Restaurant</option>
+                                            <option value="spa">Spa & Wellness</option>
                                             <option value="cruise">Cruise</option>
                                             <option value="tour">Tour</option>
                                             <option value="activity">General Activity</option>
+                                            <option value="land_activity">Land activity</option>
+                                            <option value="sea_activity">Sea activity</option>
+                                            <option value="lounge">Airport Lounge</option>
                                             <option value="transfer">Transfer</option>
                                             <option value="flight">Flight</option>
                                             <option value="visa">Visa Service</option>
@@ -616,6 +632,31 @@ const CreateService = () => {
                                             value={formData.location}
                                             onChange={handleInputChange}
                                             placeholder="e.g. Grand Baie, North"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Adult Base Price (MUR)</label>
+                                        <input
+                                            type="number"
+                                            name="price"
+                                            className="w-full px-6 py-4 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
+                                            value={formData.price}
+                                            onChange={handleInputChange}
+                                            placeholder="0"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Child Price (MUR) - Optional</label>
+                                        <input
+                                            type="number"
+                                            name="child_price"
+                                            className="w-full px-6 py-4 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
+                                            value={formData.child_price}
+                                            onChange={handleInputChange}
+                                            placeholder="0"
                                         />
                                     </div>
                                 </div>
@@ -690,6 +731,201 @@ const CreateService = () => {
                             </div>
                         </section>
 
+                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-8">
+                            <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
+                                <Package size={16} className="text-brand-red" /> Experience Narrative & Inclusions
+                            </h3>
+
+                            <div className="space-y-8">
+                                {/* Highlights */}
+                                <div>
+                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Key Highlights (Scrollable List)</label>
+                                    <div className="flex flex-wrap gap-2 mb-3">
+                                        {(formData.highlights || []).map((h, i) => (
+                                            <span key={i} className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-600 border border-green-100 rounded-xl text-[10px] font-black uppercase tracking-widest animate-in zoom-in-95 duration-200">
+                                                {h}
+                                                <button type="button" onClick={() => setFormData(prev => ({ ...prev, highlights: prev.highlights.filter((_, idx) => idx !== i) }))} className="hover:text-green-700">
+                                                    <X size={12} />
+                                                </button>
+                                            </span>
+                                        ))}
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            id="new_highlight"
+                                            placeholder="e.g. Private Beach Access"
+                                            className="grow px-6 py-3 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-xs font-bold"
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    e.preventDefault();
+                                                    if (e.target.value) {
+                                                        setFormData(prev => ({ ...prev, highlights: [...(prev.highlights || []), e.target.value] }));
+                                                        e.target.value = '';
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    {/* Included */}
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">What's Included</label>
+                                        <div className="space-y-2 mb-3 max-h-40 overflow-y-auto custom-scrollbar pr-2">
+                                            {(formData.included || []).map((item, i) => (
+                                                <div key={i} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl group">
+                                                    <span className="text-[11px] font-bold text-gray-600">{item}</span>
+                                                    <button type="button" onClick={() => setFormData(prev => ({ ...prev, included: prev.included.filter((_, idx) => idx !== i) }))} className="text-gray-300 hover:text-brand-red opacity-0 group-hover:opacity-100 transition-all">
+                                                        <X size={14} />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <input
+                                            type="text"
+                                            placeholder="Press Enter to add inclusion..."
+                                            className="w-full px-6 py-3 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-xs font-bold"
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    e.preventDefault();
+                                                    if (e.target.value) {
+                                                        setFormData(prev => ({ ...prev, included: [...(prev.included || []), e.target.value] }));
+                                                        e.target.value = '';
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                    </div>
+
+                                    {/* Not Included */}
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">What's Excluded</label>
+                                        <div className="space-y-2 mb-3 max-h-40 overflow-y-auto custom-scrollbar pr-2">
+                                            {(formData.not_included || []).map((item, i) => (
+                                                <div key={i} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl group">
+                                                    <span className="text-[11px] font-bold text-gray-600">{item}</span>
+                                                    <button type="button" onClick={() => setFormData(prev => ({ ...prev, not_included: prev.not_included.filter((_, idx) => idx !== i) }))} className="text-gray-300 hover:text-brand-red opacity-0 group-hover:opacity-100 transition-all">
+                                                        <X size={14} />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <input
+                                            type="text"
+                                            placeholder="Press Enter to add exclusion..."
+                                            className="w-full px-6 py-3 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-xs font-bold"
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    e.preventDefault();
+                                                    if (e.target.value) {
+                                                        setFormData(prev => ({ ...prev, not_included: [...(prev.not_included || []), e.target.value] }));
+                                                        e.target.value = '';
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
+                                    <Utensils size={16} className="text-brand-red" /> Meal Plan Configuration
+                                </h3>
+                                <Button
+                                    type="button"
+                                    onClick={() => setFormData(prev => ({ ...prev, meal_plans: [...(prev.meal_plans || []), { id: Date.now().toString(), label: '', price: 0 }] }))}
+                                    className="bg-slate-100 text-slate-600 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-50 hover:text-brand-red transition-all"
+                                >
+                                    <Plus size={14} className="mr-1" /> Add Plan
+                                </Button>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {(formData.meal_plans || []).map((meal, idx) => (
+                                    <div key={meal.id} className="p-6 bg-gray-50 border border-slate-200 rounded-2xl space-y-4 relative group">
+                                        <button 
+                                            type="button" 
+                                            onClick={() => setFormData(prev => ({ ...prev, meal_plans: prev.meal_plans.filter((_, i) => i !== idx) }))}
+                                            className="absolute top-4 right-4 text-gray-300 hover:text-brand-red opacity-0 group-hover:opacity-100 transition-all"
+                                        >
+                                            <X size={16} />
+                                        </button>
+                                        <div className="grid grid-cols-3 gap-3">
+                                            <div className="col-span-2">
+                                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Plan Name</label>
+                                                <input
+                                                    type="text"
+                                                    className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red font-bold text-xs"
+                                                    value={meal.label}
+                                                    onChange={(e) => {
+                                                        const updated = [...formData.meal_plans];
+                                                        updated[idx].label = e.target.value;
+                                                        setFormData(prev => ({ ...prev, meal_plans: updated }));
+                                                    }}
+                                                    placeholder="e.g. Half Board"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Price/Pax</label>
+                                                <input
+                                                    type="number"
+                                                    className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red font-black text-xs"
+                                                    value={meal.price}
+                                                    onChange={(e) => {
+                                                        const updated = [...formData.meal_plans];
+                                                        updated[idx].price = parseFloat(e.target.value) || 0;
+                                                        setFormData(prev => ({ ...prev, meal_plans: updated }));
+                                                    }}
+                                                    placeholder="0"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                                {(formData.meal_plans || []).length === 0 && (
+                                    <div className="col-span-2 text-center py-6 text-gray-400 font-bold uppercase text-[10px] tracking-widest border border-dashed border-slate-200 rounded-2xl">
+                                        No Meal Plans defined for this service
+                                    </div>
+                                )}
+                            </div>
+                        </section>
+
+                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-8">
+                            <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
+                                <Info size={16} className="text-brand-red" /> Policies & Legal
+                            </h3>
+                            
+                            <div className="space-y-6">
+                                <div>
+                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Cancellation Policy</label>
+                                    <textarea
+                                        name="cancellation_policy"
+                                        rows={3}
+                                        className="w-full px-6 py-4 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-sm font-medium resize-none leading-relaxed"
+                                        value={formData.cancellation_policy}
+                                        onChange={handleInputChange}
+                                        placeholder="Outline the rules for refund and cancellation..."
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Terms & Conditions (Service Specific)</label>
+                                    <textarea
+                                        name="terms_and_conditions"
+                                        rows={3}
+                                        className="w-full px-6 py-4 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-sm font-medium resize-none leading-relaxed"
+                                        value={formData.terms_and_conditions}
+                                        onChange={handleInputChange}
+                                        placeholder="Specify specific conditions for this service (e.g. age restrictions, dress code)..."
+                                    />
+                                </div>
+                            </div>
+                        </section>
+
 
                         <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
                             <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em] mb-4">
@@ -721,6 +957,37 @@ const CreateService = () => {
                                         onChange={handleInputChange}
                                         placeholder="e.g. Limited Time, 20% OFF"
                                         disabled={!formData.is_seasonal_deal}
+                                    />
+                                </div>
+                            </div>
+                        </section>
+
+                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
+                            <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em] mb-4">
+                                <Globe size={16} className="text-brand-red" /> Search Engine Optimization
+                            </h3>
+
+                            <div className="space-y-6">
+                                <div>
+                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Meta Title (Custom Title Tag)</label>
+                                    <input
+                                        type="text"
+                                        name="meta_title"
+                                        className="w-full px-6 py-4 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-bold text-sm"
+                                        value={formData.meta_title}
+                                        onChange={handleInputChange}
+                                        placeholder="Defaults to Service Name..."
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Meta Description</label>
+                                    <textarea
+                                        name="meta_description"
+                                        rows={2}
+                                        className="w-full px-6 py-4 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all text-sm font-medium resize-none shadow-inner"
+                                        value={formData.meta_description}
+                                        onChange={handleInputChange}
+                                        placeholder="Search engine snippet description..."
                                     />
                                 </div>
                             </div>
