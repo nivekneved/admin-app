@@ -6,7 +6,9 @@ import {
     ArrowLeft, Image as ImageIcon, 
     FileText, Layers, Map as MapIcon,
     Search, ExternalLink, Settings,
-    Plane, Building2, Anchor, MapPin
+    Plane, Building2, Anchor, MapPin,
+    Menu, BookOpen, ShieldCheck, Mail,
+    Compass
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Button } from '../components/Button';
@@ -15,18 +17,13 @@ import ImageUpload from '../components/ImageUpload';
 
 const CMS = () => {
     // UI State
-    const [view, setView] = useState('sitemap'); // 'sitemap', 'sections', 'edit'
     const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
-    
-    // Data State
     const [pages, setPages] = useState([]);
     const [selectedPage, setSelectedPage] = useState(null);
     const [sections, setSections] = useState([]);
-    const [selectedSection, setSelectedSection] = useState(null);
-    const [content, setContent] = useState({});
-
-    // 1. Initial Fetch: Get all available pages (unique slugs)
+    const [fetchingSections, setFetchingSections] = useState(false);
+    
+    // Initial Fetch: Get all available pages
     useEffect(() => {
         fetchPages();
     }, []);
@@ -34,33 +31,52 @@ const CMS = () => {
     const fetchPages = async () => {
         setLoading(true);
         try {
-            const { data, error } = await supabase
+            // 1. Get slugs from content_blocks
+            const { data: bBlocks, error: bError } = await supabase
                 .from('content_blocks')
                 .select('page_slug');
             
-            if (error) throw error;
+            if (bError) throw bError;
+            const uniqueSlugs = [...new Set(bBlocks.map(item => item.page_slug))];
+
+            // 2. Get names/links from navigations to provide better labels
+            const { data: navs, error: nError } = await supabase
+                .from('navigations')
+                .select('label, link');
             
-            const uniqueSlugs = [...new Set(data.map(item => item.page_slug))].sort();
-            const mappedPages = uniqueSlugs.map(slug => ({
-                slug: slug,
-                name: slug.split(/[-_]/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
-                icon: getIconForPage(slug),
-                description: `Manage content for the ${slug} page.`
-            }));
+            if (nError) throw nError;
+
+            // 3. Map everything
+            const mappedPages = uniqueSlugs.map(slug => {
+                const nav = navs.find(n => 
+                    n.link === `/${slug}` || 
+                    n.link === slug || 
+                    (slug === 'home' && n.link === '/')
+                );
+                return {
+                    slug: slug,
+                    name: nav ? nav.label : formatSlugToName(slug),
+                    icon: getIconForPage(slug),
+                };
+            }).sort((a, b) => a.name.localeCompare(b.name));
             
             setPages(mappedPages);
+            
+            // Auto-select first page if none selected
+            if (mappedPages.length > 0 && !selectedPage) {
+                handleSelectPage(mappedPages[0]);
+            }
         } catch (error) {
             console.error('Error fetching CMS pages:', error);
-            showAlert('Synchronization Error', 'Failed to scan site map architectural blocks.', 'error');
+            showAlert('Sync Error', 'Failed to scan architectural blocks.', 'error');
         } finally {
             setLoading(false);
         }
     };
 
-    // 2. Fetch Sections for selected page
     const handleSelectPage = async (page) => {
-        setLoading(true);
         setSelectedPage(page);
+        setFetchingSections(true);
         try {
             const { data, error } = await supabase
                 .from('content_blocks')
@@ -70,24 +86,135 @@ const CMS = () => {
 
             if (error) throw error;
             setSections(data);
-            setView('sections');
         } catch (error) {
             console.error('Error fetching sections:', error);
-            showAlert('Mapping Failure', 'Unable to retrieve block definitions for this route.', 'error');
+            showAlert('Mapping Failure', 'Unable to retrieve block definitions.', 'error');
         } finally {
-            setLoading(false);
+            setFetchingSections(false);
         }
     };
 
-    // 3. Select specific section for editing
-    const handleEditSection = (section) => {
-        setSelectedSection(section);
-        setContent(section.content || {});
-        setView('edit');
+    const formatSlugToName = (slug) => {
+        return slug.split(/[-_]/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
     };
 
+    const getIconForPage = (slug) => {
+        const s = slug.toLowerCase();
+        if (s.includes('home')) return <Home size={18} />;
+        if (s.includes('about')) return <Info size={18} />;
+        if (s.includes('contact')) return <Phone size={18} />;
+        if (s.includes('faq')) return <HelpCircle size={18} />;
+        if (s.includes('flight')) return <Plane size={18} />;
+        if (s.includes('hotel')) return <Building2 size={18} />;
+        if (s.includes('cruise')) return <Anchor size={18} />;
+        if (s.includes('dest')) return <MapPin size={18} />;
+        if (s.includes('search')) return <Search size={18} />;
+        if (s.includes('news')) return <FileText size={18} />;
+        if (s.includes('safety')) return <ShieldCheck size={18} />;
+        if (s.includes('policy') || s.includes('terms')) return <BookOpen size={18} />;
+        return <Compass size={18} />;
+    };
+
+    if (loading) {
+        return (
+            <div className="h-[80vh] flex flex-col items-center justify-center">
+                <Loader2 size={48} className="text-red-600 animate-spin mb-4" />
+                <p className="text-slate-400 font-black uppercase tracking-widest text-[10px]">Orchestrating CMS Data...</p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex h-[calc(100vh-120px)] -mx-6 -mt-6 bg-slate-50 overflow-hidden">
+            {/* COMPACT SIDEBAR */}
+            <div className="w-72 bg-white border-r border-slate-200 flex flex-col">
+                <div className="p-6 border-bottom border-slate-100 bg-slate-50/50">
+                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-1">Navigation Map</h3>
+                    <h2 className="text-xl font-black text-slate-900 tracking-tighter uppercase italic">Sitemap</h2>
+                </div>
+                <div className="flex-1 overflow-y-auto p-4 space-y-1 custom-scrollbar">
+                    {pages.map(page => (
+                        <button
+                            key={page.slug}
+                            onClick={() => handleSelectPage(page)}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all group ${
+                                selectedPage?.slug === page.slug 
+                                ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/10 scale-[1.02]' 
+                                : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                            }`}
+                        >
+                            <div className={`transition-colors ${selectedPage?.slug === page.slug ? 'text-red-500' : 'text-slate-300 group-hover:text-red-400'}`}>
+                                {page.icon}
+                            </div>
+                            <span className="text-[11px] font-black uppercase tracking-widest truncate">{page.name}</span>
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* CONTENT AREA */}
+            <div className="flex-1 overflow-y-auto bg-slate-50/30 p-10 lg:p-16 custom-scrollbar">
+                {fetchingSections ? (
+                    <div className="h-full flex flex-col items-center justify-center">
+                        <Loader2 size={32} className="text-red-600 animate-spin mb-4" />
+                        <p className="text-slate-400 font-bold uppercase tracking-widest text-[9px]">Scanning block definitions...</p>
+                    </div>
+                ) : selectedPage ? (
+                    <div className="max-w-4xl mx-auto space-y-12">
+                        {/* Header */}
+                        <div className="flex flex-col gap-2 mb-10">
+                            <div className="flex items-center gap-3">
+                                <div className="p-3 bg-red-600 text-white rounded-2xl shadow-xl shadow-red-600/20">
+                                    {selectedPage.icon}
+                                </div>
+                                <div>
+                                    <h1 className="text-4xl font-black text-slate-900 tracking-tighter uppercase italic leading-none">{selectedPage.name}</h1>
+                                    <p className="text-[10px] font-black text-red-600 uppercase tracking-[0.4em] mt-1">/{selectedPage.slug}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Sections List */}
+                        <div className="space-y-16">
+                            {sections.length === 0 ? (
+                                <div className="py-20 text-center bg-white rounded-[3rem] border border-dashed border-slate-200">
+                                    <p className="text-slate-400 font-black uppercase tracking-widest text-xs">No editable sections found for this route.</p>
+                                </div>
+                            ) : (
+                                sections.map(section => (
+                                    <SectionEditor 
+                                        key={section.id} 
+                                        section={section} 
+                                        pageSlug={selectedPage.slug}
+                                    />
+                                ))
+                            )}
+                        </div>
+
+                        {/* Footer Spacer */}
+                        <div className="h-20" />
+                    </div>
+                ) : (
+                    <div className="h-full flex flex-col items-center justify-center text-center max-w-sm mx-auto">
+                        <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-slate-200 mb-6 shadow-xl shadow-slate-200/50">
+                            <Layers size={32} />
+                        </div>
+                        <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight mb-2">Select an Architectural Route</h3>
+                        <p className="text-slate-400 text-sm font-medium">Choose a page from the sitemap sidebar to begin orchestrating its modular content blocks.</p>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
+/* --- SUBCOMPONENT: SECTION EDITOR --- */
+const SectionEditor = ({ section, pageSlug }) => {
+    const [content, setContent] = useState(section.content || {});
+    const [saving, setSaving] = useState(false);
+    const [hasChanges, setHasChanges] = useState(false);
+
     const handleSave = async () => {
-        if (!selectedSection) return;
         setSaving(true);
         try {
             const { error } = await supabase
@@ -96,45 +223,22 @@ const CMS = () => {
                     content: content, 
                     updated_at: new Date().toISOString() 
                 })
-                .eq('id', selectedSection.id);
+                .eq('id', section.id);
 
             if (error) throw error;
-
-            // Update local state for subsequent edits in same session
-            setSections(prev => prev.map(s => s.id === selectedSection.id ? { ...s, content: content } : s));
-            
-            showAlert('Block Deployed', `Changes to [${formatKey(selectedSection.section_key)}] have been synchronized.`, 'success');
+            setHasChanges(false);
+            showAlert('Synchronized', `Block [${formatKey(section.section_key)}] has been deployed.`, 'success');
         } catch (error) {
-            console.error('CMS_SAVE: Critical failure:', error);
-            showAlert('Deployment Interrupted', error.message || 'Check your permissions and network connection.', 'error');
+            console.error('CMS_SAVE_ERR:', error);
+            showAlert('Deployment Error', error.message, 'error');
         } finally {
             setSaving(false);
         }
     };
 
-    // Helper functions
-    const getIconForPage = (slug) => {
-        const s = slug.toLowerCase();
-        if (s.includes('home')) return <Home size={40} />;
-        if (s.includes('about')) return <Info size={40} />;
-        if (s.includes('contact')) return <Phone size={40} />;
-        if (s.includes('faq')) return <HelpCircle size={40} />;
-        if (s.includes('flight')) return <Plane size={40} />;
-        if (s.includes('hotel')) return <Building2 size={40} />;
-        if (s.includes('cruise')) return <Anchor size={40} />;
-        if (s.includes('dest')) return <MapPin size={40} />;
-        if (s.includes('search')) return <Search size={40} />;
-        if (s.includes('news')) return <FileText size={40} />;
-        return <Layout size={40} />;
-    };
-
-    const formatKey = (key) => {
-        if (!key) return '';
-        return key.split(/[-_]/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-    };
-
     const handleContentChange = (key, value) => {
         setContent(prev => ({ ...prev, [key]: value }));
+        setHasChanges(true);
     };
 
     const handleArrayChange = (key, index, subKey, value) => {
@@ -143,220 +247,129 @@ const CMS = () => {
         handleContentChange(key, newArray);
     };
 
-    // Main renderers
-    const renderSitemap = () => (
-        <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="flex flex-col gap-4">
-                <span className="text-[10px] font-black text-red-600 uppercase tracking-[0.4em] mb-2">Architectural Blueprint</span>
-                <h2 className="text-5xl font-black text-slate-900 tracking-tighter leading-none italic uppercase">Site Map</h2>
-                <p className="text-slate-500 max-w-xl font-medium">Select a primary route to manage its modular content blocks and visual choreography.</p>
-            </div>
+    const formatKey = (key) => {
+        if (!key) return '';
+        return key.split(/[-_]/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    };
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {pages.map(page => (
-                    <button
-                        key={page.slug}
-                        onClick={() => handleSelectPage(page)}
-                        className="p-8 bg-white border border-slate-100 rounded-[2.5rem] text-left transition-all hover:border-red-100 hover:shadow-2xl hover:shadow-red-900/5 group relative overflow-hidden"
-                    >
-                        <div className="absolute top-0 right-0 p-6 opacity-5 transition-transform group-hover:scale-110 group-hover:rotate-12">
-                            {page.icon}
-                        </div>
-                        <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-6 text-slate-300 group-hover:bg-red-50 group-hover:text-red-500 transition-colors">
-                            {React.cloneElement(page.icon, { size: 32 })}
-                        </div>
-                        <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight mb-2">{page.name}</h3>
-                        <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">{page.slug}</p>
-                        <div className="mt-6 flex items-center gap-2 text-red-600 font-bold text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity translate-x-[-10px] group-hover:translate-x-0">
-                            Explore Sections <ChevronRight size={14} />
-                        </div>
-                    </button>
-                ))}
-            </div>
-        </div>
-    );
-
-    const renderSections = () => (
-        <div className="space-y-10 animate-in fade-in slide-in-from-left-4 duration-500">
-            <div className="flex items-center gap-4">
-                <button 
-                    onClick={() => setView('sitemap')}
-                    className="w-12 h-12 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-400 hover:bg-slate-900 hover:text-white transition-all shadow-sm"
-                >
-                    <ArrowLeft size={20} />
-                </button>
-                <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-red-600 uppercase tracking-[0.4em]">Site Map / {selectedPage?.name}</span>
-                    <h2 className="text-4xl font-black text-slate-900 tracking-tighter uppercase italic">MODULAR BLOCKS</h2>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4">
-                {sections.map(section => (
-                    <button
-                        key={section.id}
-                        onClick={() => handleEditSection(section)}
-                        className="p-8 bg-white border border-slate-100 rounded-3xl text-left flex items-center justify-between transition-all hover:bg-slate-900 hover:text-white hover:shadow-xl group"
-                    >
-                        <div className="flex items-center gap-6">
-                            <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-white/10 group-hover:text-white transition-colors">
-                                <Layers size={20} />
-                            </div>
-                            <div>
-                                <h3 className="text-[13px] font-black uppercase tracking-[0.1em]">{formatKey(section.section_key)}</h3>
-                                <p className="text-[10px] font-bold opacity-50 uppercase tracking-widest mt-1">Block ID: {section.id.slice(0, 13)}</p>
-                            </div>
-                        </div>
-                        <div className="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:border-white/20 transition-all">
-                            <ChevronRight size={18} />
-                        </div>
-                    </button>
-                ))}
-            </div>
-        </div>
-    );
-
-    const renderEditForm = () => (
-        <div className="space-y-10 animate-in fade-in zoom-in-95 duration-500 pb-20">
-            <div className="flex items-center justify-between">
+    return (
+        <div className="bg-white rounded-[3rem] border border-slate-100 shadow-2xl shadow-slate-200/40 relative overflow-hidden transition-all hover:shadow-red-900/5 hover:border-red-50">
+            {/* Section Banner Header */}
+            <div className="bg-slate-50/50 border-b border-slate-100 px-10 py-6 flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                    <button 
-                        onClick={() => setView('sections')}
-                        className="w-12 h-12 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-400 hover:bg-slate-900 hover:text-white transition-all shadow-sm"
-                    >
-                        <ArrowLeft size={20} />
-                    </button>
-                    <div className="flex flex-col">
-                        <span className="text-[10px] font-black text-red-600 uppercase tracking-[0.4em]">Sections / {formatKey(selectedSection?.section_key)}</span>
-                        <h2 className="text-4xl font-black text-slate-900 tracking-tighter uppercase italic">ORCHESTRATOR</h2>
+                    <div className="w-10 h-10 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-400">
+                        <Layers size={18} />
+                    </div>
+                    <div>
+                        <h3 className="text-[13px] font-black text-slate-900 uppercase tracking-widest">{formatKey(section.section_key)}</h3>
+                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Architectural Block ID: {section.id.slice(0, 8)}</p>
                     </div>
                 </div>
 
-                <Button 
-                    onClick={handleSave} 
-                    disabled={saving}
-                    className="bg-red-600 hover:bg-red-700 text-white px-10 py-6 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] shadow-xl shadow-red-200 flex items-center gap-3 transition-all hover:scale-105 active:scale-95"
-                >
-                    {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-                    {saving ? 'Synchronizing...' : 'DEPLOY CHANGES'}
-                </Button>
+                <div className="flex items-center gap-3">
+                    {hasChanges && (
+                        <span className="text-[9px] font-black text-red-600 uppercase tracking-widest animate-pulse">Unsaved Modifications</span>
+                    )}
+                    <Button 
+                        onClick={handleSave} 
+                        size="sm"
+                        disabled={saving || !hasChanges}
+                        className={`px-6 h-10 flex items-center gap-2 ${!hasChanges ? 'opacity-50 grayscale' : 'bg-red-600 hover:bg-slate-900 text-white shadow-lg shadow-red-600/20'}`}
+                    >
+                        {saving ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />}
+                        {saving ? 'Saving...' : 'Deploy Block'}
+                    </Button>
+                </div>
             </div>
 
-            <div className="bg-white rounded-[3.5rem] border border-slate-100 p-12 lg:p-20 shadow-2xl shadow-slate-200/40 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-20 opacity-[0.02] pointer-events-none">
-                    <FileText size={400} />
-                </div>
-                
-                <div className="grid grid-cols-1 gap-14 relative z-10">
-                    {Object.entries(content).map(([key, value]) => {
-                        const isImage = key.toLowerCase().includes('image') || key.toLowerCase().includes('url') || key.toLowerCase().includes('logo') || key.toLowerCase().includes('icon');
-                        const isDescription = key.toLowerCase().includes('desc') || key.toLowerCase().includes('content') || key.toLowerCase().includes('text') || key.toLowerCase().includes('quote');
-                        const isArray = Array.isArray(value);
+            {/* Inputs Grid */}
+            <div className="p-10 lg:p-14 space-y-12">
+                {Object.entries(content).map(([key, value]) => {
+                    const isImage = key.toLowerCase().includes('image') || key.toLowerCase().includes('url') || key.toLowerCase().includes('logo') || key.toLowerCase().includes('icon');
+                    const isDescription = key.toLowerCase().includes('desc') || key.toLowerCase().includes('content') || key.toLowerCase().includes('text') || key.toLowerCase().includes('quote');
+                    const isArray = Array.isArray(value);
 
-                        if (isArray) {
-                            return (
-                                <div key={key} className="space-y-10 pt-16 border-t border-slate-50 first:pt-0 first:border-0">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-1.5 h-10 bg-red-600 rounded-full"></div>
-                                            <h4 className="text-[15px] font-black text-slate-900 uppercase tracking-[0.2em]">{formatKey(key)} Architecture</h4>
-                                        </div>
-                                        <span className="px-5 py-2 bg-slate-50 text-slate-400 text-[10px] font-black rounded-xl uppercase tracking-widest">{value.length} Iterations</span>
-                                    </div>
-                                    <div className="grid grid-cols-1 gap-8">
-                                        {value.map((item, index) => (
-                                            <div key={index} className="p-12 bg-slate-50/40 rounded-[3rem] border border-slate-100 relative group transition-all hover:bg-white hover:shadow-2xl hover:shadow-slate-100/50">
-                                                <div className="absolute top-8 right-12 w-10 h-10 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-[11px] font-black text-slate-400 shadow-sm">
-                                                    {String(index + 1).padStart(2, '0')}
-                                                </div>
-                                                <div className="grid grid-cols-1 gap-8 pt-4">
-                                                    {Object.keys(item).map(subKey => (
-                                                        <InputField 
-                                                            key={subKey}
-                                                            label={formatKey(subKey)}
-                                                            value={item[subKey] || ''}
-                                                            onChange={(val) => handleArrayChange(key, index, subKey, val)}
-                                                        />
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            );
-                        }
-
-                        if (isImage) {
-                            return (
-                                <ImageUpload
-                                    key={key}
-                                    label={formatKey(key)}
-                                    value={value || ''}
-                                    onChange={(url) => handleContentChange(key, url)}
-                                    folder={selectedPage?.slug || 'global'}
-                                    aspectRatio={key.includes('hero') ? 'aspect-[21/9]' : 'aspect-square'}
-                                />
-                            );
-                        }
-
-                        if (isDescription) {
-                            return (
-                                <TextAreaField 
-                                    key={key}
-                                    label={formatKey(key)}
-                                    value={value || ''}
-                                    onChange={(val) => handleContentChange(key, val)}
-                                />
-                            );
-                        }
-
+                    if (isArray) {
                         return (
-                            <InputField 
+                            <div key={key} className="space-y-8 pt-8 border-t border-slate-50 first:pt-0 first:border-0">
+                                <div className="flex items-center justify-between bg-slate-50 p-4 rounded-2xl">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-1 h-6 bg-red-600 rounded-full" />
+                                        <h4 className="text-[12px] font-black text-slate-900 uppercase tracking-widest">{formatKey(key)} Dataset</h4>
+                                    </div>
+                                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{value.length} Iterations</span>
+                                </div>
+                                <div className="grid grid-cols-1 gap-6">
+                                    {value.map((item, index) => (
+                                        <div key={index} className="p-10 bg-slate-50/30 rounded-[2.5rem] border border-slate-100 relative group transition-all hover:bg-white hover:shadow-xl hover:shadow-slate-100/50">
+                                            <div className="absolute top-6 right-8 text-[10px] font-black text-slate-200 group-hover:text-slate-400 transition-colors">
+                                                ITEM #{String(index + 1).padStart(2, '0')}
+                                            </div>
+                                            <div className="grid grid-cols-1 gap-6 pt-2">
+                                                {Object.keys(item).map(subKey => (
+                                                    <InputField 
+                                                        key={subKey}
+                                                        label={formatKey(subKey)}
+                                                        value={item[subKey] || ''}
+                                                        onChange={(val) => handleArrayChange(key, index, subKey, val)}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    }
+
+                    if (isImage) {
+                        return (
+                            <ImageUpload
+                                key={key}
+                                label={formatKey(key)}
+                                value={value || ''}
+                                onChange={(url) => handleContentChange(key, url)}
+                                folder={pageSlug || 'global'}
+                                aspectRatio={key.includes('hero') ? 'aspect-[21/9]' : 'aspect-square'}
+                            />
+                        );
+                    }
+
+                    if (isDescription) {
+                        return (
+                            <TextAreaField 
                                 key={key}
                                 label={formatKey(key)}
                                 value={value || ''}
                                 onChange={(val) => handleContentChange(key, val)}
                             />
                         );
-                    })}
-                </div>
-            </div>
-        </div>
-    );
+                    }
 
-    if (loading && view === 'sitemap') {
-        return (
-            <div className="py-40 flex flex-col items-center">
-                <div className="w-24 h-24 relative mb-8">
-                    <div className="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
-                    <div className="absolute inset-0 border-4 border-red-600 rounded-full border-t-transparent animate-spin"></div>
-                </div>
-                <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] animate-pulse">Initializing Site Map Architect...</h3>
-            </div>
-        );
-    }
-
-    return (
-        <div className="min-h-screen bg-slate-50/30 -mt-6 -mx-6 p-10 lg:p-16">
-            <div className="max-w-7xl mx-auto">
-                {view === 'sitemap' && renderSitemap()}
-                {view === 'sections' && renderSections()}
-                {view === 'edit' && renderEditForm()}
+                    return (
+                        <InputField 
+                            key={key}
+                            label={formatKey(key)}
+                            value={value || ''}
+                            onChange={(val) => handleContentChange(key, val)}
+                        />
+                    );
+                })}
             </div>
         </div>
     );
 };
 
 const InputField = ({ label, value, onChange }) => (
-    <div className="space-y-4 group">
-        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 flex items-center gap-3 transition-colors group-focus-within:text-red-600">
+    <div className="space-y-3 group">
+        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-3 transition-colors group-focus-within:text-red-600">
             <span className="w-1.5 h-1.5 bg-red-600 rounded-full scale-0 group-focus-within:scale-100 transition-all duration-300"></span>
             {label}
         </label>
         <div className="relative">
             <input
                 type="text"
-                className="w-full px-8 py-5 bg-white border-2 border-slate-50 rounded-3xl focus:border-slate-900 focus:outline-none transition-all font-bold text-slate-800 text-sm shadow-sm group-hover:border-slate-200 group-focus-within:shadow-2xl group-focus-within:shadow-slate-200"
+                className="w-full px-6 py-4 bg-white border border-slate-100 rounded-2xl focus:border-slate-900 focus:outline-none transition-all font-bold text-slate-800 text-sm shadow-sm group-hover:border-slate-200 group-focus-within:shadow-xl group-focus-within:shadow-slate-200/50"
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder={`Enter ${label.toLowerCase()}...`}
@@ -366,14 +379,14 @@ const InputField = ({ label, value, onChange }) => (
 );
 
 const TextAreaField = ({ label, value, onChange }) => (
-    <div className="space-y-4 group">
-        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 flex items-center gap-3 transition-colors group-focus-within:text-red-600">
+    <div className="space-y-3 group">
+        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-3 transition-colors group-focus-within:text-red-600">
             <span className="w-1.5 h-1.5 bg-red-600 rounded-full scale-0 group-focus-within:scale-100 transition-all duration-300"></span>
             {label}
         </label>
         <div className="relative">
             <textarea
-                className="w-full px-8 py-6 bg-white border-2 border-slate-50 rounded-[2.5rem] focus:border-slate-900 focus:outline-none transition-all font-bold text-slate-800 text-sm h-48 resize-none leading-relaxed shadow-sm group-hover:border-slate-200 group-focus-within:shadow-2xl group-focus-within:shadow-slate-200"
+                className="w-full px-6 py-5 bg-white border border-slate-100 rounded-3xl focus:border-slate-900 focus:outline-none transition-all font-bold text-slate-800 text-sm h-32 resize-none leading-relaxed shadow-sm group-hover:border-slate-200 group-focus-within:shadow-xl group-focus-within:shadow-slate-200/50"
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder={`Detailed ${label.toLowerCase()} content...`}
