@@ -37,7 +37,8 @@ const CMS = () => {
                 .select('page_slug');
             
             if (bError) throw bError;
-            const uniqueSlugs = [...new Set(bBlocks.map(item => item.page_slug))];
+            const uniqueSlugs = [...new Set(bBlocks.map(item => item.page_slug))]
+                .filter(slug => !/^s\d+$/.test(slug));
 
             // 2. Get names/links from navigations to provide better labels
             const { data: navs, error: nError } = await supabase
