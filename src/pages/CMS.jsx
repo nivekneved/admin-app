@@ -8,7 +8,7 @@ import {
     Search, ExternalLink, Settings,
     Plane, Building2, Anchor, MapPin,
     Menu, BookOpen, ShieldCheck, Mail,
-    Compass
+    Compass, Moon
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Button } from '../components/Button';
@@ -107,6 +107,8 @@ const CMS = () => {
         if (s.includes('flight')) return <Plane size={18} />;
         if (s.includes('hotel')) return <Building2 size={18} />;
         if (s.includes('cruise')) return <Anchor size={18} />;
+        if (s.includes('day-package')) return <MapPin size={18} />;
+        if (s.includes('evening-package')) return <Moon size={18} />;
         if (s.includes('dest')) return <MapPin size={18} />;
         if (s.includes('search')) return <Search size={18} />;
         if (s.includes('news')) return <FileText size={18} />;
