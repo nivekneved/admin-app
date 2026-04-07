@@ -19,15 +19,13 @@ import {
   Inbox,
   Mail,
   FileText,
-  FileEdit,
   ChevronDown,
   Briefcase,
   Users as UsersIcon,
   Globe,
   Monitor
 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import { showAlert, showConfirm } from '../utils/swal';
+import { showConfirm } from '../utils/swal';
 import logo from '../assets/logo.png';
 
 const Sidebar = ({ isOpen, setIsOpen }) => {

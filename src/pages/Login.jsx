@@ -27,7 +27,7 @@ const Login = () => {
       } else {
         setError(result.error || 'Invalid credentials. Please try again.');
       }
-    } catch (err) {
+    } catch {
       setError('A system error occurred during authentication.');
     } finally {
       setIsSubmitting(false);

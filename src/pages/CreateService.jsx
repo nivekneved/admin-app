@@ -772,7 +772,7 @@ const CreateService = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     {/* Included */}
                                     <div>
-                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">What's Included</label>
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">What&apos;s Included</label>
                                         <div className="space-y-2 mb-3 max-h-40 overflow-y-auto custom-scrollbar pr-2">
                                             {(formData.included || []).map((item, i) => (
                                                 <div key={i} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl group">
@@ -801,7 +801,7 @@ const CreateService = () => {
 
                                     {/* Not Included */}
                                     <div>
-                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">What's Excluded</label>
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">What&apos;s Excluded</label>
                                         <div className="space-y-2 mb-3 max-h-40 overflow-y-auto custom-scrollbar pr-2">
                                             {(formData.not_included || []).map((item, i) => (
                                                 <div key={i} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl group">

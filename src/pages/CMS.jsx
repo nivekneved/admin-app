@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { 
-    Save, RefreshCw, Loader2, 
-    Type, Layout, ChevronRight, Globe, 
+    Save, Loader2, 
     Info, Home, Phone, HelpCircle, 
-    ArrowLeft, Image as ImageIcon, 
-    FileText, Layers, Map as MapIcon,
-    Search, ExternalLink, Settings,
-    Plane, Building2, Anchor, MapPin,
-    Menu, BookOpen, ShieldCheck, Mail,
+    FileText, Layers,
+    Search,
+    Plane, Building2, Anchor, MapPin, BookOpen, ShieldCheck,
     Compass, Moon
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -38,7 +35,7 @@ const CMS = () => {
             
             if (bError) throw bError;
             const uniqueSlugs = [...new Set(bBlocks.map(item => item.page_slug))]
-                .filter(slug => !/^s\d+$/.test(slug));
+                .filter(slug => slug && !/^s\d+$/i.test(slug));
 
             // 2. Get names/links from navigations to provide better labels
             const { data: navs, error: nError } = await supabase
