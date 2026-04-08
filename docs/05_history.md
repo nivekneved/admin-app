@@ -74,5 +74,7 @@
 - **Asset Management**: Added dynamic configuration field for "Experience Section Image".
 
 ## 2026-04-08 - Managing Seasonal Service Pricing
-- **Yearly Price Management**: Built a comprehensive Yearly Price management system in` PriceManager.jsx ` with a 12-month calendar grid, daily overrides, age-group capacity limits (Adult, Teen, Child, Infant), and bulk-fill functionality.
+- **Yearly Price Management**: Built a comprehensive Yearly Price management system in `PriceManager.jsx` with a 12-month calendar grid, daily overrides, age-group capacity limits (Adult, Teen, Child, Infant), and bulk-fill functionality.
+- **Selector Optimization**: Converted Service Type, Year, and Variant (Room Type) inputs into high-fidelity dropdown menus for a more streamlined administrative experience.
+- **Dynamic Context Loading**: Implemented reactive room type filtering that automatically populates the secondary selector based on the selected hotel service.
 - **Pricing Schema**: Ensured database schema integration (`service_pricing`) is production-ready with RLS and variant support.
