@@ -69,9 +69,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       title: 'User Engagement',
       icon: <UsersIcon size={18} />,
       items: [
-        { title: 'Customers', path: '/customers', icon: <UserCheck size={16} /> },
-        { title: 'Inquiries', path: '/inquiries', icon: <Inbox size={16} /> },
-        { title: 'Subscribers', path: '/subscribers', icon: <Mail size={16} /> },
+        { title: 'Inbox', path: '/inquiries', icon: <Inbox size={16} /> },
         { title: 'Reviews', path: '/reviews', icon: <MessageSquare size={16} /> },
       ]
     },

@@ -134,7 +134,7 @@ const Dashboard = () => {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div 
               onClick={() => navigate('/team')}
               className="group cursor-pointer transform hover:-translate-y-1 transition-all duration-300"
@@ -153,23 +153,6 @@ const Dashboard = () => {
               </Card>
             </div>
 
-            <div 
-              onClick={() => navigate('/customers')}
-              className="group cursor-pointer transform hover:-translate-y-1 transition-all duration-300"
-            >
-              <Card className="bg-white border border-slate-200 shadow-sm group-hover:shadow-xl group-hover:border-red-100 rounded-[2.5rem] overflow-hidden">
-                <CardContent className="p-8 text-left">
-                  <div className="flex justify-between items-center mb-6">
-                    <div className="p-4 bg-slate-50 text-slate-900 rounded-3xl group-hover:bg-slate-900 group-hover:text-white transition-colors duration-300">
-                      <UserCheck size={28} />
-                    </div>
-                    <ArrowRight size={20} className="text-slate-200 group-hover:text-slate-900 transition-colors" />
-                  </div>
-                  <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Customers</h3>
-                  <div className="text-4xl font-black text-slate-900 tracking-tighter">{stats.totalCustomers}</div>
-                </CardContent>
-              </Card>
-            </div>
 
             <div 
               onClick={() => navigate('/bookings')}

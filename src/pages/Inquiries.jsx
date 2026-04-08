@@ -11,97 +11,119 @@ import { Button } from '../components/Button';
 import { showAlert, showConfirm } from '../utils/swal';
 
 const Inquiries = () => {
-    const [inquiries, setInquiries] = useState([]);
+    const [transmissions, setTransmissions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
-    const [viewingInquiry, setViewingInquiry] = useState(null);
+    const [viewingTransmission, setViewingTransmission] = useState(null);
 
     useEffect(() => {
-        fetchInquiries();
+        fetchData();
     }, []);
 
-    const fetchInquiries = async () => {
+    const fetchData = async () => {
         setLoading(true);
         try {
-            const { data, error } = await supabase
+            // Fetch standard inquiries
+            const { data: inquiriesData, error: inqError } = await supabase
                 .from('inquiries')
                 .select('*')
                 .order('created_at', { ascending: false });
 
-            if (error) {
-                if (error.code === '42P01') {
-                    setInquiries([]);
-                } else {
-                    throw error;
-                }
-            } else {
-                setInquiries(data || []);
-            }
+            if (inqError) throw inqError;
+
+            // Fetch subscribers
+            const { data: subscribersData, error: subError } = await supabase
+                .from('subscribers')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (subError) throw subError;
+
+            // Transform subscribers to match transmission shape
+            const transformedSubscribers = (subscribersData || []).map(sub => ({
+                id: sub.id,
+                name: 'Newsletter Subscriber',
+                email: sub.email,
+                subject: 'New Subscription',
+                message: `User subscribed to newsletter with email: ${sub.email}`,
+                status: sub.status === 'active' ? 'read' : 'unread', // Newsletter signups are usually "read" but we can treat them as unread if new
+                created_at: sub.created_at,
+                type: 'newsletter'
+            }));
+
+            const combined = [
+                ...(inquiriesData || []).map(i => ({ ...i, type: 'inquiry' })),
+                ...transformedSubscribers
+            ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+            setTransmissions(combined);
         } catch (error) {
-            console.error('Error fetching inquiries:', error);
-            showAlert('Error', 'Failed to load inquiries', 'error');
+            console.error('Error fetching data:', error);
+            showAlert('Error', 'Failed to load inbox data', 'error');
         } finally {
             setLoading(false);
         }
     };
 
-    const markAsRead = async (id) => {
+    const markAsRead = async (item) => {
+        if (item.type !== 'inquiry') return;
         try {
             const { error } = await supabase
                 .from('inquiries')
                 .update({ status: 'read' })
-                .eq('id', id);
+                .eq('id', item.id);
 
             if (error) throw error;
-            setInquiries(prev => prev.map(i => i.id === id ? { ...i, status: 'read' } : i));
+            setTransmissions(prev => prev.map(i => i.id === item.id ? { ...i, status: 'read' } : i));
         } catch (error) {
             console.error('Error marking as read:', error);
         }
     };
 
-    const deleteInquiry = async (id) => {
+    const deleteItem = async (item) => {
         const result = await showConfirm(
-            'Delete Inquiry?',
-            'Are you sure you want to remove this message?'
+            `Delete ${item.type === 'inquiry' ? 'Inquiry' : 'Subscriber'}?`,
+            'Are you sure you want to remove this record?'
         );
 
         if (!result.isConfirmed) return;
 
         try {
+            const table = item.type === 'inquiry' ? 'inquiries' : 'subscribers';
             const { error } = await supabase
-                .from('inquiries')
+                .from(table)
                 .delete()
-                .eq('id', id);
+                .eq('id', item.id);
 
             if (error) throw error;
-            showAlert('Deleted', 'Inquiry removed successfully', 'success');
-            fetchInquiries();
-            if (viewingInquiry?.id === id) setViewingInquiry(null);
+            showAlert('Deleted', 'Removed successfully', 'success');
+            fetchData();
+            if (viewingTransmission?.id === item.id) setViewingTransmission(null);
         } catch (error) {
-            console.error('Error deleting inquiry:', error);
-            showAlert('Error', 'Failed to delete inquiry', 'error');
+            console.error('Error deleting:', error);
+            showAlert('Error', 'Failed to delete record', 'error');
         }
     };
 
-    const processedInquiries = useMemo(() => {
-        return inquiries.filter(inquiry => {
+    const processedItems = useMemo(() => {
+        return transmissions.filter(item => {
             const matchesSearch = 
-                inquiry.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                inquiry.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                inquiry.subject?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                inquiry.message?.toLowerCase().includes(searchTerm.toLowerCase());
+                item.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.subject?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.message?.toLowerCase().includes(searchTerm.toLowerCase());
             
-            const matchesStatus = statusFilter === 'all' || inquiry.status === statusFilter;
+            const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
             
             return matchesSearch && matchesStatus;
         });
-    }, [inquiries, searchTerm, statusFilter]);
+    }, [transmissions, searchTerm, statusFilter]);
 
-    const handleViewDetails = (inquiry) => {
-        setViewingInquiry(inquiry);
-        if (inquiry.status === 'unread') {
-            markAsRead(inquiry.id);
+    const handleViewDetails = (item) => {
+        setViewingTransmission(item);
+        if (item.status === 'unread' && item.type === 'inquiry') {
+            markAsRead(item);
         }
     };
 
@@ -109,12 +131,12 @@ const Inquiries = () => {
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-black text-gray-900 tracking-tight">Inquiry Inbox</h1>
-                    <p className="text-gray-400 text-sm font-medium">Manage customer requests and contact form submissions</p>
+                    <h1 className="text-2xl font-black text-gray-900 tracking-tight">Inbox</h1>
+                    <p className="text-gray-400 text-sm font-medium">Manage customer inquiries and newsletter subscribers</p>
                 </div>
                 <div className="flex items-center gap-2">
                     <Button
-                        onClick={fetchInquiries}
+                        onClick={fetchData}
                         variant="outline"
                         className="text-gray-500 border-slate-300 flex items-center gap-2"
                     >
@@ -160,33 +182,40 @@ const Inquiries = () => {
                                 <Loader2 className="animate-spin text-brand-red mb-4" size={32} />
                                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Opening Secure Comms...</p>
                             </div>
-                        ) : inquiries.length === 0 ? (
+                        ) : transmissions.length === 0 ? (
                             <div className="py-20 text-center flex flex-col items-center gap-4 px-6">
                                 <Inbox size={48} className="text-gray-100" />
                                 <p className="text-gray-400 font-bold">Your inbox is clear</p>
-                                <p className="text-gray-300 text-xs">When customers use the contact form, their queries will appear here.</p>
+                                <p className="text-gray-300 text-xs">When customers interact with the site, their queries will appear here.</p>
                             </div>
                         ) : (
                             <div className="divide-y divide-gray-50">
-                                {processedInquiries.map((inquiry) => (
+                                {processedItems.map((item) => (
                                     <button
-                                        key={inquiry.id}
-                                        onClick={() => handleViewDetails(inquiry)}
+                                        key={item.id}
+                                        onClick={() => handleViewDetails(item)}
                                         className={`w-full text-left p-6 hover:bg-gray-50 transition-all flex flex-col gap-2 relative ${
-                                            viewingInquiry?.id === inquiry.id ? 'bg-red-50/30' : ''
+                                            viewingTransmission?.id === item.id ? 'bg-red-50/30' : ''
                                         }`}
                                     >
-                                        {inquiry.status === 'unread' && (
+                                        {item.status === 'unread' && (
                                             <div className="absolute top-6 right-6 w-2 h-2 bg-brand-red rounded-full shadow-lg shadow-red-200" />
                                         )}
                                         <div className="flex justify-between items-start pr-4">
-                                            <h3 className="text-sm font-black text-gray-900 truncate">{inquiry.name}</h3>
+                                            <div className="flex flex-col gap-1">
+                                                <h3 className="text-sm font-black text-gray-900 truncate">{item.name}</h3>
+                                                <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full w-fit ${
+                                                    item.type === 'inquiry' ? 'bg-blue-50 text-blue-600' : 'bg-purple-50 text-purple-600'
+                                                }`}>
+                                                    {item.type}
+                                                </span>
+                                            </div>
                                             <span className="text-[9px] font-bold text-gray-400 uppercase tracking-tight">
-                                                {new Date(inquiry.created_at).toLocaleDateString()}
+                                                {new Date(item.created_at).toLocaleDateString()}
                                             </span>
                                         </div>
-                                        <p className="text-xs font-bold text-brand-red truncate uppercase tracking-tight">{inquiry.subject}</p>
-                                        <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">{inquiry.message}</p>
+                                        <p className="text-xs font-bold text-brand-red truncate uppercase tracking-tight">{item.subject}</p>
+                                        <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">{item.message}</p>
                                     </button>
                                 ))}
                             </div>
@@ -194,9 +223,9 @@ const Inquiries = () => {
                     </CardContent>
                 </Card>
 
-                {/* Inquiry Details */}
+                {/* Details */}
                 <Card className="lg:col-span-2 border border-slate-300 shadow-xl shadow-gray-200/50 rounded-[2.5rem] bg-white overflow-hidden flex flex-col h-[700px]">
-                    {viewingInquiry ? (
+                    {viewingTransmission ? (
                         <>
                             <CardHeader className="p-8 border-b border-gray-50 bg-gray-50/30">
                                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -205,16 +234,16 @@ const Inquiries = () => {
                                             <User size={24} />
                                         </div>
                                         <div>
-                                            <h2 className="text-xl font-black text-gray-900">{viewingInquiry.name}</h2>
+                                            <h2 className="text-xl font-black text-gray-900">{viewingTransmission.name}</h2>
                                             <div className="flex items-center gap-4 text-gray-400 text-xs font-bold uppercase tracking-widest mt-1">
-                                                <span className="flex items-center gap-1.5"><Mail size={12} className="text-brand-red" /> {viewingInquiry.email}</span>
-                                                {viewingInquiry.phone && <span className="flex items-center gap-1.5"><Phone size={12} className="text-brand-red" /> {viewingInquiry.phone}</span>}
+                                                <span className="flex items-center gap-1.5"><Mail size={12} className="text-brand-red" /> {viewingTransmission.email}</span>
+                                                {viewingTransmission.phone && <span className="flex items-center gap-1.5"><Phone size={12} className="text-brand-red" /> {viewingTransmission.phone}</span>}
                                             </div>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <Button
-                                            onClick={() => deleteInquiry(viewingInquiry.id)}
+                                            onClick={() => deleteItem(viewingTransmission)}
                                             variant="outline"
                                             className="text-gray-400 hover:text-brand-red border-slate-300 p-3 h-auto rounded-xl"
                                         >
@@ -227,9 +256,9 @@ const Inquiries = () => {
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-2">
                                         <AlertCircle size={16} className="text-brand-red" />
-                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Inquiry Subject</span>
+                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Subject</span>
                                     </div>
-                                    <h3 className="text-2xl font-black text-gray-900">{viewingInquiry.subject}</h3>
+                                    <h3 className="text-2xl font-black text-gray-900">{viewingTransmission.subject}</h3>
                                 </div>
 
                                 <div className="p-8 bg-gray-50/50 rounded-[2rem] border border-gray-100 relative">
@@ -237,22 +266,24 @@ const Inquiries = () => {
                                     <div className="space-y-4">
                                         <div className="flex items-center gap-2">
                                             <Calendar size={14} className="text-gray-400" />
-                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Message Received {new Date(viewingInquiry.created_at).toLocaleString()}</span>
+                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Received {new Date(viewingTransmission.created_at).toLocaleString()}</span>
                                         </div>
                                         <p className="text-gray-700 leading-relaxed font-medium whitespace-pre-wrap">
-                                            {viewingInquiry.message}
+                                            {viewingTransmission.message}
                                         </p>
                                     </div>
                                 </div>
 
-                                <div className="pt-8 border-t border-gray-50">
-                                    <a 
-                                        href={`mailto:${viewingInquiry.email}?subject=RE: ${viewingInquiry.subject}`}
-                                        className="inline-flex items-center gap-3 bg-slate-950 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-black transition-all shadow-xl shadow-slate-200"
-                                    >
-                                        <Mail size={16} /> Reply via Email
-                                    </a>
-                                </div>
+                                {viewingTransmission.type === 'inquiry' && (
+                                    <div className="pt-8 border-t border-gray-50">
+                                        <a 
+                                            href={`mailto:${viewingTransmission.email}?subject=RE: ${viewingTransmission.subject}`}
+                                            className="inline-flex items-center gap-3 bg-slate-950 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-black transition-all shadow-xl shadow-slate-200"
+                                        >
+                                            <Mail size={16} /> Reply via Email
+                                        </a>
+                                    </div>
+                                )}
                             </CardContent>
                         </>
                     ) : (
@@ -261,8 +292,8 @@ const Inquiries = () => {
                                 <Inbox size={40} />
                             </div>
                             <div className="space-y-2">
-                                <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight">Select a transmission</h3>
-                                <p className="text-gray-400 text-sm max-w-xs mx-auto">Select a message from the list to view the full details and respond to the customer.</p>
+                                <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight">Select a message</h3>
+                                <p className="text-gray-400 text-sm max-w-xs mx-auto">Select an item from the list to view the full details and respond.</p>
                             </div>
                         </CardContent>
                     )}
