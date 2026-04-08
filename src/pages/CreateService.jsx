@@ -1120,6 +1120,42 @@ const CreateService = () => {
 
                         {formData.category_ids.some(id => categories.find(c => c.id === id)?.name === 'Hotels') && (
                             <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-6 border-b border-slate-100">
+                                    <div>
+                                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">ADULTS MAX</label>
+                                        <input
+                                            type="number"
+                                            name="max_adults"
+                                            className="w-full px-4 py-3 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-black text-xl"
+                                            value={formData.max_adults}
+                                            onChange={handleInputChange}
+                                            placeholder="No limit"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">KIDS MAX</label>
+                                        <input
+                                            type="number"
+                                            name="max_children"
+                                            className="w-full px-4 py-3 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-black text-xl"
+                                            value={formData.max_children}
+                                            onChange={handleInputChange}
+                                            placeholder="No limit"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">CHILD AGE LIMIT</label>
+                                        <input
+                                            type="number"
+                                            name="child_age_limit"
+                                            className="w-full px-4 py-3 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-black text-xl"
+                                            value={formData.child_age_limit}
+                                            onChange={handleInputChange}
+                                            placeholder="12"
+                                        />
+                                    </div>
+                                </div>
+
                                 <div className="flex items-center justify-between mb-4">
                                     <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
                                         <BedDouble size={16} className="text-brand-red" /> Accommodation & Pricing
@@ -1448,79 +1484,8 @@ const CreateService = () => {
                             </h3>
 
                             <div className="space-y-6 relative z-10">
-                                <div>
-                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Base Rental/Unit Price (MUR)</label>
-                                    <div className="relative">
-                                        <input
-                                            type="number"
-                                            name="price"
-                                            required
-                                            step="0.01"
-                                            className="w-full pl-12 pr-6 py-4 bg-white/5 border border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-black text-xl text-white outline-none"
-                                            value={formData.price}
-                                            onChange={handleInputChange}
-                                            placeholder="0.00"
-                                        />
-                                        <DollarSign size={20} className="absolute left-4 top-4 text-brand-red" />
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Current Inventory Capacity</label>
-                                    <div className="relative">
-                                        <input
-                                            type="number"
-                                            name="stock"
-                                            required
-                                            className="w-full pl-12 pr-6 py-4 bg-white/5 border border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-black text-xl text-white outline-none"
-                                            value={formData.stock}
-                                            onChange={handleInputChange}
-                                            placeholder="0"
-                                        />
-                                        <Package size={20} className="absolute left-4 top-4 text-brand-red" />
-                                    </div>
-                                </div>
-
                                 <div className="pt-4 border-t border-white/5">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                        <div className="relative">
-                                            <input
-                                                type="number"
-                                                name="max_adults"
-                                                className="w-full pl-6 pr-6 py-4 bg-white/5 border border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-black text-xl text-white outline-none"
-                                                value={formData.max_adults}
-                                                onChange={handleInputChange}
-                                                placeholder="No limit"
-                                            />
-                                            <div className="absolute right-4 top-4 text-[10px] font-black text-gray-500 uppercase tracking-widest">ADULTS MAX</div>
-                                        </div>
-                                        <div className="relative">
-                                            <input
-                                                type="number"
-                                                name="max_children"
-                                                className="w-full pl-6 pr-6 py-4 bg-white/5 border border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-black text-xl text-white outline-none"
-                                                value={formData.max_children}
-                                                onChange={handleInputChange}
-                                                placeholder="No limit"
-                                            />
-                                            <div className="absolute right-4 top-4 text-[10px] font-black text-gray-500 uppercase tracking-widest">KIDS MAX</div>
-                                        </div>
-                                    </div>
 
-                                    <div className="relative mb-6">
-                                        <input
-                                            type="number"
-                                            name="child_age_limit"
-                                            className="w-full pl-6 pr-6 py-4 bg-white/5 border border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-black text-xl text-white outline-none"
-                                            value={formData.child_age_limit}
-                                            onChange={handleInputChange}
-                                            placeholder="12"
-                                        />
-                                        <div className="absolute right-4 top-4 text-[10px] font-black text-gray-500 uppercase tracking-widest">CHILD AGE LIMIT</div>
-                                        <p className="mt-2 ml-1 text-[9px] font-bold text-gray-500 uppercase tracking-widest leading-relaxed">
-                                            Guests above this age are considered adults.
-                                        </p>
-                                    </div>
                                     <div className="flex items-center justify-between px-2">
                                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Featured Status</label>
                                         <button
