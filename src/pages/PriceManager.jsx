@@ -138,9 +138,12 @@ const PriceManager = () => {
   const [saving,  setSaving]  = useState(false);
 
   // Variant panel
-  const [showAddVariant, setShowAddVariant] = useState(false);
-  const [newVariantName, setNewVariantName] = useState('');
-  const [addingVariant,  setAddingVariant]  = useState(false);
+  const [showAddVariant,  setShowAddVariant]  = useState(false);
+  const [newVariantName,  setNewVariantName]  = useState('');
+  const [addingVariant,   setAddingVariant]   = useState(false);
+  // Age-group capacity per variant (null = not accepted)
+  const [capacity,        setCapacity]        = useState({ max_infants: null, max_children: null, max_teens: null });
+  const [savingCapacity,  setSavingCapacity]  = useState(false);
 
   // Bulk fill (one per age group)
   const [bulk, setBulk] = useState(emptyPrices());
@@ -173,11 +176,12 @@ const PriceManager = () => {
     (async () => {
       const { data } = await supabase
         .from('room_types')
-        .select('id, name, weekday_price, weekend_price')
+        .select('id, name, weekday_price, weekend_price, max_infants, max_children, max_teens')
         .eq('service_id', selectedSvc.id)
         .order('name');
       setVariants(data || []);
       setSelectedVar(null);
+      setCapacity({ max_infants: null, max_children: null, max_teens: null });
       setGrid([]);
     })();
   }, [selectedSvc]);
@@ -368,6 +372,42 @@ const PriceManager = () => {
     showAlert('Deleted', 'Variant deleted', 'success');
   };
 
+  // ── Select variant + load its capacity ───────────────────────
+  const handleSelectVar = (v) => {
+    setSelectedVar(v);
+    setCapacity({
+      max_infants:  v.max_infants  ?? null,
+      max_children: v.max_children ?? null,
+      max_teens:    v.max_teens    ?? null,
+    });
+  };
+
+  // ── Save age-group capacity ───────────────────────────────────
+  const saveCapacity = async () => {
+    if (!selectedVar) return;
+    setSavingCapacity(true);
+    // Helper: empty string or unchecked = null (not accepted)
+    const toInt = (v) => (v === '' || v === null || v === undefined) ? null : parseInt(v, 10);
+    const patch = {
+      max_infants:  toInt(capacity.max_infants),
+      max_children: toInt(capacity.max_children),
+      max_teens:    toInt(capacity.max_teens),
+    };
+    const { error } = await supabase
+      .from('room_types')
+      .update(patch)
+      .eq('id', selectedVar.id);
+    if (error) {
+      showAlert('Error', 'Could not save capacity', 'error');
+    } else {
+      // Sync back into variants list
+      setVariants(prev => prev.map(v => v.id === selectedVar.id ? { ...v, ...patch } : v));
+      setSelectedVar(prev => ({ ...prev, ...patch }));
+      showAlert('Saved', 'Age-group capacity updated', 'success');
+    }
+    setSavingCapacity(false);
+  };
+
   // ── Derived ───────────────────────────────────────────────────
   const variantLabel   = serviceType === 'hotel' ? 'Room Type' : 'Variant';
   const filledMonths   = grid.filter(m => m.price !== '').length;
@@ -502,19 +542,77 @@ const PriceManager = () => {
               ) : (
                 <div className="space-y-1 max-h-40 overflow-y-auto">
                   {variants.map(v => (
-                    <div key={v.id} onClick={() => setSelectedVar(v)}
+                    <div key={v.id} onClick={() => handleSelectVar(v)}
                       className={`flex items-center justify-between px-3 py-2 rounded-xl cursor-pointer border transition text-xs ${
                         selectedVar?.id === v.id
                           ? 'bg-red-50 border-red-200 text-brand-red font-bold'
                           : 'border-slate-100 hover:border-slate-200 hover:bg-slate-50 text-slate-700'
                       }`}>
-                      <span>{v.name}</span>
+                      <span className="flex-1 min-w-0 truncate">{v.name}</span>
+                      {/* Age acceptance badges */}
+                      <span className="flex gap-0.5 mx-1.5 shrink-0">
+                        {[{k:'max_infants',l:'I'},{k:'max_children',l:'C'},{k:'max_teens',l:'T'}].map(b => (
+                          <span key={b.k} title={b.k.replace('max_','')} className={`text-[8px] font-black rounded px-1 ${
+                            v[b.k] !== null && v[b.k] !== undefined ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-300'
+                          }`}>{b.l}</span>
+                        ))}
+                      </span>
                       <button onClick={e => { e.stopPropagation(); handleDeleteVariant(v); }}
-                        className="text-slate-300 hover:text-red-500 transition ml-2">
+                        className="text-slate-300 hover:text-red-500 transition">
                         <Trash2 size={12} />
                       </button>
                     </div>
                   ))}
+                </div>
+              )}
+
+              {/* ── Capacity editor for selected variant ── */}
+              {selectedVar && (
+                <div className="mt-3 border-t border-slate-100 pt-3">
+                  <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2">
+                    Age Capacity · {selectedVar.name}
+                  </p>
+                  <div className="space-y-2">
+                    {[
+                      { key: 'max_infants',  label: 'Infant',  range: '0–2',   color: 'purple' },
+                      { key: 'max_children', label: 'Child',   range: '3–11',  color: 'blue'   },
+                      { key: 'max_teens',    label: 'Teen',    range: '12–17', color: 'amber'  },
+                    ].map(ag => (
+                      <div key={ag.key} className="flex items-center gap-2">
+                        <label className="flex items-center gap-1.5 cursor-pointer select-none w-24 shrink-0">
+                          <input
+                            type="checkbox"
+                            checked={capacity[ag.key] !== null}
+                            onChange={e => setCapacity(prev => ({ ...prev, [ag.key]: e.target.checked ? 0 : null }))}
+                            className="rounded accent-brand-red"
+                          />
+                          <span className={`text-[10px] font-black ${
+                            ag.color==='purple'?'text-purple-600':ag.color==='blue'?'text-blue-600':'text-amber-600'
+                          }`}>{ag.label} <span className="text-slate-400 font-normal">({ag.range})</span></span>
+                        </label>
+                        {capacity[ag.key] !== null ? (
+                          <div className="flex items-center gap-1.5 flex-1">
+                            <input
+                              type="number"
+                              min="0"
+                              value={capacity[ag.key] ?? ''}
+                              onChange={e => setCapacity(prev => ({ ...prev, [ag.key]: e.target.value === '' ? 0 : parseInt(e.target.value,10) }))}
+                              className="w-14 border border-slate-200 rounded-lg px-2 py-1 text-xs font-bold outline-none focus:ring-2 focus:ring-brand-red text-center"
+                            />
+                            <span className="text-[10px] text-slate-400">{capacity[ag.key] === 0 ? 'unlimited' : `max per booking`}</span>
+                          </div>
+                        ) : (
+                          <span className="text-[10px] text-slate-400 italic">Not accepted</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    onClick={saveCapacity}
+                    disabled={savingCapacity}
+                    className="mt-3 w-full py-1.5 bg-slate-800 text-white rounded-lg text-[10px] font-black hover:bg-slate-700 transition disabled:opacity-50">
+                    {savingCapacity ? 'Saving…' : 'Save Capacity Settings'}
+                  </button>
                 </div>
               )}
             </>
