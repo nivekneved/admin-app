@@ -93,3 +93,11 @@
 - **Data-Driven UI**: Refactored `HotelClientWrapper.tsx` and the server-side mapping logic to prioritize room-specific data while maintaining a robust fallback to hotel-level policies for legacy data compatibility.
 - **Premium Visualization**: Implemented high-fidelity icons and badges (Users, Calendar) for occupancy data, improving user transparency and reducing inquiry friction during the room selection process.
 - **Build Certification**: Verified 100% build success (`npm run build`) in the web application after schema and type updates.
+
+## 2026-04-08 - Admin UX: Collapsible Form Infrastructure
+- **Interactive Form Sections**: Redesigned the complex service creation/editing form with a high-fidelity accordion system. Implemented persistent `collapsedSections` state to manage visibility across Identity, Narrative, Policies, SEO, and more.
+- **Micro-Animations & Visual Feedback**: Integrated `animate-in`, `fade-in`, and `slide-in` transitions with rotating `lucide-react` chevrons for a fluid, premium administrative experience.
+- **Event Propagation Guarding**: Implemented `stopPropagation` on essential action triggers (e.g., "Add Room Type", "Add Day/Stop") to prevent accidental section collapsing during data entry.
+- **Logic Stabilization**: Resolved critical JSX syntax errors and redundant component blocks between the Gallery and Accommodation sections, ensuring a clean and manageable codebase.
+- **Build Certification**: Verified production readiness with a 100% successful `npm run build` pass in the `admin-app` environment.
+

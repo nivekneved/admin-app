@@ -13,6 +13,7 @@ import {
 import { supabase } from '../lib/supabase';
 import { showAlert } from '../utils/swal';
 import ImageUpload from '../components/ImageUpload';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 
 const CreateService = () => {
     const { id } = useParams();
@@ -59,6 +60,22 @@ const CreateService = () => {
         terms_and_conditions: '',
         meal_plans: []
     });
+
+    const [collapsedSections, setCollapsedSections] = useState({
+        identity: false,
+        narrative: false,
+        mealPlans: false,
+        policies: false,
+        promotional: false,
+        seo: false,
+        gallery: false,
+        accommodation: false,
+        itinerary: false
+    });
+
+    const toggleSection = (section) => {
+        setCollapsedSections(prev => ({ ...prev, [section]: !prev[section] }));
+    };
 
     const isEdit = !!id;
 
@@ -522,12 +539,21 @@ const CreateService = () => {
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2 space-y-8">
-                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
-                            <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em] mb-4">
-                                <Tag size={16} className="text-brand-red" /> Service Identity
-                            </h3>
+                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300">
+                            <div 
+                                className="flex items-center justify-between cursor-pointer group/header"
+                                onClick={() => toggleSection('identity')}
+                            >
+                                <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
+                                    <Tag size={16} className="text-brand-red" /> Service Identity
+                                </h3>
+                                <div className="p-2 rounded-xl bg-gray-50 group-hover/header:bg-red-50 text-gray-400 group-hover/header:text-brand-red transition-all">
+                                    {collapsedSections.identity ? <ChevronRight size={18} /> : <ChevronDown size={18} />}
+                                </div>
+                            </div>
 
-                            <div className="space-y-6">
+                            {!collapsedSections.identity && (
+                                <div className="space-y-6 mt-6 animate-in fade-in slide-in-from-top-2 duration-300">
                                 <div>
                                     <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Full Listing Title</label>
                                     <input
@@ -731,13 +757,25 @@ const CreateService = () => {
                                         </Button>
                                     </div>
                                 </div>
-                            </div>
+                                </div>
+                            )}
                         </section>
 
-                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-8">
-                            <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
-                                <Package size={16} className="text-brand-red" /> Experience Narrative & Inclusions
-                            </h3>
+                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300">
+                            <div 
+                                className="flex items-center justify-between cursor-pointer group/header"
+                                onClick={() => toggleSection('narrative')}
+                            >
+                                <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
+                                    <Package size={16} className="text-brand-red" /> Experience Narrative & Inclusions
+                                </h3>
+                                <div className="p-2 rounded-xl bg-gray-50 group-hover/header:bg-red-50 text-gray-400 group-hover/header:text-brand-red transition-all">
+                                    {collapsedSections.narrative ? <ChevronRight size={18} /> : <ChevronDown size={18} />}
+                                </div>
+                            </div>
+
+                            {!collapsedSections.narrative && (
+                                <div className="space-y-8 mt-8 animate-in fade-in slide-in-from-top-2 duration-300">
 
                             <div className="space-y-8">
                                 {/* Highlights */}
@@ -831,24 +869,38 @@ const CreateService = () => {
                                         />
                                     </div>
                                 </div>
-                            </div>
+                                </div>
+                                </div>
+                            )}
                         </section>
 
-                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
-                            <div className="flex items-center justify-between mb-4">
+                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300">
+                            <div 
+                                className="flex items-center justify-between cursor-pointer group/header"
+                                onClick={() => toggleSection('mealPlans')}
+                            >
                                 <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
                                     <Utensils size={16} className="text-brand-red" /> Meal Plan Configuration
                                 </h3>
-                                <Button
-                                    type="button"
-                                    onClick={() => setFormData(prev => ({ ...prev, meal_plans: [...(prev.meal_plans || []), { id: Date.now().toString(), label: '', price: 0 }] }))}
-                                    className="bg-slate-100 text-slate-600 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-50 hover:text-brand-red transition-all"
-                                >
-                                    <Plus size={14} className="mr-1" /> Add Plan
-                                </Button>
+                                <div className="flex items-center gap-4">
+                                    <Button
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setFormData(prev => ({ ...prev, meal_plans: [...(prev.meal_plans || []), { id: Date.now().toString(), label: '', price: 0 }] }));
+                                        }}
+                                        className="bg-slate-100 text-slate-600 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-50 hover:text-brand-red transition-all"
+                                    >
+                                        <Plus size={14} className="mr-1" /> Add Plan
+                                    </Button>
+                                    <div className="p-2 rounded-xl bg-gray-50 group-hover/header:bg-red-50 text-gray-400 group-hover/header:text-brand-red transition-all">
+                                        {collapsedSections.mealPlans ? <ChevronRight size={18} /> : <ChevronDown size={18} />}
+                                    </div>
+                                </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {!collapsedSections.mealPlans && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 animate-in fade-in slide-in-from-top-2 duration-300">
                                 {(formData.meal_plans || []).map((meal, idx) => (
                                     <div key={meal.id} className="p-6 bg-gray-50 border border-slate-200 rounded-2xl space-y-4 relative group">
                                         <button 
@@ -896,14 +948,24 @@ const CreateService = () => {
                                     </div>
                                 )}
                             </div>
+                        )}
                         </section>
 
-                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-8">
-                            <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
-                                <Info size={16} className="text-brand-red" /> Policies & Legal
-                            </h3>
+                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300">
+                            <div 
+                                className="flex items-center justify-between cursor-pointer group/header"
+                                onClick={() => toggleSection('policies')}
+                            >
+                                <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
+                                    <Info size={16} className="text-brand-red" /> Policies & Legal
+                                </h3>
+                                <div className="p-2 rounded-xl bg-gray-50 group-hover/header:bg-red-50 text-gray-400 group-hover/header:text-brand-red transition-all">
+                                    {collapsedSections.policies ? <ChevronRight size={18} /> : <ChevronDown size={18} />}
+                                </div>
+                            </div>
                             
-                            <div className="space-y-6">
+                            {!collapsedSections.policies && (
+                                <div className="space-y-6 mt-6 animate-in fade-in slide-in-from-top-2 duration-300">
                                 <div>
                                     <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Cancellation Policy</label>
                                     <textarea
@@ -926,16 +988,26 @@ const CreateService = () => {
                                         placeholder="Specify specific conditions for this service (e.g. age restrictions, dress code)..."
                                     />
                                 </div>
-                            </div>
+                                </div>
+                            )}
                         </section>
 
 
-                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
-                            <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em] mb-4">
-                                <Tag size={16} className="text-brand-red" /> Promotional Strategy
-                            </h3>
+                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300">
+                            <div 
+                                className="flex items-center justify-between cursor-pointer group/header"
+                                onClick={() => toggleSection('promotional')}
+                            >
+                                <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
+                                    <Tag size={16} className="text-brand-red" /> Promotional Strategy
+                                </h3>
+                                <div className="p-2 rounded-xl bg-gray-50 group-hover/header:bg-red-50 text-gray-400 group-hover/header:text-brand-red transition-all">
+                                    {collapsedSections.promotional ? <ChevronRight size={18} /> : <ChevronDown size={18} />}
+                                </div>
+                            </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {!collapsedSections.promotional && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6 animate-in fade-in slide-in-from-top-2 duration-300">
                                 <div className="p-6 bg-red-50/50 rounded-2xl border border-red-100 flex items-center justify-between group">
                                     <div className="space-y-1">
                                         <p className="text-[10px] font-black text-brand-red uppercase tracking-widest leading-none">Seasonal Deal</p>
@@ -962,15 +1034,25 @@ const CreateService = () => {
                                         disabled={!formData.is_seasonal_deal}
                                     />
                                 </div>
-                            </div>
+                                </div>
+                            )}
                         </section>
 
-                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
-                            <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em] mb-4">
-                                <Globe size={16} className="text-brand-red" /> Search Engine Optimization
-                            </h3>
+                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300">
+                            <div 
+                                className="flex items-center justify-between cursor-pointer group/header"
+                                onClick={() => toggleSection('seo')}
+                            >
+                                <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
+                                    <Globe size={16} className="text-brand-red" /> Search Engine Optimization
+                                </h3>
+                                <div className="p-2 rounded-xl bg-gray-50 group-hover/header:bg-red-50 text-gray-400 group-hover/header:text-brand-red transition-all">
+                                    {collapsedSections.seo ? <ChevronRight size={18} /> : <ChevronDown size={18} />}
+                                </div>
+                            </div>
 
-                            <div className="space-y-6">
+                            {!collapsedSections.seo && (
+                                <div className="space-y-6 mt-6 animate-in fade-in slide-in-from-top-2 duration-300">
                                 <div>
                                     <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Meta Title (Custom Title Tag)</label>
                                     <input
@@ -993,18 +1075,28 @@ const CreateService = () => {
                                         placeholder="Search engine snippet description..."
                                     />
                                 </div>
-                            </div>
+                                </div>
+                            )}
                         </section>
 
-                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
-                            <div className="flex items-center justify-between mb-4">
+                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300">
+                            <div 
+                                className="flex items-center justify-between cursor-pointer group/header"
+                                onClick={() => toggleSection('gallery')}
+                            >
                                 <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
                                     <Camera size={16} className="text-brand-red" /> Multi-Image Experience Gallery
                                 </h3>
-                                <div className="text-[10px] text-gray-300 font-black uppercase tracking-widest">{formData.gallery_images?.length || 0} / 10 ASSETS</div>
+                                <div className="flex items-center gap-4">
+                                    <div className="text-[10px] text-gray-300 font-black uppercase tracking-widest">{formData.gallery_images?.length || 0} / 10 ASSETS</div>
+                                    <div className="p-2 rounded-xl bg-gray-50 group-hover/header:bg-red-50 text-gray-400 group-hover/header:text-brand-red transition-all">
+                                        {collapsedSections.gallery ? <ChevronRight size={18} /> : <ChevronDown size={18} />}
+                                    </div>
+                                </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {!collapsedSections.gallery && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6 animate-in fade-in slide-in-from-top-2 duration-300">
                                 <div className="space-y-4">
                                     <ImageUpload
                                         label="Push to Gallery"
@@ -1044,137 +1136,40 @@ const CreateService = () => {
                                         )}
                                     </div>
                                 </div>
-                            </div>
+                                </div>
+                            )}
                         </section>
 
-                        <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-8">
-                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
-                                <div>
-                                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Key Experience Highlights</label>
-                                    <div className="flex flex-wrap gap-2 mb-3">
-                                        {(formData.highlights || []).map(h => (
-                                            <span key={h} className="px-3 py-1.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                                                {h}
-                                                <button type="button" onClick={() => toggleListValue('highlights', h)} className="hover:text-red-400"><X size={12} /></button>
-                                            </span>
-                                        ))}
-                                    </div>
-                                    <div className="flex gap-2">
-                                        <input
-                                            type="text"
-                                            id="new_highlight"
-                                            placeholder="e.g. VIP Concierge"
-                                            className="grow px-4 py-3 bg-gray-50 border border-slate-300 rounded-xl text-xs font-bold"
-                                            onKeyDown={e => { if(e.key === 'Enter') { e.preventDefault(); toggleListValue('highlights', e.target.value); e.target.value = ''; } }}
-                                        />
-                                        <Button type="button" onClick={() => { const i = document.getElementById('new_highlight'); toggleListValue('highlights', i.value); i.value = ''; }} className="bg-brand-charcoal text-white px-6 rounded-xl text-[10px] font-black uppercase">Add</Button>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Included in Package</label>
-                                    <div className="flex flex-wrap gap-2 mb-3">
-                                        {(formData.included || []).map(i => (
-                                            <span key={i} className="px-3 py-1.5 bg-green-50 text-green-600 border border-green-100 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                                                {i}
-                                                <button type="button" onClick={() => toggleListValue('included', i)} className="hover:text-red-400"><X size={12} /></button>
-                                            </span>
-                                        ))}
-                                    </div>
-                                    <div className="flex gap-2">
-                                        <input
-                                            type="text"
-                                            id="new_included"
-                                            placeholder="e.g. Flight + Transfers"
-                                            className="grow px-4 py-3 bg-gray-50 border border-slate-300 rounded-xl text-xs font-bold"
-                                            onKeyDown={e => { if(e.key === 'Enter') { e.preventDefault(); toggleListValue('included', e.target.value); e.target.value = ''; } }}
-                                        />
-                                        <Button type="button" onClick={() => { const i = document.getElementById('new_included'); toggleListValue('included', i.value); i.value = ''; }} className="bg-brand-charcoal text-white px-6 rounded-xl text-[10px] font-black uppercase">Add</Button>
-                                    </div>
-                                </div>
-                             </div>
 
-                             <div className="space-y-6 pt-4 border-t border-slate-100">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div>
-                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Cancellation Policy</label>
-                                        <textarea
-                                            rows={2}
-                                            name="cancellation_policy"
-                                            className="w-full px-4 py-3 bg-gray-50 border border-slate-300 rounded-2xl text-xs font-medium resize-none focus:outline-none focus:ring-2 focus:ring-brand-red"
-                                            value={formData.cancellation_policy}
-                                            onChange={handleInputChange}
-                                            placeholder="Standard 48-hour cancellation policy..."
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Terms & Conditions</label>
-                                        <textarea
-                                            rows={2}
-                                            name="terms_and_conditions"
-                                            className="w-full px-4 py-3 bg-gray-50 border border-slate-300 rounded-2xl text-xs font-medium resize-none focus:outline-none focus:ring-2 focus:ring-brand-red"
-                                            value={formData.terms_and_conditions}
-                                            onChange={handleInputChange}
-                                            placeholder="Booking terms, insurance requirements..."
-                                        />
-                                    </div>
-                                </div>
-                             </div>
-                        </section>
 
                         {formData.category_ids.some(id => categories.find(c => c.id === id)?.name === 'Hotels') && (
-                            <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
-                                {/* 
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-6 border-b border-slate-100">
-                                    <div>
-                                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">ADULTS MAX</label>
-                                        <input
-                                            type="number"
-                                            name="max_adults"
-                                            className="w-full px-4 py-3 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-black text-xl"
-                                            value={formData.max_adults}
-                                            onChange={handleInputChange}
-                                            placeholder="No limit"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">KIDS MAX</label>
-                                        <input
-                                            type="number"
-                                            name="max_children"
-                                            className="w-full px-4 py-3 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-black text-xl"
-                                            value={formData.max_children}
-                                            onChange={handleInputChange}
-                                            placeholder="No limit"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">CHILD AGE LIMIT</label>
-                                        <input
-                                            type="number"
-                                            name="child_age_limit"
-                                            className="w-full px-4 py-3 bg-gray-50 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red transition-all font-black text-xl"
-                                            value={formData.child_age_limit}
-                                            onChange={handleInputChange}
-                                            placeholder="12"
-                                        />
-                                    </div>
-                                </div>
-                                */}
-
-                                <div className="flex items-center justify-between mb-4">
+                            <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300">
+                                <div 
+                                    className="flex items-center justify-between cursor-pointer group/header"
+                                    onClick={() => toggleSection('accommodation')}
+                                >
                                     <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
                                         <BedDouble size={16} className="text-brand-red" /> Accommodation & Pricing
                                     </h3>
-                                    <button
-                                        type="button"
-                                        onClick={addRoomType}
-                                        className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-brand-red hover:text-red-700 transition-colors"
-                                    >
-                                        <Plus size={14} /> Add Room Type
-                                    </button>
+                                    <div className="flex items-center gap-4">
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                addRoomType();
+                                            }}
+                                            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-brand-red hover:text-red-700 transition-colors"
+                                        >
+                                            <Plus size={14} /> Add Room Type
+                                        </button>
+                                        <div className="p-2 rounded-xl bg-gray-50 group-hover/header:bg-red-50 text-gray-400 group-hover/header:text-brand-red transition-all">
+                                            {collapsedSections.accommodation ? <ChevronRight size={18} /> : <ChevronDown size={18} />}
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div className="space-y-6">
+                                {!collapsedSections.accommodation && (
+                                    <div className="space-y-6 mt-6 animate-in fade-in slide-in-from-top-2 duration-300">
                                     {formData.room_types.length === 0 ? (
                                         <div className="py-12 flex flex-col items-center justify-center border-2 border-dashed border-gray-100 rounded-3xl text-gray-300">
                                             <BedDouble size={48} className="mb-2 opacity-20" />
@@ -1416,6 +1411,7 @@ const CreateService = () => {
                                         </div>
                                     )}
                                 </div>
+                            )}
                             </section>
                         )}
 
@@ -1423,21 +1419,33 @@ const CreateService = () => {
                             const cat = categories.find(c => c.id === id);
                             return cat && (cat.name === 'Activities' || cat.name === 'Cruises' || cat.name === 'Group Tours');
                         }) && (
-                                <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
-                                    <div className="flex items-center justify-between mb-4">
+                                <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300">
+                                    <div 
+                                        className="flex items-center justify-between cursor-pointer group/header"
+                                        onClick={() => toggleSection('itinerary')}
+                                    >
                                         <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
                                             <Calendar size={16} className="text-brand-red" /> Itinerary & Schedule
                                         </h3>
-                                        <button
-                                            type="button"
-                                            onClick={addItineraryDay}
-                                            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-brand-red hover:text-red-700 transition-colors"
-                                        >
-                                            <Plus size={14} /> Add Day/Stop
-                                        </button>
+                                        <div className="flex items-center gap-4">
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    addItineraryDay();
+                                                }}
+                                                className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-brand-red hover:text-red-700 transition-colors"
+                                            >
+                                                <Plus size={14} /> Add Day/Stop
+                                            </button>
+                                            <div className="p-2 rounded-xl bg-gray-50 group-hover/header:bg-red-50 text-gray-400 group-hover/header:text-brand-red transition-all">
+                                                {collapsedSections.itinerary ? <ChevronRight size={18} /> : <ChevronDown size={18} />}
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <div className="space-y-4">
+                                    {!collapsedSections.itinerary && (
+                                        <div className="space-y-4 mt-6 animate-in fade-in slide-in-from-top-2 duration-300">
                                         {formData.itinerary.length === 0 ? (
                                             <div className="py-12 flex flex-col items-center justify-center border-2 border-dashed border-gray-100 rounded-3xl text-gray-300">
                                                 <Calendar size={48} className="mb-2 opacity-20" />
@@ -1506,6 +1514,7 @@ const CreateService = () => {
                                             </div>
                                         )}
                                     </div>
+                                )}
                                 </section>
                             )}
                     </div>
