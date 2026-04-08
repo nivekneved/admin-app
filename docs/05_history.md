@@ -37,6 +37,7 @@
 - **Web App Strict Typings**: Erased all rogue `any` Typescript signatures within the `privacy-policy` to `Record<string, unknown>`. Patched a severe React hook optimization warning in `BookingWizard.tsx` by migrating unstable generic `watch()` calls to `useWatch({ control })`, and converted rigid Zod `.default('')` properties to `.optional()` mapped fields for 100% accurate `react-hook-form` type resolution. Fixed broken DOM parsing map in `terms-conditions`.
 - **Ecosystem Node Debloat**: Performed mass uninstallation of heavy, orphaned NPM dependencies across the architecture utilizing `depcheck`, shrinking deployment pipelines (Removed `next-intl`, `react-dropzone`, `react-hot-toast`, `uuid`, `date-fns`, `qrcode.react`). 
 - **Compilation Gate Pass**: Both `npx tsc --noEmit` and pipeline lint validations built perfectly locally, yielding `EXIT CODE 0` clearing the final deployment gate.
+
 ## 2026-03-31 - Service Metadata & Card Teasers
 - **Database Schema**: Added `short_description` column to `public.services` for card-specific summaries.
 - **Admin App Enhancement**: Integrated "Card Teaser (Short Description)" field into `CreateService.jsx` for both creation and editing.
@@ -80,3 +81,9 @@
 - **Legacy Data Reconciliation**: Developed an automated synchronization bridge that detects and imports room types from legacy JSONB columns into the relational `room_types` table, resolving the "blank dropdown" issue for older records like LOTUS 2026.
 - **High-Fidelity UI Redesign**: Overhauled the "Age Capacity" editor with a premium aesthetic featuring context-aware status badges, bold typography, and a streamlined layout matching official design references.
 - **Pricing Schema**: Ensured database schema integration (`service_pricing`) is production-ready with RLS and variant support.
+
+## 2026-04-08 - Hotel Detail UI Refinement & Sidebar Cleanup
+- **Sidebar De-cluttering**: Streamlined the right sidebar on the `CreateService.jsx` page by removing redundant "Base Rental" and "Current Inventory" fields.
+- **Improved Information Hierarchy**: Relocated "Adults Max", "Kids Max", and "Child Age Limit" fields from the sidebar into the main "Accommodation & Pricing" section (specific to Hotels).
+- **Styling Standardization**: Updated the relocated occupancy fields with high-contrast, premium styling to match the main content area's aesthetic.
+- **Deployment**: Verified build integrity (`npm run build`) and pushed changes to the repository.
