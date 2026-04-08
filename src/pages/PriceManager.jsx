@@ -474,18 +474,14 @@ const PriceManager = () => {
         {/* 1: Service Type */}
         <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
           <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 block">1 · Service Type</label>
-          <div className="grid grid-cols-2 gap-1.5">
+          <select value={serviceType || ''}
+            onChange={e => setServiceType(e.target.value)}
+            className="w-full text-xs border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-brand-red bg-white text-slate-800 font-semibold appearance-none cursor-pointer">
+            <option value="">— Select type —</option>
             {SERVICE_TYPES.map(t => (
-              <button key={t.value} onClick={() => setServiceType(t.value)}
-                className={`flex items-center gap-1.5 px-2 py-2 rounded-xl text-[11px] font-bold transition border ${
-                  serviceType === t.value
-                    ? 'bg-brand-red text-white border-red-600 shadow'
-                    : 'border-slate-100 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
-                }`}>
-                <t.icon size={12} /> {t.label}
-              </button>
+              <option key={t.value} value={t.value}>{t.label}</option>
             ))}
-          </div>
+          </select>
         </div>
 
         {/* 2: Service */}
@@ -540,29 +536,32 @@ const PriceManager = () => {
                   No {variantLabel.toLowerCase()}s. Click + to add one.
                 </p>
               ) : (
-                <div className="space-y-1 max-h-40 overflow-y-auto">
-                  {variants.map(v => (
-                    <div key={v.id} onClick={() => handleSelectVar(v)}
-                      className={`flex items-center justify-between px-3 py-2 rounded-xl cursor-pointer border transition text-xs ${
-                        selectedVar?.id === v.id
-                          ? 'bg-red-50 border-red-200 text-brand-red font-bold'
-                          : 'border-slate-100 hover:border-slate-200 hover:bg-slate-50 text-slate-700'
-                      }`}>
-                      <span className="flex-1 min-w-0 truncate">{v.name}</span>
-                      {/* Age acceptance badges */}
-                      <span className="flex gap-0.5 mx-1.5 shrink-0">
-                        {[{k:'max_infants',l:'I'},{k:'max_children',l:'C'},{k:'max_teens',l:'T'}].map(b => (
-                          <span key={b.k} title={b.k.replace('max_','')} className={`text-[8px] font-black rounded px-1 ${
-                            v[b.k] !== null && v[b.k] !== undefined ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-300'
-                          }`}>{b.l}</span>
-                        ))}
-                      </span>
-                      <button onClick={e => { e.stopPropagation(); handleDeleteVariant(v); }}
-                        className="text-slate-300 hover:text-red-500 transition">
-                        <Trash2 size={12} />
-                      </button>
-                    </div>
-                  ))}
+                <div className="flex gap-1.5">
+                  <select
+                    value={selectedVar?.id || ''}
+                    onChange={e => handleSelectVar(variants.find(v => v.id === e.target.value) || null)}
+                    className="flex-1 text-xs border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-brand-red bg-white text-slate-800 font-semibold appearance-none cursor-pointer"
+                  >
+                    <option value="">— Select {variantLabel} —</option>
+                    {variants.map(v => (
+                      <option key={v.id} value={v.id}>
+                        {v.name} {v.max_infants !== null || v.max_children !== null || v.max_teens !== null ? `(${[
+                          v.max_infants !== null ? 'I' : '',
+                          v.max_children !== null ? 'C' : '',
+                          v.max_teens !== null ? 'T' : ''
+                        ].filter(Boolean).join('/')})` : ''}
+                      </option>
+                    ))}
+                  </select>
+                  {selectedVar && (
+                    <button
+                      onClick={() => handleDeleteVariant(selectedVar)}
+                      className="p-2.5 text-slate-400 hover:text-red-500 border border-slate-200 rounded-xl hover:bg-red-50 transition shrink-0"
+                      title={`Delete ${variantLabel}`}
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  )}
                 </div>
               )}
 
@@ -622,18 +621,13 @@ const PriceManager = () => {
         {/* 4: Year */}
         <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
           <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 block">4 · Year</label>
-          <div className="grid grid-cols-3 gap-1.5">
+          <select value={year}
+            onChange={e => setYear(Number(e.target.value))}
+            className="w-full text-xs border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-brand-red bg-white text-slate-800 font-semibold appearance-none cursor-pointer">
             {YEAR_OPTIONS.map(y => (
-              <button key={y} onClick={() => setYear(y)}
-                className={`py-2 rounded-xl text-xs font-black border transition ${
-                  year === y
-                    ? 'bg-brand-red text-white border-red-600 shadow'
-                    : 'border-slate-100 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
-                }`}>
-                {y}
-              </button>
+              <option key={y} value={y}>{y}</option>
             ))}
-          </div>
+          </select>
         </div>
       </div>
 
