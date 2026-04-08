@@ -134,7 +134,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 }`}
             >
               <Home size={18} className="mr-3" />
-              <span className="font-bold text-xs uppercase tracking-tight">Dashboard</span>
+              <span className="font-bold text-xs tracking-tight">Dashboard</span>
             </Link>
           </div>
 
@@ -148,7 +148,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
               >
                 <div className="flex items-center gap-3">
                   <span className={`transition-colors ${openGroups[group.id] ? "text-brand-red" : "text-slate-400 group-hover:text-brand-red"}`}>{group.icon}</span>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 group-hover:text-slate-900">{group.title}</span>
+                  <span className="text-[10px] font-black tracking-widest text-slate-600 group-hover:text-slate-900">{group.title}</span>
                 </div>
                 <ChevronDown 
                   size={14} 
@@ -171,7 +171,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                           }`}
                       >
                         <span className="mr-3 shrink-0 opacity-70 group-hover:opacity-100 transition-opacity">{item.icon}</span>
-                        <span className="font-bold text-[11px] uppercase tracking-tight">{item.title}</span>
+                        <span className="font-bold text-[11px] tracking-tight">{item.title}</span>
                       </Link>
                     </li>
                   ))}
@@ -193,7 +193,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
               className="w-full flex items-center px-4 py-3 rounded-xl text-slate-400 hover:text-brand-red hover:bg-red-50 transition-all duration-300 group"
             >
               <LogOut size={18} className="mr-3 group-hover:translate-x-1 transition-transform" />
-              <span className="font-bold text-xs uppercase tracking-tight">Sign Out</span>
+              <span className="font-bold text-xs tracking-tight">Sign Out</span>
             </button>
           </div>
         </nav>
