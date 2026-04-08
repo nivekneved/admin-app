@@ -78,4 +78,5 @@
 - **Selector Optimization**: Converted Service Type, Year, and Variant (Room Type) inputs into high-fidelity dropdown menus for a more streamlined administrative experience.
 - **Dynamic Context Loading**: Implemented reactive room type filtering that automatically populates the secondary selector based on the selected hotel service.
 - **Legacy Data Reconciliation**: Developed an automated synchronization bridge that detects and imports room types from legacy JSONB columns into the relational `room_types` table, resolving the "blank dropdown" issue for older records like LOTUS 2026.
+- **High-Fidelity UI Redesign**: Overhauled the "Age Capacity" editor with a premium aesthetic featuring context-aware status badges, bold typography, and a streamlined layout matching official design references.
 - **Pricing Schema**: Ensured database schema integration (`service_pricing`) is production-ready with RLS and variant support.
