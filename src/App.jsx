@@ -32,6 +32,7 @@ import News from './pages/News';
 import CreateNews from './pages/CreateNews';
 import PopupAds from './pages/PopupAds';
 import NavigationManager from './pages/NavigationManager';
+import PriceManager from './pages/PriceManager';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -82,6 +83,7 @@ function App() {
             <Route path="/news/edit/:id" element={<CreateNews />} />
             <Route path="/popup-ads" element={<PopupAds />} />
             <Route path="/navigation" element={<NavigationManager />} />
+            <Route path="/pricing" element={<PriceManager />} />
             <Route path="/settings" element={<Settings />} />
 
             <Route path="/users" element={<Navigate to="/team" replace />} />

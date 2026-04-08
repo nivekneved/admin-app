@@ -23,7 +23,8 @@ import {
   Briefcase,
   Users as UsersIcon,
   Globe,
-  Monitor
+  Monitor,
+  DollarSign
 } from 'lucide-react';
 import { showConfirm } from '../utils/swal';
 import logo from '../assets/logo.png';
@@ -60,6 +61,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       items: [
         { title: 'Services', path: '/services', icon: <Package size={16} /> },
         { title: 'Categories', path: '/categories', icon: <Layers size={16} /> },
+        { title: 'Price Manager', path: '/pricing', icon: <DollarSign size={16} /> },
         { title: 'Bookings', path: '/bookings', icon: <Calendar size={16} /> },
         { title: 'Reports', path: '/reports', icon: <BarChart2 size={16} /> },
       ]
