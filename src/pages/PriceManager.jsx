@@ -160,7 +160,7 @@ const PriceManager = () => {
       setLoading(true);
       const { data } = await supabase
         .from('services')
-        .select('id, name, base_price, service_type')
+        .select('id, name, base_price, service_type, room_types')
         .eq('service_type', serviceType)
         .eq('is_active', true)
         .order('name');
@@ -174,15 +174,41 @@ const PriceManager = () => {
     if (!selectedSvc) { setVariants([]); setSelectedVar(null); return; }
 
     (async () => {
-      const { data } = await supabase
+      setLoading(true);
+      // Try to load from the dedicated room_types table
+      const { data: tableData } = await supabase
         .from('room_types')
         .select('id, name, weekday_price, weekend_price, max_infants, max_children, max_teens')
         .eq('service_id', selectedSvc.id)
         .order('name');
-      setVariants(data || []);
+      
+      let fetchedVariants = tableData || [];
+
+      // Fallback/Auto-Sync: If table is empty but service has room_types in JSONB
+      if (fetchedVariants.length === 0 && selectedSvc.room_types?.length > 0) {
+        const toInsert = selectedSvc.room_types.map(rt => ({
+          service_id: selectedSvc.id,
+          name: rt.name || rt.type || 'Standard Room',
+          weekday_price: parseFloat(rt.prices?.mon || 0),
+          weekend_price: parseFloat(rt.prices?.fri || 0)
+        }));
+
+        const { data: insertedData, error: insErr } = await supabase
+          .from('room_types')
+          .insert(toInsert)
+          .select();
+
+        if (!insErr && insertedData) {
+          fetchedVariants = insertedData;
+          showAlert('Sync Successful', `Imported ${insertedData.length} room types from service data for management.`, 'success');
+        }
+      }
+
+      setVariants(fetchedVariants);
       setSelectedVar(null);
       setCapacity({ max_infants: null, max_children: null, max_teens: null });
       setGrid([]);
+      setLoading(false);
     })();
   }, [selectedSvc]);
 
