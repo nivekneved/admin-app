@@ -1123,6 +1123,7 @@ const CreateService = () => {
 
                         {formData.category_ids.some(id => categories.find(c => c.id === id)?.name === 'Hotels') && (
                             <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-300 space-y-6">
+                                {/* 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-6 border-b border-slate-100">
                                     <div>
                                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">ADULTS MAX</label>
@@ -1158,6 +1159,7 @@ const CreateService = () => {
                                         />
                                     </div>
                                 </div>
+                                */}
 
                                 <div className="flex items-center justify-between mb-4">
                                     <h3 className="flex items-center gap-2 text-xs font-black text-gray-900 uppercase tracking-[0.2em]">
