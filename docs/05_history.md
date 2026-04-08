@@ -5,6 +5,8 @@
 - **Identity Reconciliation**: Resolved the "Disconnected ID" issue by linking 100% of matching `auth.users` to the `admins` and `customers` tables via email-based SQL reconciliation.
 - **Access Restoration**: Fixed 401 and 404 API errors for metadata tables (`service_categories`, `navigations`, `content_blocks`) by restoring missing public read and staff management policies.
 - **Security Definer Optimization**: Refactored internal RLS functions to use `SECURITY DEFINER` and specific `search_path` to prevent recursion and improve horizontal scaling performance.
+- **Consolidated Inbox Ecosystem**: Merged `Inquiries` and `Subscribers` into a single, unified "Inbox" interface. Implemented data transformation logic to present newsletter signups and contact form queries in one cohesive chronological view with type-specific indicators. (U-15)
+- **Menu Streamlining**: Deactivated the "Customers" menu item and Dashboard card to simplify the navigation experience and focus on direct customer engagement through the new Inbox hub. (U-14)
 - **Documentation**: Generated `docs/07_rls_diagnosis.md` detailing the full diagnostic audit and remediation steps.
 
 ## 2026-04-01 - Admin Session Stability & API Integrity
