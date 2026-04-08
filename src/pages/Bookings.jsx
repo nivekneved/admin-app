@@ -423,8 +423,10 @@ const Bookings = () => {
                               : (booking.service_name || booking.lounge_name || 'Generic')}
                           </span>
                         </div>
-                        <div className="text-[9px] text-gray-400 font-black uppercase tracking-widest">
-                          {booking.service_type || 'Unknown'}
+                        <div className="text-[9px] text-gray-400 font-black uppercase tracking-widest flex items-center gap-2">
+                          <span>{booking.service_type || 'Unknown'}</span>
+                          <span className="text-gray-300">•</span>
+                          <span>{booking.pax_adults || 0}A, {booking.pax_teens || 0}T, {booking.pax_children || 0}C, {booking.pax_infants || 0}I</span>
                         </div>
                       </td>
                       <td className="px-8 py-5 whitespace-nowrap text-left">
@@ -596,6 +598,30 @@ const Bookings = () => {
                 <p className="text-sm font-black text-gray-900">
                   Rs {(viewingBooking.total_price || viewingBooking.amount || 0).toFixed(2)}
                 </p>
+              </div>
+
+              <div className="bg-brand-red/5 rounded-xl p-4 border border-brand-red/10 col-span-2">
+                <div className="flex items-center text-[10px] font-black text-brand-red uppercase tracking-widest mb-3">
+                   Guest Breakdown
+                </div>
+                <div className="grid grid-cols-4 gap-4">
+                   <div className="text-center">
+                      <p className="text-[10px] font-black text-gray-400 uppercase">Adults</p>
+                      <p className="text-lg font-black text-gray-900">{viewingBooking.pax_adults || 0}</p>
+                   </div>
+                   <div className="text-center">
+                      <p className="text-[10px] font-black text-gray-400 uppercase">Teens</p>
+                      <p className="text-lg font-black text-gray-900">{viewingBooking.pax_teens || 0}</p>
+                   </div>
+                   <div className="text-center">
+                      <p className="text-[10px] font-black text-gray-400 uppercase">Children</p>
+                      <p className="text-lg font-black text-gray-900">{viewingBooking.pax_children || 0}</p>
+                   </div>
+                   <div className="text-center">
+                      <p className="text-[10px] font-black text-gray-400 uppercase">Infants</p>
+                      <p className="text-lg font-black text-gray-900">{viewingBooking.pax_infants || 0}</p>
+                   </div>
+                </div>
               </div>
 
               {viewingBooking.booking_items && viewingBooking.booking_items.length > 0 && (
