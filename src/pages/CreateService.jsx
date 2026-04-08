@@ -159,6 +159,9 @@ const CreateService = () => {
                 images: [], // Support for multiple images
                 available: true,
                 min_stay: 1,
+                max_adults: 2,
+                max_children: 0,
+                child_age_limit: 12,
                 features: [],
                 prices: { mon: '', tue: '', wed: '', thu: '', fri: '', sat: '', sun: '' }
             }]
@@ -1208,6 +1211,38 @@ const CreateService = () => {
                                                                 value={rt.min_stay || 1}
                                                                 onChange={e => updateRoomType(idx, 'min_stay', parseInt(e.target.value) || 1)}
                                                             />
+                                                        </div>
+                                                        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+                                                            <div>
+                                                                <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">ROOM ADULTS MAX</label>
+                                                                <input
+                                                                    type="number"
+                                                                    min="1"
+                                                                    className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                                                                    value={rt.max_adults || 2}
+                                                                    onChange={e => updateRoomType(idx, 'max_adults', parseInt(e.target.value) || 2)}
+                                                                />
+                                                            </div>
+                                                            <div>
+                                                                <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">ROOM KIDS MAX</label>
+                                                                <input
+                                                                    type="number"
+                                                                    min="0"
+                                                                    className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                                                                    value={rt.max_children || 0}
+                                                                    onChange={e => updateRoomType(idx, 'max_children', parseInt(e.target.value) || 0)}
+                                                                />
+                                                            </div>
+                                                            <div>
+                                                                <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">ROOM CHILD AGE LIMIT</label>
+                                                                <input
+                                                                    type="number"
+                                                                    min="1"
+                                                                    className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-red transition-all"
+                                                                    value={rt.child_age_limit || 12}
+                                                                    onChange={e => updateRoomType(idx, 'child_age_limit', parseInt(e.target.value) || 12)}
+                                                                />
+                                                            </div>
                                                         </div>
                                                         <div className="md:col-span-2 space-y-4">
                                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

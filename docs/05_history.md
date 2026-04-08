@@ -87,3 +87,9 @@
 - **Improved Information Hierarchy**: Relocated "Adults Max", "Kids Max", and "Child Age Limit" fields from the sidebar into the main "Accommodation & Pricing" section (specific to Hotels).
 - **Styling Standardization**: Updated the relocated occupancy fields with high-contrast, premium styling to match the main content area's aesthetic.
 - **Deployment**: Verified build integrity (`npm run build`) and pushed changes to the repository.
+## 2026-04-08 - Per-Room Occupancy Transparency & Management
+- **Admin App Granularity**: Upgraded `CreateService.jsx` to support specific occupancy limits (Max Adults, Max Kids, Child Age Limit) for individual room types. This allows for more precise booking controls where different room categories have varied capacities.
+- **Web App Detail Overhaul**: Enhanced the Hotel detail page by surfacing these granular occupancy limits directly on the room type cards.
+- **Data-Driven UI**: Refactored `HotelClientWrapper.tsx` and the server-side mapping logic to prioritize room-specific data while maintaining a robust fallback to hotel-level policies for legacy data compatibility.
+- **Premium Visualization**: Implemented high-fidelity icons and badges (Users, Calendar) for occupancy data, improving user transparency and reducing inquiry friction during the room selection process.
+- **Build Certification**: Verified 100% build success (`npm run build`) in the web application after schema and type updates.
