@@ -593,50 +593,61 @@ const PriceManager = () => {
 
               {/* ── Capacity editor for selected variant ── */}
               {selectedVar && (
-                <div className="mt-3 border-t border-slate-100 pt-3">
-                  <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2">
-                    Age Capacity · {selectedVar.name}
+                <div className="mt-4 border-t border-slate-100 pt-4 bg-slate-50/50 -mx-4 px-4 pb-4">
+                  <p className="text-[10px] font-black uppercase tracking-widest bg-blue-600 text-white px-3 py-2 rounded-xl mb-4 flex items-center gap-2 shadow-sm">
+                    <Users size={12} /> Age Capacity · {selectedVar.name}
                   </p>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     {[
                       { key: 'max_infants',  label: 'Infant',  range: '0–2',   color: 'purple' },
                       { key: 'max_children', label: 'Child',   range: '3–11',  color: 'blue'   },
                       { key: 'max_teens',    label: 'Teen',    range: '12–17', color: 'amber'  },
                     ].map(ag => (
-                      <div key={ag.key} className="flex items-center gap-2">
-                        <label className="flex items-center gap-1.5 cursor-pointer select-none w-24 shrink-0">
+                      <div key={ag.key} className="flex items-center justify-between gap-4 py-0.5">
+                        <label className="flex items-center gap-3 cursor-pointer select-none">
                           <input
                             type="checkbox"
                             checked={capacity[ag.key] !== null}
                             onChange={e => setCapacity(prev => ({ ...prev, [ag.key]: e.target.checked ? 0 : null }))}
-                            className="rounded accent-brand-red"
+                            className="w-4 h-4 rounded border-slate-300 text-brand-red focus:ring-brand-red cursor-pointer transition-all"
                           />
-                          <span className={`text-[10px] font-black ${
-                            ag.color==='purple'?'text-purple-600':ag.color==='blue'?'text-blue-600':'text-amber-600'
-                          }`}>{ag.label} <span className="text-slate-400 font-normal">({ag.range})</span></span>
+                          <span className={`text-xs font-black leading-none ${
+                            ag.color==='purple'?'text-purple-600' : 
+                            ag.color==='blue'?'text-blue-600' : 'text-amber-600'
+                          }`}>
+                            {ag.label} <span className="text-slate-400 font-normal ml-1">({ag.range})</span>
+                          </span>
                         </label>
-                        {capacity[ag.key] !== null ? (
-                          <div className="flex items-center gap-1.5 flex-1">
-                            <input
-                              type="number"
-                              min="0"
-                              value={capacity[ag.key] ?? ''}
-                              onChange={e => setCapacity(prev => ({ ...prev, [ag.key]: e.target.value === '' ? 0 : parseInt(e.target.value,10) }))}
-                              className="w-14 border border-slate-200 rounded-lg px-2 py-1 text-xs font-bold outline-none focus:ring-2 focus:ring-brand-red text-center"
-                            />
-                            <span className="text-[10px] text-slate-400">{capacity[ag.key] === 0 ? 'unlimited' : `max per booking`}</span>
-                          </div>
-                        ) : (
-                          <span className="text-[10px] text-slate-400 italic">Not accepted</span>
-                        )}
+                        
+                        <div className="flex items-center gap-2 min-w-[130px] justify-end">
+                          {capacity[ag.key] !== null ? (
+                            <div className="flex items-center gap-2 animate-in fade-in slide-in-from-right-2 duration-300">
+                              <input
+                                type="number"
+                                min="0"
+                                value={capacity[ag.key] ?? ''}
+                                onChange={e => setCapacity(prev => ({ ...prev, [ag.key]: e.target.value === '' ? 0 : parseInt(e.target.value,10) }))}
+                                className="w-16 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-black outline-none focus:ring-2 focus:ring-blue-400 text-center bg-white shadow-sm"
+                              />
+                              <span className="text-[9px] font-black text-blue-600 bg-blue-50 border border-blue-100 px-2 py-1 rounded-lg uppercase tracking-tight">
+                                {capacity[ag.key] === 0 ? 'unlimited' : 'Max'}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-[9px] font-black text-slate-400 bg-slate-100 border border-slate-200 px-3 py-1 rounded-lg italic uppercase tracking-tight animate-in fade-in duration-300">
+                              Not accepted
+                            </span>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
                   <button
                     onClick={saveCapacity}
                     disabled={savingCapacity}
-                    className="mt-3 w-full py-1.5 bg-slate-800 text-white rounded-lg text-[10px] font-black hover:bg-slate-700 transition disabled:opacity-50">
-                    {savingCapacity ? 'Saving…' : 'Save Capacity Settings'}
+                    className="mt-5 w-full py-2.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition shadow-lg shadow-slate-200 disabled:opacity-50 flex items-center justify-center gap-2">
+                    {savingCapacity ? <RefreshCw size={14} className="animate-spin" /> : <Save size={14} />}
+                    {savingCapacity ? 'Syncing...' : 'Update Capacity Settings'}
                   </button>
                 </div>
               )}
