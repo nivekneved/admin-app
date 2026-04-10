@@ -93,98 +93,98 @@ const CMS = () => {
     return (
         <div className="flex h-[calc(100vh-56px)] -mx-4 md:-mx-8 -mt-4 md:-mt-8 bg-white overflow-hidden font-sans">
             {/* MINIMALIST SITEMAP SIDEBAR */}
-            <div className="w-80 bg-slate-50 border-r border-slate-200 flex flex-col relative z-20">
-                <div className="p-8 pb-4">
-                    <div className="flex items-center justify-between mb-6">
+            <div className="w-72 bg-slate-50 border-r border-slate-200 flex flex-col relative z-20">
+                <div className="p-4 pb-2">
+                    <div className="flex items-center justify-between mb-4">
                         <div>
-                            <h2 className="text-[10px] font-black text-red-600 uppercase tracking-[0.4em] mb-1">Architectural</h2>
-                            <h1 className="text-2xl font-black text-slate-900 tracking-tighter uppercase italic leading-none">Map</h1>
+                            <h2 className="text-[9px] font-black text-red-600 uppercase tracking-[0.3em] mb-0.5">Architectural</h2>
+                            <h1 className="text-lg font-black text-slate-900 tracking-tight uppercase leading-none">Map</h1>
                         </div>
-                        <button onClick={() => fetchSections(selectedPage.slug)} className="p-2 bg-white rounded-xl border border-slate-200 text-slate-400 hover:text-red-600 transition-colors shadow-sm">
-                            <RefreshCw size={14} className={fetchingSections ? "animate-spin" : ""} />
+                        <button onClick={() => fetchSections(selectedPage.slug)} className="p-1.5 bg-white rounded-lg border border-slate-200 text-slate-400 hover:text-red-600 transition-colors shadow-sm">
+                            <RefreshCw size={12} className={fetchingSections ? "animate-spin" : ""} />
                         </button>
                     </div>
                     
                     <div className="relative group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-red-500 transition-colors" size={16} />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-red-500 transition-colors" size={14} />
                         <input 
                             type="text"
                             placeholder="Search sitemap..."
-                            className="w-full pl-12 pr-4 py-4 bg-white border border-slate-200 rounded-2xl focus:border-red-500/20 focus:outline-none text-[12px] font-bold text-slate-600 transition-all shadow-sm"
+                            className="w-full pl-10 pr-3 py-2 bg-white border border-slate-200 rounded-xl focus:border-red-500/20 focus:outline-none text-[11px] font-bold text-slate-600 transition-all shadow-sm"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto px-4 py-4 space-y-1 custom-scrollbar">
+                <div className="flex-1 overflow-y-auto px-2 py-2 space-y-0.5 custom-scrollbar">
                     {filteredPages.map(page => (
                         <button
                             key={page.slug}
                             onClick={() => setSelectedPage(page)}
                             className={cn(
-                                "w-full flex items-center justify-between px-5 py-4 rounded-2xl transition-all group",
+                                "w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all group",
                                 selectedPage?.slug === page.slug 
-                                ? "bg-white text-slate-900 shadow-xl shadow-slate-200/50 border border-slate-200/50" 
+                                ? "bg-white text-slate-900 shadow-md shadow-slate-200/50 border border-slate-200/50" 
                                 : "text-slate-500 hover:bg-white/50 hover:text-slate-900"
                             )}
                         >
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-3">
                                 <div className={cn(
-                                    "p-2 rounded-xl transition-all",
-                                    selectedPage?.slug === page.slug ? "bg-red-600 text-white shadow-lg shadow-red-600/20" : "bg-slate-100 text-slate-400 group-hover:bg-red-50 group-hover:text-red-600"
+                                    "p-1.5 rounded-lg transition-all",
+                                    selectedPage?.slug === page.slug ? "bg-red-600 text-white shadow-md shadow-red-600/20" : "bg-slate-100 text-slate-400 group-hover:bg-red-50 group-hover:text-red-600"
                                 )}>
-                                    {page.icon}
+                                    {React.cloneElement(page.icon, { size: 14 })}
                                 </div>
                                 <div className="text-left">
-                                    <span className="text-[10px] font-black uppercase tracking-widest block">{page.name}</span>
+                                    <span className="text-[10px] font-black uppercase tracking-wider block">{page.name}</span>
                                     <span className="text-[8px] font-bold block opacity-40 uppercase tracking-widest text-slate-400">/{page.slug}</span>
                                 </div>
                             </div>
-                            <ChevronRight size={14} className={cn(
+                            <ChevronRight size={12} className={cn(
                                 "transition-transform",
-                                selectedPage?.slug === page.slug ? "translate-x-0 opacity-100 text-red-600" : "-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-40"
+                                selectedPage?.slug === page.slug ? "translate-x-0 opacity-100 text-red-600" : "-translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-40"
                             )} />
                         </button>
                     ))}
                 </div>
 
-                <div className="p-8 border-t border-slate-200 bg-white">
-                    <div className="flex items-center gap-3">
-                         <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">System Ready for Orchestration</span>
+                <div className="p-4 border-t border-slate-200 bg-white">
+                    <div className="flex items-center gap-2">
+                         <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                         <span className="text-[8px] font-black text-slate-400 uppercase tracking-tight">System Ready for Orchestration</span>
                     </div>
                 </div>
             </div>
 
             {/* HIGH-DENSITY CONTENT CANVAS */}
             <div className="flex-1 overflow-y-auto bg-white custom-scrollbar">
-                <div className="p-12 lg:p-20 max-w-6xl mx-auto">
+                <div className="p-6 lg:p-10 max-w-full">
                     {/* PAGE HEADER */}
-                    <div className="mb-24 flex flex-col md:flex-row md:items-end justify-between gap-12">
+                    <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
                         <div className="flex-1">
-                            <div className="flex items-center gap-4 mb-6">
-                                <span className="px-4 py-1.5 bg-slate-900 text-white rounded-full text-[9px] font-black uppercase tracking-[0.2em] shadow-xl shadow-slate-900/10">Dynamic Segment</span>
+                            <div className="flex items-center gap-4 mb-3">
+                                <span className="px-3 py-1 bg-slate-900 text-white rounded-full text-[8px] font-black uppercase tracking-[0.15em] shadow-lg shadow-slate-900/10">Dynamic Segment</span>
                                 <a 
                                     href={`https://travellounge.mu${selectedPage.slug === 'home' ? '' : `/${selectedPage.slug}`}`} 
                                     target="_blank" 
                                     rel="noreferrer"
-                                    className="flex items-center gap-2 text-[10px] font-black text-red-600 uppercase tracking-widest hover:underline"
+                                    className="flex items-center gap-2 text-[9px] font-black text-red-600 uppercase tracking-widest hover:underline"
                                 >
-                                    Preview Route <ExternalLink size={12} />
+                                    Preview Route <ExternalLink size={10} />
                                 </a>
                             </div>
-                            <h1 className="text-7xl font-black text-slate-900 tracking-tighter uppercase italic leading-none mb-6">
+                            <h1 className="text-lg font-bold text-slate-900 tracking-wider uppercase leading-none mb-2">
                                 {selectedPage.name}
                             </h1>
-                            <div className="flex items-center gap-6">
-                                <p className="text-slate-400 text-sm font-medium italic border-l-4 border-red-600 pl-6 py-1">
+                            <div className="flex items-center gap-4">
+                                <p className="text-slate-400 text-[10px] font-bold border-l-2 border-red-600 pl-3 py-0">
                                     /{selectedPage.slug}
                                 </p>
-                                <div className="flex items-center gap-4 text-[10px] font-black text-slate-300 uppercase tracking-widest">
-                                    <span>{sections.length} Module Definitions</span>
+                                <div className="flex items-center gap-3 text-[8px] font-black text-slate-300 uppercase tracking-widest">
+                                    <span>{sections.length} Modules</span>
                                     <div className="w-1 h-1 rounded-full bg-slate-200" />
-                                    <span>Last Sync: {new Date().toLocaleTimeString()}</span>
+                                    <span>Sync: {new Date().toLocaleTimeString()}</span>
                                 </div>
                             </div>
                         </div>
@@ -192,17 +192,14 @@ const CMS = () => {
 
                     {/* SECTION BLOCKS */}
                     {fetchingSections ? (
-                        <div className="py-60 flex flex-col items-center justify-center">
+                        <div className="py-20 flex flex-col items-center justify-center">
                             <div className="relative">
-                                <Loader2 className="animate-spin text-red-600 mb-8" size={64} strokeWidth={1.5} />
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <div className="w-2 h-2 bg-red-600 rounded-full" />
-                                </div>
+                                <Loader2 className="animate-spin text-red-600 mb-6" size={48} strokeWidth={1.5} />
                             </div>
-                            <p className="text-[12px] font-black text-slate-300 uppercase tracking-[0.8em]">Orchestrating Library...</p>
+                            <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.6em]">Orchestrating Library...</p>
                         </div>
                     ) : sections.length > 0 ? (
-                        <div className="space-y-40 mb-40">
+                        <div className="space-y-3 mb-10 text-slate-900">
                             {sections.map((section, idx) => (
                                 <SectionSegment 
                                     key={section.id} 
@@ -273,56 +270,51 @@ const SectionSegment = ({ section, index, pageSlug }) => {
 
     return (
         <div className={cn(
-            "bg-white rounded-[3rem] border transition-all duration-500 overflow-hidden",
+            "bg-white rounded-xl border transition-all duration-500 overflow-hidden",
             hasUnsavedChanges ? "border-red-600 ring-4 ring-red-600/5" : "border-slate-100",
-            !isExpanded && "rounded-[2rem]",
             isLocked && "opacity-80"
         )}>
             {/* SEGMENT HEADER */}
-            <div className="px-10 py-8 flex items-center justify-between group cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
-                <div className="flex items-center gap-6">
+            <div className="px-4 py-3 flex items-center justify-between group cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
+                <div className="flex items-center gap-3">
                     <div className={cn(
-                        "w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xs border transition-colors",
+                        "w-8 h-8 rounded-lg flex items-center justify-center font-black text-[9px] border transition-colors",
                         isLocked ? "bg-slate-900 border-slate-900 text-white" : "bg-slate-50 border-slate-100 text-slate-300 group-hover:border-red-600"
                     )}>
-                        {isLocked ? <ShieldCheck size={16} /> : String(index).padStart(2, '0')}
+                        {isLocked ? <ShieldCheck size={12} /> : String(index).padStart(2, '0')}
                     </div>
                     <div>
-                        <h4 className="text-[13px] font-black text-slate-900 uppercase tracking-widest flex items-center gap-3">
+                        <h4 className="text-[10px] font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
                             {formatKey(section.section_key)}
-                            {hasUnsavedChanges && <span className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse" />}
-                            {isLocked && <span className="text-[8px] font-black bg-slate-900 text-white px-2 py-0.5 rounded tracking-tighter ml-2">Protected</span>}
+                            {hasUnsavedChanges && <span className="w-1 h-1 bg-red-600 rounded-full animate-pulse" />}
+                            {isLocked && <span className="text-[6px] font-black bg-slate-900 text-white px-1 py-0.5 rounded tracking-tighter ml-1">ADMIN ONLY</span>}
                         </h4>
-                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
-                            Block ID: <span className="font-black text-slate-900 opacity-60">#{section.id.slice(0, 8)}</span>
+                        <p className="text-[7px] font-bold text-slate-300 uppercase mt-0.5">
+                            ID: <span className="opacity-60">{section.id.slice(0, 8)}</span>
                         </p>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-4" onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                     <button 
                         onClick={() => setIsExpanded(!isExpanded)}
-                        className="p-3 text-slate-300 hover:text-red-600 transition-colors"
+                        className="p-1.5 text-slate-200 hover:text-red-600 transition-colors"
                     >
-                        {isExpanded ? <X size={20} /> : <Eye size={20} />}
+                        {isExpanded ? <X size={14} /> : <Eye size={14} />}
                     </button>
-                    {isLocked ? (
-                        <div className="flex items-center gap-2 px-6 py-3 bg-slate-100 rounded-2xl text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                            <ShieldCheck size={12} /> Ask Administrator
-                        </div>
-                    ) : (
+                    {!isLocked && (
                         <Button
                             disabled={!hasUnsavedChanges || isSaving}
                             onClick={handleSave}
                             className={cn(
-                                "px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all",
+                                "px-4 py-1.5 rounded-lg text-[8px] font-bold uppercase tracking-wider transition-all",
                                 hasUnsavedChanges 
-                                ? "bg-red-600 text-white shadow-xl shadow-red-600/20 hover:scale-[1.02] active:scale-95" 
-                                : "bg-slate-50 text-slate-300"
+                                ? "bg-red-600 text-white shadow-md hover:scale-[1.01] active:scale-98" 
+                                : "bg-slate-50 text-slate-200"
                             )}
                         >
-                            {isSaving ? <Loader2 className="animate-spin" size={14} /> : <Save size={14} className="mr-2" />}
-                            {isSaving ? 'Deploy Changes' : 'Deploy Changes'}
+                            {isSaving ? <Loader2 className="animate-spin" size={10} /> : <Save size={10} className="mr-1.5" />}
+                            {isSaving ? 'Saving' : 'Save'}
                         </Button>
                     )}
                 </div>
@@ -331,8 +323,8 @@ const SectionSegment = ({ section, index, pageSlug }) => {
             {/* SEGMENT CONTENT */}
             {isExpanded && (
                 <div className={cn(
-                    "px-10 lg:px-16 py-10 border-t border-slate-50 space-y-12",
-                    isLocked ? "bg-slate-100/30 select-none cursor-not-allowed pointer-events-none grayscale opacity-60" : "bg-[#FDFDFD]"
+                    "px-4 py-4 border-t border-slate-50 space-y-4",
+                    isLocked ? "bg-slate-100/30 select-none cursor-not-allowed pointer-events-none grayscale opacity-60" : "bg-white"
                 )}>
                     {Object.entries(content).map(([key, value]) => (
                         <SegmentItem 
@@ -346,14 +338,11 @@ const SectionSegment = ({ section, index, pageSlug }) => {
                     ))}
                     
                     {/* Block Interaction Metadata */}
-                    <div className="pt-10 border-t border-slate-100 flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                             <Check size={12} className={isLocked ? "text-slate-300" : "text-green-500"} />
-                             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                                {isLocked ? 'Immutable Schema' : 'Valid JSON Schema'}
-                             </span>
-                        </div>
-                        <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Block type: {section.section_key}</p>
+                    <div className="pt-4 border-t border-slate-50 flex items-center justify-between">
+                         <span className="text-[7px] font-bold text-slate-200 uppercase tracking-widest">
+                            {isLocked ? 'PROTECTED RECORD' : 'EDITABLE SEGMENT'}
+                         </span>
+                        <p className="text-[7px] font-black text-slate-100 uppercase">Schema: {section.section_key}</p>
                     </div>
                 </div>
             )}
@@ -369,29 +358,27 @@ const SegmentItem = ({ label, fieldKey, value, onChange, pageSlug }) => {
 
     if (isArray) {
         return (
-            <div className="space-y-10 group/collection">
-                <div className="flex items-center justify-between px-2">
-                    <h5 className="text-[14px] font-black text-slate-900 uppercase tracking-[0.2em] flex items-center gap-4">
-                        <div className="w-1.5 h-6 bg-red-600 rounded-full" />
-                        {label} Collection
-                        <span className="px-3 py-1 bg-slate-100 text-slate-400 rounded-full text-[9px] lowercase font-bold">{value.length} items</span>
+            <div className="space-y-3 group/collection">
+                <div className="flex items-center justify-between">
+                    <h5 className="text-[10px] font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                        <div className="w-1 h-3 bg-red-600 rounded-full" />
+                        {label} [{value.length}]
                     </h5>
-                    <button className="flex items-center gap-2 px-6 py-3 bg-red-50 text-red-600 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all shadow-sm">
-                        <Plus size={14} /> Add Record
+                    <button className="flex items-center gap-1.5 px-3 py-1 bg-red-50 text-red-600 rounded-lg text-[8px] font-bold uppercase tracking-wider hover:bg-red-600 hover:text-white transition-all">
+                        <Plus size={10} /> Add
                     </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
                     {value.map((item, idx) => (
-                        <div key={idx} className="bg-[#FBFCFE] border border-slate-100 rounded-[3.5rem] p-10 relative group/card transition-all hover:bg-white hover:shadow-2xl hover:shadow-slate-200/40 hover:-translate-y-2">
-                            <div className="absolute top-8 right-10 flex items-center gap-3">
-                                <span className="text-[10px] font-black text-slate-200 group-hover/card:text-slate-400 transition-colors uppercase italic">{String(idx + 1).padStart(2, '0')}</span>
-                                <button className="p-2 text-slate-100 hover:text-red-600 transition-colors opacity-0 group-hover/card:opacity-100">
-                                    <Trash2 size={14} />
+                        <div key={idx} className="bg-slate-50/30 border border-slate-100 rounded-xl p-4 relative group/card transition-all hover:bg-white hover:border-slate-200">
+                            <div className="absolute top-3 right-3 flex items-center gap-1">
+                                <button className="p-1 text-slate-200 hover:text-red-600 transition-colors opacity-0 group-hover/card:opacity-100 font-bold text-[8px] uppercase">
+                                    <Trash2 size={10} />
                                 </button>
                             </div>
                             
-                            <div className="space-y-10 pt-4">
+                            <div className="space-y-3 pt-1">
                                 {Object.keys(item).map(subKey => (
                                     <InlineEditField 
                                         key={subKey}
@@ -415,14 +402,11 @@ const SegmentItem = ({ label, fieldKey, value, onChange, pageSlug }) => {
     }
 
     return (
-        <div className="group/item relative bg-[#F9FAFB] p-10 rounded-[4rem] border border-transparent hover:border-slate-100 hover:bg-white hover:shadow-xl hover:shadow-slate-100/50 transition-all">
-            <div className="flex items-center justify-between mb-8 px-2">
-                <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] group-focus-within/item:text-red-600 transition-colors">
+        <div className="group/item relative bg-slate-50/30 p-4 rounded-xl border border-transparent hover:border-slate-100 hover:bg-white transition-all">
+            <div className="mb-2 px-1">
+                <label className="text-[8px] font-bold text-slate-300 uppercase tracking-wider group-focus-within/item:text-red-600 transition-colors">
                     {label}
                 </label>
-                <div className="flex items-center gap-4 opacity-0 group-hover/item:opacity-100 transition-all translate-x-4 group-hover/item:translate-x-0">
-                    <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest italic">{isImage ? 'Visual Asset' : isDescription ? 'Rich Text' : 'Primitive Data'}</span>
-                </div>
             </div>
 
             <InlineEditField 
@@ -470,7 +454,7 @@ const InlineEditField = ({ label, value, onChange, compact = false, isLarge = fa
                         onBlur={() => setEditing(false)}
                         className={cn(
                             "w-full bg-transparent border-0 focus:ring-0 p-0 text-slate-800 font-medium leading-relaxed resize-none transition-all outline-none",
-                            compact ? "text-xs h-24" : "text-lg h-44",
+                            compact ? "text-[9px] h-16" : "text-xs h-24",
                             editing ? "opacity-100" : "opacity-80"
                         )}
                         placeholder={`Provide ${label.toLowerCase()} content...`}
@@ -483,8 +467,8 @@ const InlineEditField = ({ label, value, onChange, compact = false, isLarge = fa
                         onFocus={() => setEditing(true)}
                         onBlur={() => setEditing(false)}
                         className={cn(
-                            "w-full bg-transparent border-0 focus:ring-0 p-0 font-black text-slate-900 transition-all outline-none uppercase tracking-tight",
-                            compact ? "text-sm" : "text-4xl",
+                            "w-full bg-transparent border-0 focus:ring-0 p-0 font-bold text-slate-900 transition-all outline-none tracking-tight",
+                            compact ? "text-[10px]" : "text-sm",
                             editing ? "opacity-100" : "opacity-90"
                         )}
                         placeholder={`Enter ${label.toLowerCase()}...`}
@@ -493,8 +477,8 @@ const InlineEditField = ({ label, value, onChange, compact = false, isLarge = fa
                 
                 {/* Visual Focus Indicator */}
                 <div className={cn(
-                    "absolute -bottom-2 left-0 h-[2px] bg-red-600 transition-all duration-500 rounded-full",
-                    editing ? "w-20 opacity-100" : "w-0 opacity-0"
+                    "absolute -bottom-1 left-0 h-[1px] bg-red-600 transition-all duration-300 rounded-full",
+                    editing ? "w-8 opacity-100" : "w-0 opacity-0"
                 )} />
             </div>
 
