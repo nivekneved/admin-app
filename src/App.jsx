@@ -21,8 +21,8 @@ import CreateService from './pages/CreateService';
 import CreateOrder from './pages/CreateOrder';
 import CreateBooking from './pages/CreateBooking';
 import CreateInvoice from './pages/CreateInvoice';
-import Categories from './pages/Categories';
 import HeroSlider from './pages/HeroSlider';
+import PageBanners from './pages/PageBanners';
 import Reviews from './pages/Reviews';
 import FAQs from './pages/FAQs';
 import CMS from './pages/CMS';
@@ -63,6 +63,7 @@ function App() {
             <Route path="/services/edit/:id" element={<CreateService />} />
             <Route path="/categories" element={<Categories />} />
             <Route path="/hero-slider" element={<HeroSlider />} />
+            <Route path="/banners" element={<PageBanners />} />
             <Route path="/bookings" element={<Bookings />} />
             <Route path="/bookings/create" element={<CreateBooking />} />
             <Route path="/orders" element={<Orders />} />

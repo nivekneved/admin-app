@@ -24,7 +24,8 @@ import {
   Users as UsersIcon,
   Globe,
   Monitor,
-  DollarSign
+  DollarSign,
+  Image as ImageIcon
 } from 'lucide-react';
 import { showConfirm } from '../utils/swal';
 import logo from '../assets/logo.png';
@@ -83,6 +84,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         { title: 'Site Map Orchestrator', path: '/cms', icon: <MapPin size={16} /> },
         { title: 'News Editor', path: '/news', icon: <FileText size={16} /> },
         { title: 'Hero Slider', path: '/hero-slider', icon: <Layout size={16} /> },
+        { title: 'Page Banners', path: '/banners', icon: <ImageIcon size={16} /> },
         { title: 'Navigation', path: '/navigation', icon: <Layers size={16} /> },
         { title: 'Popup Ads', path: '/popup-ads', icon: <Monitor size={16} /> },
         { title: 'FAQs', path: '/faqs', icon: <HelpCircle size={16} /> },
