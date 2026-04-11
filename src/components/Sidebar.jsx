@@ -64,7 +64,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         { title: 'Categories', path: '/categories', icon: <Layers size={16} /> },
         { title: 'Price Manager', path: '/pricing', icon: <DollarSign size={16} /> },
         { title: 'Bookings', path: '/bookings', icon: <Calendar size={16} /> },
-        { title: 'Reports', path: '/reports', icon: <BarChart2 size={16} /> },
+        // { title: 'Reports', path: '/reports', icon: <BarChart2 size={16} /> },
       ]
     },
     {
