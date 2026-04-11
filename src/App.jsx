@@ -7,6 +7,7 @@ import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Services from './pages/Services';
+import Categories from './pages/Categories';
 import Orders from './pages/Orders';
 import Bookings from './pages/Bookings';
 import Reports from './pages/Reports';
